@@ -5,17 +5,19 @@
   
 
   
-  <title>Hexo</title>
+  <title>LinWenLi Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
+  <meta name="description" content="总有一天，你的日积月累会成为别人的望尘莫及。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LinWenLi Blog">
 <meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="LinWenLi Blog">
+<meta property="og:description" content="总有一天，你的日积月累会成为别人的望尘莫及。">
 <meta property="og:locale" content="en_US">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="LinWenLi">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="LinWenLi Blog" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -36,7 +38,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">LinWenLi Blog</a>
       </h1>
       
     </div>
@@ -86,19 +88,24 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="环境准备："><a href="#环境准备：" class="headerlink" title="环境准备："></a>环境准备：</h2><ul>
+        <h2 id="一、环境准备："><a href="#一、环境准备：" class="headerlink" title="一、环境准备："></a>一、环境准备：</h2><ul>
 <li>Node.js安装</li>
 <li>Git安装</li>
-<li>Github帐号注册<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><h3 id="1-在Github上新建名为-github-io的github同名公开仓库"><a href="#1-在Github上新建名为-github-io的github同名公开仓库" class="headerlink" title="1 在Github上新建名为**.github.io的github同名公开仓库"></a>1 在Github上新建名为**.github.io的github同名公开仓库</h3><h3 id="2-本地安装Hexo"><a href="#2-本地安装Hexo" class="headerlink" title="2 本地安装Hexo"></a>2 本地安装Hexo</h3><code>npm install -g hexo-cli</code><h3 id="3-本地创建Hexo项目"><a href="#3-本地创建Hexo项目" class="headerlink" title="3 本地创建Hexo项目"></a>3 本地创建Hexo项目</h3><code>hexo init blog   （blog是文件夹名称，可自定义命名）</code><h3 id="4-项目安装部署插件-在本地项目目录下执行以下命令"><a href="#4-项目安装部署插件-在本地项目目录下执行以下命令" class="headerlink" title="4 项目安装部署插件,在本地项目目录下执行以下命令"></a>4 项目安装部署插件,在本地项目目录下执行以下命令</h3><code>npm install hexo-deployer-git --save</code><h3 id="5-在项目文件-config-yml末尾补充部署配置"><a href="#5-在项目文件-config-yml末尾补充部署配置" class="headerlink" title="5 在项目文件_config.yml末尾补充部署配置"></a>5 在项目文件_config.yml末尾补充部署配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repo: https://github.com/LinWenLi95/LinWenLi95.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line">注意：repo为步骤1创建的同名仓库代码地址</span><br></pre></td></tr></table></figure>
-<h3 id="6-部署（根据提示输入github用户名和密码）"><a href="#6-部署（根据提示输入github用户名和密码）" class="headerlink" title="6 部署（根据提示输入github用户名和密码）"></a>6 部署（根据提示输入github用户名和密码）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
-<h3 id="7-浏览器访问网址https-github-io-博客搭建结束"><a href="#7-浏览器访问网址https-github-io-博客搭建结束" class="headerlink" title="7 浏览器访问网址https://**.github.io,博客搭建结束"></a>7 浏览器访问网址https://**.github.io,博客搭建结束</h3><h3 id="8-另外还需要知道Hexo的几个常用命令"><a href="#8-另外还需要知道Hexo的几个常用命令" class="headerlink" title="8 另外还需要知道Hexo的几个常用命令"></a>8 另外还需要知道Hexo的几个常用命令</h3>1-7步骤可快速搭建一个能通过Github访问的博客，以下是Hexo常用命令说明<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g <span class="comment"># 安装Hexo</span></span><br><span class="line">npm update hexo -g <span class="comment"># 升级Hexo</span></span><br><span class="line"></span><br><span class="line">npm install hexo-deployer-git --save <span class="comment"># 安装部署插件</span></span><br><span class="line"></span><br><span class="line">hexo init &lt;自定义博客名&gt; <span class="comment"># 初始化博客</span></span><br><span class="line"></span><br><span class="line">hexo new <span class="string">&quot;我的博客&quot;</span> <span class="comment"># 新建文章 简写：hexo n &quot;我的博客&quot;</span></span><br><span class="line"></span><br><span class="line">hexo generate <span class="comment"># 生成静态网页代码 简写：hexo g</span></span><br><span class="line"></span><br><span class="line">hexo deploy <span class="comment"># 部署 简写：hexo d</span></span><br><span class="line"></span><br><span class="line">hexo server <span class="comment"># 启动服务预览 简写：hexo s</span></span><br><span class="line">hexo server -s <span class="comment"># 静态模式</span></span><br><span class="line">hexo server -p 5000 <span class="comment"># 更改端口（默认4000）</span></span><br><span class="line">hexo server -i 192.168.1.1 <span class="comment"># 自定义 IP</span></span><br><span class="line"></span><br><span class="line">hexo clean <span class="comment"># 清除缓存，若是网页正常情况下可以忽略这条命令</span></span><br></pre></td></tr></table></figure>
-<h3 id="9-主题设置（待补充。。。）"><a href="#9-主题设置（待补充。。。）" class="headerlink" title="9 主题设置（待补充。。。）"></a>9 主题设置（待补充。。。）</h3>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26625249">https://zhuanlan.zhihu.com/p/26625249</a></li>
+<li>Github帐号注册</li>
 </ul>
+<h2 id="二、部署步骤："><a href="#二、部署步骤：" class="headerlink" title="二、部署步骤："></a>二、部署步骤：</h2><h3 id="1-在Github上新建名为-github-io的github同名公开仓库"><a href="#1-在Github上新建名为-github-io的github同名公开仓库" class="headerlink" title="1 在Github上新建名为**.github.io的github同名公开仓库"></a>1 在Github上新建名为**.github.io的github同名公开仓库</h3><h3 id="2-本地安装Hexo"><a href="#2-本地安装Hexo" class="headerlink" title="2 本地安装Hexo"></a>2 本地安装Hexo</h3><p><code>npm install -g hexo-cli</code></p>
+<h3 id="3-本地创建Hexo项目"><a href="#3-本地创建Hexo项目" class="headerlink" title="3 本地创建Hexo项目"></a>3 本地创建Hexo项目</h3><p><code>hexo init blog   （blog是文件夹名称，可自定义命名）</code></p>
+<h3 id="4-项目安装部署插件-在本地项目目录下执行以下命令"><a href="#4-项目安装部署插件-在本地项目目录下执行以下命令" class="headerlink" title="4 项目安装部署插件,在本地项目目录下执行以下命令"></a>4 项目安装部署插件,在本地项目目录下执行以下命令</h3><p><code>npm install hexo-deployer-git --save</code></p>
+<h3 id="5-在项目文件-config-yml末尾补充部署配置"><a href="#5-在项目文件-config-yml末尾补充部署配置" class="headerlink" title="5 在项目文件_config.yml末尾补充部署配置"></a>5 在项目文件_config.yml末尾补充部署配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  <span class="built_in">type</span>: git</span><br><span class="line">  repo: https://github.com/LinWenLi95/LinWenLi95.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line">注意：repo为步骤1创建的同名仓库代码地址</span><br></pre></td></tr></table></figure>
+<h3 id="6-部署（根据提示输入github用户名和密码）"><a href="#6-部署（根据提示输入github用户名和密码）" class="headerlink" title="6 部署（根据提示输入github用户名和密码）"></a>6 部署（根据提示输入github用户名和密码）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
+<h3 id="7-浏览器访问网址https-github-io-博客搭建结束"><a href="#7-浏览器访问网址https-github-io-博客搭建结束" class="headerlink" title="7 浏览器访问网址https://**.github.io,博客搭建结束"></a>7 浏览器访问网址https://**.github.io,博客搭建结束</h3><h3 id="8-另外还需要知道Hexo的几个常用命令"><a href="#8-另外还需要知道Hexo的几个常用命令" class="headerlink" title="8 另外还需要知道Hexo的几个常用命令"></a>8 另外还需要知道Hexo的几个常用命令</h3><p>1-7步骤可快速搭建一个能通过Github访问的博客，以下是Hexo常用命令说明</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g <span class="comment"># 安装Hexo</span></span><br><span class="line">npm update hexo -g <span class="comment"># 升级Hexo</span></span><br><span class="line"></span><br><span class="line">npm install hexo-deployer-git --save <span class="comment"># 安装部署插件</span></span><br><span class="line"></span><br><span class="line">hexo init &lt;自定义博客名&gt; <span class="comment"># 初始化博客</span></span><br><span class="line"></span><br><span class="line">hexo new <span class="string">&quot;我的博客&quot;</span> <span class="comment"># 新建文章 简写：hexo n &quot;我的博客&quot;</span></span><br><span class="line"></span><br><span class="line">hexo generate <span class="comment"># 生成静态网页代码 简写：hexo g</span></span><br><span class="line"></span><br><span class="line">hexo deploy <span class="comment"># 部署 简写：hexo d</span></span><br><span class="line"></span><br><span class="line">hexo server <span class="comment"># 启动服务预览 简写：hexo s</span></span><br><span class="line">hexo server -s <span class="comment"># 静态模式</span></span><br><span class="line">hexo server -p 5000 <span class="comment"># 更改端口（默认4000）</span></span><br><span class="line">hexo server -i 192.168.1.1 <span class="comment"># 自定义 IP</span></span><br><span class="line"></span><br><span class="line">hexo clean <span class="comment"># 清除缓存，若是网页正常情况下可以忽略这条命令</span></span><br></pre></td></tr></table></figure>
+<h3 id="9-主题设置（待补充。。。）"><a href="#9-主题设置（待补充。。。）" class="headerlink" title="9 主题设置（待补充。。。）"></a>9 主题设置（待补充。。。）</h3><p>参考：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26625249">https://zhuanlan.zhihu.com/p/26625249</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/04/Github%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2/" data-id="ckqpax4ky0000i8uz5wrlcuio" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/04/Github%E6%90%AD%E5%BB%BAHexo%E5%8D%9A%E5%AE%A2/" data-id="ckqp9y2oq0000h0uze88k9e5g" class="article-share-link">Share</a>
       
       
     </footer>
@@ -147,7 +154,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/04/hello-world/" data-id="ckqpax4l50001i8uzhz19b8it" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/04/hello-world/" data-id="ckqp9y2p20001h0uz4k2s0ygu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -207,7 +214,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2021 John Doe<br>
+      &copy; 2021 LinWenLi<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
