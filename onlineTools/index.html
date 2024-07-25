@@ -519,11 +519,6 @@
                     // 在这里对特殊列的值进行处理
                     // sku开头调整
                     if (['item_sku', 'parent_sku'].includes(targetKeyWord) && value != null) {
-                        const source = document.getElementById('sourceSKUText')
-                        const target = document.getElementById('targetSKUText')
-                        if (source.value.trim() && target.value.trim()) {
-                            value = removePrefixAndAddNew(value, source.value, target.value);
-                        }
                         if (document.getElementById('checkboxSku').checked) {
                             value = siteKey + value.substring(2)
                         }
