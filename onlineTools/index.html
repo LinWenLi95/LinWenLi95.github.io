@@ -194,8 +194,9 @@
         targetWorkBookMap = {}
         document.getElementById('targetDiv').innerText = null
         if (e.target.files.length === 1) {
+            const name = e.target.files[0].name
             // 选单文件时判断文件名开头不是站点缩写则不可使用sku开头自动替换功能
-            if (!siteMap[e.target.files[0].name.substring(0, 2).toUpperCase()]) {
+            if (!siteMap[getFileNameSite(e.target.files[0].name)]) {
                 const checkboxSku = document.getElementById('checkboxSku')
                 checkboxSku.checked = false
                 checkboxSku.disabled = true
@@ -205,8 +206,8 @@
         } else {
             // 选多文件时，文件名开头不是站点缩写则停止读取
             for (const file of e.target.files) {
-                if (!siteMap[file.name.substring(0, 2).toUpperCase()]) {
-                    document.getElementById('targetDiv').innerHTML = `<label style="color: red">请重新选择以站点英文缩写开头命名的多个文件</label>`
+                if (!siteMap[getFileNameSite(file.name)]) {
+                    document.getElementById('targetDiv').innerHTML = `<label style="color: red">请重新选择以站点英文缩写开头或结尾命名的多个文件</label>`
                     return
                 }
             }
@@ -241,7 +242,7 @@
                         break
                     case 'target':
                         // 验证文件站点重复
-                        const site = file.name.substring(0, 2).toUpperCase()
+                        const site = getFileNameSite(file.name)
                         const selectId = site + 'Select'
                         if (document.getElementById(selectId)) {
                             document.getElementById('targetDiv').innerHTML = `<label style="color: red">出现重复的站点缩写，请检查</label>`
@@ -319,6 +320,17 @@
             reader.readAsArrayBuffer(file)
         }
     }
+    // 获取文件名的开头或结尾站点字母
+    function getFileNameSite(name) {
+        let site = ''
+        let pre, suffix
+        if (siteMap[pre = name.substring(0, 2).toUpperCase()]) {
+            site = pre
+        } else if (siteMap[suffix = name.substring(0, name.length - 5).slice(-2).toUpperCase()]) {
+            site = suffix
+        }
+        return site
+    }
 
     function loadInstructions(code) {
         if (instructionState['code'] === code) {
@@ -351,7 +363,7 @@
                             <label>3.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/>
                             <label>4.点击按钮，自动生成处理好顺序的数据表格</label><br/>
                             <label>5.复制生成的数据以仅粘贴值的方式粘贴到目标表格后，进行手动调整</label><br/><br/>
-                            <label style="font-size: 12px;">注意：选择多个目标站点表格时，文件名前两位必须是站点英文缩写</label><br/>`
+                            <label style="font-size: 12px;">注意：选择多个目标站点表格时，文件名前两位或末尾两位必须是站点英文缩写</label><br/>`
                     break
                 }
                 case 3:{
