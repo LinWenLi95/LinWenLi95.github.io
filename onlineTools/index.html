@@ -452,9 +452,10 @@
         let cellKey
         for (let colCount = 1; colCount <= maxColCount; colCount++) {
             // 取列第三行值
-            cellKey = sourceSheet[convertToLetter(colCount) + '3'].v
+            let cell = sourceSheet[convertToLetter(colCount) + '3']
+            if(!cell) continue
+            cellKey = cell.v
             const arr = []
-            let cell
             for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
                 cell = sourceSheet[convertToLetter(colCount) + rowNum]
                 arr.push(cell ? cell.v : null)
@@ -479,7 +480,9 @@
             const targetKeyWordArr = []
             for (let colCount = 1; colCount <= targetMaxColCount; colCount++) {
                 // 取列第三行值
-                cellKey = targetSheet[convertToLetter(colCount) + '3'].v
+                const cell = targetSheet[convertToLetter(colCount) + '3']
+                if(!cell) continue
+                cellKey = cell.v
                 targetKeyWordArr.push(cellKey)
             }
             // 3. 获取目标表格指定列数据
@@ -579,9 +582,10 @@
         let cellKey
         for (let colCount = startColNumber; colCount <= maxColCount; colCount++) {
             // 取列第三行值
+            let cell = sheet[convertToLetter(colCount) + headRowNumber]
+            if(!cell) continue
             cellKey = sheet[convertToLetter(colCount) + headRowNumber].v
             const arr = []
-            let cell
             for (let rowNum = headRowNumber + 1; rowNum <= maxRowCount; rowNum++) {
                 cell = sheet[convertToLetter(colCount) + rowNum]
                 arr.push(cell ? cell.v : '')
