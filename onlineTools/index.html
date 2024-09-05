@@ -45,7 +45,7 @@
     <div v-show="!iframe.show" class="centered">
         <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位转换工具</el-button><br/><br/>
         <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">表格上架工具</el-button><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleTools('pdfAddText')">PDF添加Made In China</el-button>
+        <el-button type="primary" style="width: 200px" @click="handleOpenPDFWeb">PDF添加Made In China</el-button>
     </div>
     <div v-if="iframe.show" >
         <el-button type="primary" class="backButton" @click="handleBack">返回</el-button>
@@ -79,6 +79,9 @@
                 if (this.iframe.show) {
                     this.iframe.src = this.toolsSrc[value]
                 }
+            },
+            handleOpenPDFWeb() {
+                window.open('http://amztool.moyuren.cn/index');
             },
             handleBack() {
                 this.iframe.show = !this.iframe.show
