@@ -45,7 +45,8 @@
     <div v-show="!iframe.show" class="centered">
         <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位转换工具</el-button><br/><br/>
         <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">表格上架工具</el-button><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleOpenPDFWeb">PDF添加Made In China</el-button>
+        <el-button type="primary" style="width: 200px" @click="handleOpenPDFWeb">PDF添加Made In China</el-button><br/><br/>
+        <el-button type="primary" style="width: 200px" @click="handleTools('fireFlower')">看烟花</el-button>
     </div>
     <div v-if="iframe.show" >
         <el-button type="primary" class="backButton" @click="handleBack">返回</el-button>
@@ -69,7 +70,7 @@
                 toolsSrc: {
                     copySiteExcel: 'https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html',// 站点上架表格复制
                     unitConvert: 'https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html',// 单位转换工具
-                    pdfAddText: 'http://amztool.moyuren.cn/index'//添加Made In China
+                    fireFlower: 'https://linwenli95.github.io/onlineTools/tools/Fireworks/index.html'
                 }
             }
         },
