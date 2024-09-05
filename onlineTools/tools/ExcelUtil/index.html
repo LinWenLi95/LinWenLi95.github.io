@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Amazon多站点上架辅助工具</title>
+
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 使容器的高度为窗口高度 */
+        }
+
+        /* div宽度 */
+        #borderDiv {
+            border: 1px solid #808080;
+            padding: 20px;
+            border-radius: 10px;
+            width: auto;
+            height: auto;
+            /*允许移动*/
+            position: absolute;
+            cursor: move;
+        }
+
+        /* div边框阴影 */
+        .div-3d-border {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 50px;
+        }
+
+        /* 按钮水平居中 */
+        #read-excel {
+            margin: 0 auto;
+            display: block;
+            text-align: center;
+        }
+
+        /* 按钮样式 */
+        .custom-button {
+            background-color: #4CAF50; /* 按钮背景颜色 */
+            border: none; /* 无边框 */
+            color: white; /* 文本颜色 */
+            padding: 10px 14px; /* 内边距 */
+            text-align: center; /* 文本居中 */
+            text-decoration: none; /* 无下划线 */
+            display: inline-block; /* 支持设置宽度和高度 */
+            font-size: 16px; /* 字体大小 */
+            margin: 4px 2px; /* 外边距 */
+            cursor: pointer; /* 鼠标光标变为点击手势 */
+            border-radius: 5px; /* 圆角边框 */
+            transition: background-color 0.3s, color 0.3s; /* 过渡效果 */
+        }
+
+        /* 按钮样式（鼠标悬浮时） */
+        .custom-button:hover {
+            background-color: #45a049; /* 鼠标悬浮时的背景颜色 */
+            color: #ffffff; /* 鼠标悬浮时的文本颜色 */
+        }
+
+        /* sku文本框 */
+        #sourceSKUText, #targetSKUText {
+            width: 40px;
+        }
+
+        #templateExcel {
+            font-size: 12px;
+        }
+
+        #sourceSheetDiv {
+            display: inline-block;
+            visibility: hidden;
+        }
+        #sourceSheet {
+            width: 120px;
+        }
+        #instructionsDiv {
+            border-radius: 10px;
+            background-color: #f2f2f2;
+            padding: 20px;
+            margin: 10px 0;
+            display: none;
+        }
+        #domainDiv {
+            border-radius: 10px;
+            /*border: 1px solid #f2f2f2;*/
+            padding: 0 20px;
+            margin-top: 10px;
+        }
+        .instructionHref {
+            color: #3a3636;
+        }
+        #bodyDiv {
+            border-radius: 10px;
+            padding: 20px;
+            /*内阴影*/
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径、颜色 */
+            border: 1px solid #808080;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="borderDiv" class="div-3d-border">
+        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.6</label><br/>
+        <div id="bodyDiv">
+            <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(1)">功能说明</a>
+            <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(2)">使用步骤</a>
+            <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(3)">更新日志</a>
+            <div id="instructionsDiv"></div>
+            <div id="domainDiv">
+                <label>源站点表格：</label><input type="file" id="input-source-excel"/>
+                <div id="sourceSheetDiv">
+                    <label for="sourceSheet">Sheet：</label><select id="sourceSheet"></select>
+                </div>
+                <br/><br/>
+                <label>新站点表格：</label><input type="file" id="input-target-excel" multiple/>
+                <div id="targetDiv"></div>
+                <br/>
+
+                <!--        <label for="sourceSKUText">SKU固定开头后两位替换为对应站点缩写：</label><input type="text" id="sourceSKUText"/>-->
+                <!--        <label for="targetSKUText">&ndash;&gt;</label><input type="text" id="targetSKUText"/><br/><br/>-->
+                <label for="checkboxSku">SKU开头两位替换为对应站点缩写：</label><input type="checkbox"
+                                                                                      id="checkboxSku"/><br/><br/>
+                <label>定价/文案表格：</label><input type="file" id="priceExcel"/>
+                <a id="templateExcel" href="TemplateExcel.xlsx">下载定价文案模板</a><br/><br/>
+
+                <button id="read-excel" class="custom-button">执行数据处理</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script color="0,0,0" opacity="0.8" count="200" src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.js" type="text/javascript" charset="utf-8"></script>
+<script src="xlsx.full.min.js"></script>
+<script src="FileSaver.min.js" charset="utf-8"></script>
+<script>
+    let sourceWorkBook
+    let targetWorkBookMap
+    let priceWorkBook
+    const siteMap = {
+        "US": "美国",
+        "CA": "加拿大",
+        "MX": "墨西哥",
+        "BR": "巴西",
+        "UK": "英国",
+        "FR": "法国",
+        "DE": "德国",
+        "IT": "意大利",
+        "ES": "西班牙",
+        "BE": "比利时",
+        "NL": "荷兰",
+        "SE": "瑞典",
+        "PL": "波兰",
+        "JP": "日本",
+        "AU": "澳大利亚",
+        "SG": "新加坡",
+        "AE": "阿拉伯联合酋长国",
+        "SA": "沙特阿拉伯"
+    }
+    const listPricePlus = {
+        "US": 5,
+        "CA": 7,
+        "MX": 90,
+        "BR": 27,
+        "UK": 5,
+        "FR": 5,
+        "DE": 5,
+        "IT": 5,
+        "ES": 5,
+        "BE": 5,
+        "NL": 5,
+        "SE": 52,
+        "PL": 20,
+        "JP": 780,
+        "AU": 8,
+        "SG": 7,
+        "AE": 18,
+        "SA": 19
+    }
+    let instructionState = { code:1, show: false }
+
+    // 读取源Excel
+    document.getElementById('input-source-excel').addEventListener('change', function (e) {
+        document.getElementById('sourceSheetDiv').style.visibility = e.target.files.length === 0 ? 'hidden' : 'visible'
+        loadExcel('source', e.target.files)
+    });
+    // 读取新Excel
+    document.getElementById('input-target-excel').addEventListener('change', function (e) {
+        targetWorkBookMap = {}
+        document.getElementById('targetDiv').innerText = null
+        if (e.target.files.length === 1) {
+            const name = e.target.files[0].name
+            // 选单文件时判断文件名开头不是站点缩写则不可使用sku开头自动替换功能
+            if (!siteMap[getFileNameSite(e.target.files[0].name)]) {
+                const checkboxSku = document.getElementById('checkboxSku')
+                checkboxSku.checked = false
+                checkboxSku.disabled = true
+            } else {
+                document.getElementById('checkboxSku').disabled = false
+            }
+        } else {
+            // 选多文件时，文件名开头不是站点缩写则停止读取
+            for (const file of e.target.files) {
+                if (!siteMap[getFileNameSite(file.name)]) {
+                    document.getElementById('targetDiv').innerHTML = `<label style="color: red">请重新选择以站点英文缩写开头或结尾命名的多个文件</label>`
+                    return
+                }
+            }
+        }
+        loadExcel('target', e.target.files)
+    });
+    // 读取priceExcel
+    document.getElementById('priceExcel').addEventListener('change', function (e) {
+        // 展示站点表格的price+
+        if (e.target.files.length>0 && targetWorkBookMap) {
+            const divs = document.getElementsByClassName('price+')
+            console.log('divs.length')
+            console.log(divs.length)
+            for (const div of divs) {
+                div.style.visibility = 'visible'
+            }
+        }
+        loadExcel('priceExcel', e.target.files)
+    });
+
+    // 加载一个或多个Excel，匹配为不同文件
+    function loadExcel(name, files) {
+        for (let file of files) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workBook = XLSX.read(data, {type: 'array'});
+                switch (name) {
+                    case 'source':
+                        sourceWorkBook = workBook
+                        addOptions('sourceSheet', workBook.SheetNames, 6)
+                        break
+                    case 'target':
+                        // 验证文件站点重复
+                        const site = getFileNameSite(file.name)
+                        const selectId = site + 'Select'
+                        if (document.getElementById(selectId)) {
+                            document.getElementById('targetDiv').innerHTML = `<label style="color: red">出现重复的站点缩写，请检查</label>`
+                            break
+                        }
+                        targetWorkBookMap[site] = workBook
+                        // 显示文件名及页面下拉框
+                        const targetDiv = document.getElementById('targetDiv')
+                        // const html = `<div style="display: inline-block;width: 100px">` +
+                        //     `<label style="font-size: 12px">${shortenStr(file.name)}</label></div>`+
+                        //     `<label>Sheet:</label><select id="${site + 'ListPricePlus'}"></select>` +
+                        //     `<label>Price+</label>` +
+                        //     `<input id="${site + 'ListPricePlus'}" type="number" value="${listPricePlus[site]}" style="width: 40px;">` +
+                        //     `<br/>`
+                        // targetDiv.innerHTML = html
+
+                        // 文件名
+                        const div1 = document.createElement('div');
+                        let style = div1.style
+                        style.display = 'inline-block'
+                        style.width = '140px'
+                        div1.innerHTML = `<label style="font-size: 12px">${shortenStr(file.name)}</label>`
+                        // 页下拉框
+                        const div2 = document.createElement('div');
+                        style = div2.style
+                        style.display = 'inline-block'
+                        style.width = '200px'
+                        let label = document.createElement('label');
+                        label.innerText = 'Sheet: '
+                        label.style.fontSize = '12px'
+                        const select = document.createElement('select');
+                        select.id = selectId
+                        select.style.width = '120px'
+                        div2.appendChild(label)
+                        div2.appendChild(select)
+                        // price+
+                        const div3 = document.createElement('div');
+                        div3.className = 'price+'
+                        style = div3.style
+                        style.display = 'inline-block'
+                        style.width = '120px'
+                        // 当配置文件未选择时隐藏加价div
+                        if (!priceWorkBook) {
+                            style.visibility = 'hidden'
+                        }
+                        label = document.createElement('label');
+                        label.innerText = 'Price+ '
+                        label.style.fontSize = '12px'
+                        const input = document.createElement('input');
+                        input.id = site + 'ListPricePlus'
+                        input.type = 'number'
+                        input.style.width = '40px'
+                        input.value = listPricePlus[site]
+                        div3.appendChild(label)
+                        div3.appendChild(input)
+                        targetDiv.appendChild(div1);
+                        targetDiv.appendChild(div2);
+                        targetDiv.appendChild(div3);
+                        targetDiv.appendChild(document.createElement('br'))
+                        addOptions(select.id, workBook.SheetNames, 6)
+                        break
+                    case 'priceExcel':
+                        // 验证表格是否正确
+                        if (!(workBook.SheetNames.includes('站点及语言') && workBook.SheetNames.includes('全站定价'))) {
+                            alert('表格错误，请重新选择')
+                            return
+                        }
+                        priceWorkBook = workBook
+                        break
+                    default:
+                        alert('excel匹配错误')
+                }
+                console.log('Excel读取完成')
+            }
+            reader.readAsArrayBuffer(file)
+        }
+    }
+    // 获取文件名的开头或结尾站点字母
+    function getFileNameSite(name) {
+        let site = ''
+        let pre, suffix
+        if (siteMap[pre = name.substring(0, 2).toUpperCase()]) {
+            site = pre
+        } else if (siteMap[suffix = name.substring(0, name.length - 5).slice(-2).toUpperCase()]) {
+            site = suffix
+        }
+        return site
+    }
+
+    function loadInstructions(code) {
+        if (instructionState['code'] === code) {
+            instructionState['show'] = !instructionState['show']
+        } else {
+            instructionState['code'] = code
+            instructionState['show'] = true
+        }
+        const div = document.getElementById('instructionsDiv')
+
+        if (instructionState['show']) {
+            let html = ''
+            switch (code) {
+                case 1:{
+                    html = `<label>作用：将源表格的列数据按新站点表格表头排序后导出</label><br/><br/>
+                            <label>解决痛点：</label><br/>
+                            <label>1. 解决不同表格列顺序不同，无法直接复制旧表格的已填数据填充新表的问题</label><br/>
+                            <label>2. 通过粘贴的值直观看出列的含义，不用盯着表头一格格去找要填的列，费神</label><br/>
+                            <label>3. 解决价格和文案仍需手动填写的问题,最大限度地减少上架表格填写工作量</label><br/><br/>
+                            <label>功能说明：</label><br/>
+                            <label>定价/文案表格:输入定价和各站点文案后，可替换到数据中，减少工作量，提升效率</label><br/>
+                            <label>Price+：以定价/文案表格中对应站点的定价加上Price+的值作为list_price的价格</label><br/>
+                            <label>SKU开头两位替换为对应站点缩写：勾选后，SKU开头两位会被替换为新表格文件的前两位</label><br/>`
+                    break
+                }
+                case 2:{
+                    html = `<label>使用步骤：</label><br/>
+                            <label>1.选择源站点表格文件并选择template页</label><br/>
+                            <label>2.选择一个或多个目标站点表格文件并选择template页</label><br/>
+                            <label>3.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/>
+                            <label>4.点击按钮，自动生成处理好顺序的数据表格</label><br/>
+                            <label>5.复制生成的数据以仅粘贴值的方式粘贴到目标表格后，进行手动调整</label><br/><br/>
+                            <label style="font-size: 12px;">注意：选择多个目标站点表格时，文件名前两位或末尾两位必须是站点英文缩写</label><br/>`
+                    break
+                }
+                case 3:{
+                    html = `<label>07.03 更新:</label><br/><br/>
+                            <label>表格上架很繁琐，有没有能够把产品快速上架全站点的方法或工具？</label><br/>
+                            <label style="font-size: 12px">以下是找到的能把一个站点的Listing上架到其他站点的方法：</label><br/>
+                            <label style="font-size: 12px">1. 亚马逊卖家后台-模板表格批量上架功能，挨个下载不同站点的上架表格，挨个填写数据后上传，表格填写工作量大，但上传稳定</label><br/>
+                            <label style="font-size: 12px">2. 亚马逊卖家后台-全球销售功能，能够把一个站点的全部Listing同步到其他站点，缺点是容易出现某个站点或某个listing同步失败，需挨个站点检查。</label><br/>
+                            <label style="font-size: 12px">3. 亚马逊卖家后台-单个商品编辑界面-开通多站点销售功能，能够把单产品同步到多个站点，缺点是需挨个设置，工作量大且会出现部分站点开启失败</label><br/>
+                            <label style="font-size: 12px">4. 第三方ERP系统的商品信息采集功能，采集到商品信息后可上架到其他站点，单次只能上架单站点单个商品，效率极低，仅适合上新</label><br/><br/>
+                            <label>很遗憾，上面找到的上架方法各有缺点，无法做到把产品快速准确地上架全站点，反而是表格上架更靠谱点</label><br/>
+                            <label>因此我打算写一个工具来减少填写多站点上架表格时的重复性工作量</label><br/><br/>
+                            <label>07.04 更新:</label><br/><br/>
+                            <label>&nbsp;&nbsp;初步实现选择两个Excel，根据表头调整数据的功能</label><br/><br/>
+                            <label>07.13 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;添加SKU开头替换功能</label><br/><br/>
+                            <label>07.17 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 新增定价及翻译自动替换功能，可指定站点</label><br/>
+                            <label>&nbsp;&nbsp;2. 新增定价文案模板下载</label><br/>
+                            <label>&nbsp;&nbsp;3. 界面优化调整</label><br/><br/>
+                            <label>07.18 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 界面优化调整</label><br/>
+                            <label>&nbsp;&nbsp;2. SKU开头替换功能调整</label><br/>
+                            <label>&nbsp;&nbsp;3. 选择目标站点表格更新为可选择多个站点文件</label><br/>
+                            <label>&nbsp;&nbsp;4. 重新调整定价文案表格</label><br/><br/>
+                            <label>07.19 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 补充操作逻辑验证及文件校验</label><br/>
+                            <label>&nbsp;&nbsp;2. 界面优化调整</label><br/>
+                            <label>&nbsp;&nbsp;3. 添加窗体拖动</label><br/><br/>
+                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/>`
+                }
+            }
+            div.style.display = 'block'
+            div.innerHTML = html
+        } else {
+            div.style.display = 'none'
+        }
+    }
+    // 向指定select添加选项
+    function addOptions(selectId, optionValues, defaultSelectOptionIndex = 0) {
+        const select = document.getElementById(selectId);
+        select.innerText = null
+        for (let i = 0; i < optionValues.length; i++) {
+            const item = optionValues[i]
+            const option = document.createElement('option');
+            option.text = item;
+            option.value = item;
+            // 默认选中页
+            if (i === defaultSelectOptionIndex) option.selected = true
+            select.appendChild(option);
+        }
+    }
+
+    // 处理数据并下载
+    document.getElementById('read-excel').addEventListener('click', function (e) {
+        if (!sourceWorkBook || !targetWorkBookMap || targetWorkBookMap.length === 0) {
+            alert("请选择源文件与目标文件！")
+            return
+        }
+        for (let site in targetWorkBookMap) {
+            let input = document.getElementById(site + 'ListPricePlus')
+            if (input) {
+                listPricePlus[site] = Number(input.value)
+                console.log('input.value:' + input.value)
+            }
+        }
+        console.log('listPricePlus')
+        console.log(listPricePlus)
+        executeData2Excel();
+    });
+
+    function executeData2Excel() {
+        // 1.读取源excel数据
+        let selectEle = document.getElementById('sourceSheet')
+        const sourceSheetSelected = selectEle.options[selectEle.selectedIndex].value;
+        const sourceSheet = sourceWorkBook.Sheets[sourceSheetSelected]
+        // 读取源数据表的模板页所有列数据，按数据列
+        // 使用SheetJS的工具函数获取有值的行数和列数
+        let range = XLSX.utils.decode_range(sourceSheet['!ref']);
+        let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+        let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+        // 输出行数和列数
+        console.log(`源表格有值行数: ${maxRowCount}, 列数: ${maxColCount}`);
+        // 先取每列第三行值，再取每列值为value
+        const dataMap = {}
+        let cellKey
+        for (let colCount = 1; colCount <= maxColCount; colCount++) {
+            // 取列第三行值
+            let cell = sourceSheet[convertToLetter(colCount) + '3']
+            if(!cell) continue
+            cellKey = cell.v
+            const arr = []
+            for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
+                cell = sourceSheet[convertToLetter(colCount) + rowNum]
+                arr.push(cell ? cell.v : null)
+            }
+            dataMap[cellKey] = arr
+        }
+        console.log("dataMap")
+        console.log(dataMap)
+
+        const dataArrayMap = {}
+        for (let siteKey in targetWorkBookMap) {
+            // 2. 获取目标表格的关键词数组
+            selectEle = document.getElementById(siteKey + 'Select')
+            const targetSheetSelected = selectEle.options[selectEle.selectedIndex].value;
+            const targetSheet = targetWorkBookMap[siteKey].Sheets[targetSheetSelected]
+            // 使用SheetJS的工具函数获取有值的最大列数
+            range = XLSX.utils.decode_range(targetSheet['!ref']);
+            const targetMaxColCount = range.e.c - range.s.c + 1; // 有值的列数
+            // 输出列数
+            console.log(`目标表格有值列数: ${targetMaxColCount}`);
+            // 先取每列第三行值，再取每列值为value
+            const targetKeyWordArr = []
+            for (let colCount = 1; colCount <= targetMaxColCount; colCount++) {
+                // 取列第三行值
+                const cell = targetSheet[convertToLetter(colCount) + '3']
+                if(!cell) continue
+                cellKey = cell.v
+                targetKeyWordArr.push(cellKey)
+            }
+            // 3. 获取目标表格指定列数据
+            let priceArr
+            let translateData
+            if (priceWorkBook) {
+                // 获取选择的站点
+                // 加载select选项
+                const siteName = siteMap[siteKey]
+                console.log('siteName' + siteName)
+                // 获取全站定价页的指定站点定价
+                priceArr = getColContentByColHeader(priceWorkBook, "全站定价", siteName)
+                // priceArr = priceArr.map(Number)
+                console.log('priceArr:' + priceArr)
+                // 获取翻译页
+                const siteArr = getColContentByColHeader(priceWorkBook, "站点及语言", "站点")
+                const languageArr = getColContentByColHeader(priceWorkBook, "站点及语言", "语言")
+                console.log('siteArr:' + siteArr)
+                console.log('languageArr:' + languageArr)
+                // 获取站点行对应的语言值
+                let language = ''
+                for (let i = 0; i < siteArr.length; i++) {
+                    if (siteName === siteArr[i]) {
+                        language = languageArr[i]
+                        break
+                    }
+                }
+                console.log('language:' + language)
+                // 获取翻译页内容
+                translateData = getSheetData(priceWorkBook, language)
+                console.log('translateData')
+                console.log(translateData)
+            }
+            // 4. 数据输出到excel
+            const dataArr = []
+            dataArr.push(targetKeyWordArr)
+            // 外循环数据行数次，将每行的数据补上
+            for (let i = 0; i < maxRowCount - 3; i++) {
+                // 内循环将单元格数据补上，第一行已占据，从第二行开始
+                let arr = dataArr[i + 1]
+                if (!arr) {
+                    arr = dataArr[i + 1] = new Array(maxColCount);
+                }
+                for (let j = 0; j < targetKeyWordArr.length; j++) {
+                    const targetKeyWord = targetKeyWordArr[j]
+                    const dataArr = dataMap[targetKeyWord]
+                    // 获取单元格值
+                    let value = dataArr ? dataArr[i] : null
+                    // 在这里对特殊列的值进行处理
+                    // sku开头调整
+                    if (['item_sku', 'parent_sku'].includes(targetKeyWord) && value != null) {
+                        if (document.getElementById('checkboxSku').checked) {
+                            value = siteKey + value.substring(2)
+                        }
+                    }
+                    // 若有加载价格表格则刷新
+                    if (priceWorkBook) {
+                        if (['standard_price', 'list_price', 'list_price_with_tax'].includes(targetKeyWord)) {
+                            // 把价格放进去
+                            if ('standard_price' === targetKeyWord) {
+                                value = priceArr[i] || value
+                            }
+                            if (['list_price', 'list_price_with_tax'].includes(targetKeyWord)) {
+                                value = priceArr[i] ? Number(priceArr[i]) + listPricePlus[siteKey] : value
+                            }
+                        }
+                        if (['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords'].includes(targetKeyWord)) {
+                            // 把翻译放进去
+                            const colArr = translateData[targetKeyWord]
+                            const val = colArr && colArr.length > 0 ? colArr[i] : ''
+                            value = val || value
+                        }
+                    }
+                    arr[j] = value;
+                }
+            }
+            dataArrayMap[siteKey] = dataArr
+        }
+        console.log("listPricePlus")
+        console.log(listPricePlus)
+        console.log('dataArrayMap:')
+        console.log(dataArrayMap)
+
+        // 数组添加到表格输出下载
+        downloadExcel(dataArrayMap)
+    }
+
+    // 获取页数据
+    function getSheetData(workBook, sheetName, headRowNumber = 1, startColNumber = 1) {
+        const sheet = workBook.Sheets[sheetName]
+        // 使用SheetJS的工具函数获取有值的最大列数
+        const range = XLSX.utils.decode_range(sheet['!ref']);
+        let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+        let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+        // 先取每列第三行值，再取每列值为value
+        const dataMap = {}
+        let cellKey
+        for (let colCount = startColNumber; colCount <= maxColCount; colCount++) {
+            // 取列第三行值
+            let cell = sheet[convertToLetter(colCount) + headRowNumber]
+            if(!cell) continue
+            cellKey = sheet[convertToLetter(colCount) + headRowNumber].v
+            const arr = []
+            for (let rowNum = headRowNumber + 1; rowNum <= maxRowCount; rowNum++) {
+                cell = sheet[convertToLetter(colCount) + rowNum]
+                arr.push(cell ? cell.v : '')
+            }
+            dataMap[cellKey] = arr
+        }
+        return dataMap
+    }
+
+    // 获取指定行的值
+    function getRowContentByRowNumber(workBook, sheetName, rowNumber, startColNumber = 1) {
+        let sheet = workBook.Sheets[sheetName]
+        // 使用SheetJS的工具函数获取有值的行数和列数
+        let range = XLSX.utils.decode_range(sheet['!ref']);
+        let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+        let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+        // 获取指定行有值的所有单元格内容
+        const cellArray = []
+        for (let colNumber = 1; colNumber <= maxColCount; colNumber++) {// 最大列次数循环，获取每列指定行的值
+            if (colNumber < startColNumber) continue
+            // 取指定单元格的值
+            cellArray.push(getCellValue(sheet, rowNumber, colNumber) || null)
+        }
+        return cellArray
+    }
+
+    // 获取指定列的值，从开始行开始，默认从第一行开始
+    function getColContentByColNumber(workBook, sheetName, colNumber, startRowNumber = 1) {
+        let sheet = workBook.Sheets[sheetName]
+        // 使用SheetJS的工具函数获取有值的行数和列数
+        let range = XLSX.utils.decode_range(sheet['!ref']);
+        let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+        let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+        // 获取指定行有值的所有单元格内容
+        const cellArray = []
+        for (let rowNumber = 1; rowNumber <= maxRowCount; rowNumber++) {// 最大列次数循环，获取每行指定列的值
+            if (rowNumber < startRowNumber) continue
+            // 取指定单元格的值
+            cellArray.push(getCellValue(sheet, rowNumber, colNumber) || null)
+        }
+        return cellArray
+    }
+
+    // 根据指定行单元格作为表头获取匹配列的值
+    function getColContentByColHeader(workBook, sheetName, colHeaderStr, rowNumber = 1) {
+        const headerArr = getRowContentByRowNumber(workBook, sheetName, rowNumber)
+        console.log('headerArr' + headerArr)
+        // 获取是第几列匹配上
+        for (let i = 0; i < headerArr.length; i++) {
+            if (colHeaderStr === headerArr[i]) {
+                return getColContentByColNumber(workBook, sheetName, i + 1, rowNumber + 1)
+            }
+        }
+        return []
+    }
+
+    // 获取表格页指定单元格的值
+    function getCellValue(sheet, rowNumber, colNumber) {
+        if (sheet == null || rowNumber < 1 || colNumber < 1) return ''
+        const cell = sheet[convertToLetter(colNumber) + rowNumber]
+        return cell ? cell.v : ''
+    }
+
+    // 原始字符串、需要从字符串开头移除的字符串和需要从开头移除后添加的字符串。
+    function removePrefixAndAddNew(originalStr, prefixToRemove, newPrefix) {
+        return originalStr.replace(new RegExp('^' + prefixToRemove), newPrefix);
+    }
+
+    // 列数转字母
+    function convertToLetter(num) {
+        if (num <= 0) {
+            return '';
+        }
+        let remainder = (num - 1) % 26;
+        return convertToLetter(Math.floor((num - 1) / 26)) + String.fromCharCode(65 + remainder); // 65对应ASCII码中的'A'
+    }
+
+    // 下载表格
+    function downloadExcel(dataArrMap) {
+        const workbook = XLSX.utils.book_new();
+        for (const key in dataArrMap) {
+            const worksheet = XLSX.utils.aoa_to_sheet(dataArrMap[key]);
+            // 将工作表添加到工作簿
+            XLSX.utils.book_append_sheet(workbook, worksheet, key);
+        }
+        exportExcel(workbook)
+    }
+
+    function exportExcel(workbook, fileName) {
+        // 下载文件
+        const wbout = XLSX.write(workbook, {bookType: 'xlsx', type: 'binary'});
+
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        let name = (fileName ? fileName : getCurrentDateTime()) + '.xlsx'
+        saveAs(new Blob([s2ab(wbout)], {type: 'application/octet-stream'}), name);
+    }
+
+    // 获取当前时间字符串
+    function getCurrentDateTime() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        return `${year}${month}${day}-${hours}${minutes}${seconds}`;
+    }
+
+    // 将字符串限制在前
+    function shortenStr(str, prefixLen = 4, suffixLen = 9) {
+        // 如果长度无需调整则返回
+        if (str.length <= prefixLen + suffixLen) return str
+        const prefix = str.substring(0, prefixLen)
+        const suffix = str.substring(str.length - suffixLen)
+        return prefix + '...' + suffix
+    }
+
+    function getSelectedValue(id) {
+        const selectEle = document.getElementById(id)
+        return selectEle ? selectEle.options[selectEle.selectedIndex].value : ''
+    }
+    // 拖动div
+    const draggable = document.getElementById('borderDiv');
+    let active = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+
+    function dragStart(e) {
+        if (e.type === "mousedown") {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+        } else if (e.type === "touchstart") {
+            initialX = e.touches[0].clientX - xOffset;
+            initialY = e.touches[0].clientY - yOffset;
+        }
+
+        if (e.target === draggable) {
+            active = true;
+        }
+    }
+
+    function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        active = false;
+    }
+
+    function drag(e) {
+        if (active) {
+            e.preventDefault();
+
+            if (e.type === "mousemove") {
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+            } else if (e.type === "touchmove") {
+                currentX = e.touches[0].clientX - initialX;
+                currentY = e.touches[0].clientY - initialY;
+            }
+
+            xOffset = currentX;
+            yOffset = currentY;
+
+            setTranslate(currentX, currentY, draggable);
+        }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    }
+
+    // Mouse events
+    draggable.addEventListener('mousedown', dragStart);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', dragEnd);
+
+    // Touch events
+    draggable.addEventListener('touchstart', dragStart, { passive: false });
+    draggable.addEventListener('touchmove', drag);
+    draggable.addEventListener('touchend', dragEnd);
+</script>
+</body>
+</html>
