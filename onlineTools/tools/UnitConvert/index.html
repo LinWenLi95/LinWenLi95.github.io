@@ -166,14 +166,14 @@
                         trigger="hover">
                     <img src="img/standard.png">
                     <img src="img/low.png">
-                    <a slot="reference" href="javascript:;">费用标准</a>
+                    <a href="javascript:;" slot="reference">费用标准</a>
                 </el-popover>
                 <el-popover
                         placement="bottom"
                         trigger="hover">
                     <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
                     <img src="img/fba外箱要求.png">
-                    <a slot="reference" href="javascript:;">外箱要求</a>
+                    <a href="javascript:;" slot="reference">外箱要求</a>
                 </el-popover>
                 <el-form-item label="标准尺寸">
                     <el-input class="min-width-col" v-model="classification"></el-input>
@@ -187,6 +187,9 @@
                     <el-input v-model="FBADeliveryFee.lowPrice">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
+                </el-form-item>
+                <el-form-item label="高一档尺寸">
+                    <el-input class="min-width-col" v-model="highClassification"></el-input>
                 </el-form-item>
                 <el-form-item class="min-width-col" label="高一档标准">
                     <el-input v-model="FBADeliveryFee.highStandard">
@@ -592,6 +595,7 @@
             rateUnits: {},
             sizeType: {
                 Small: {// 小号标准尺寸
+                    name: '小号标准尺寸',
                     side: {//边长标准
                         longestSide: 15,// 最长边不超过15英寸
                         secondSide: 12,// 次长边不超过12英寸
@@ -657,6 +661,7 @@
                     }
                 },
                 Large: {// 大号标准尺寸
+                    name: '大号标准尺寸',
                     side: {//边长标准
                         longestSide: 18,
                         secondSide: 14,
@@ -762,6 +767,7 @@
                     }
                 },
                 LargeLarge: {// 大号大件
+                    name: '大号大件',
                     side: {
                         longestSide: 59,
                         secondSide: 33,
@@ -784,6 +790,7 @@
                     }
                 },
                 Oversized: {// 超大件
+                    name: '超大件',
                     side: {
                         longestSide: 59,
                         secondSide: 33,
@@ -843,6 +850,7 @@
                 },
             },
             classification: '',
+            highClassification: '',
             lowPriceDeliveryFee: 0.0,// 售价不超过10刀的低价商品FBA配送费
             standardDeliveryFee: 0.0,// 标准配送费
             highStandardDeliveryFee: 0.0,// 标准配送费
@@ -1106,56 +1114,155 @@
                 this.toFixedObjAttr(profitCalculation, 4, priceAttrList)
                 this.profitCalculation = {...profitCalculation}
             },
-            // 分类
+            // 先根据重量再看尺寸进行配送费计算
             classificationHandler() {
+                // 取出四个尺寸中符合重量要求的重量区间
+                const weightRangeMap = {}
+                if (this.weight.lb > 0) {
+                    for (let sizeTypeKey in this.sizeType) {
+                        const sizeTypeVal = this.sizeType[sizeTypeKey]
+                        weightRangeMap[sizeTypeKey] = this.getWeightCondition(sizeTypeVal.weight)
+                    }
+                }
+                // 获取匹配的标准尺寸
+                let sizeTypeNameBySize = ''
                 if (this.size.length['in'] && this.size.width['in'] && this.size.height['in']) {
                     const arr = [this.size.length['in'], this.size.width['in'], this.size.height['in']]
-                    if (this.matchConditions(this.sizeType.Small.side, arr)) {
-                        this.classification = '小号标准尺寸'
-                        this.feeComputed(this.sizeType.Small.weight)
-                    } else if (this.matchConditions(this.sizeType.Large.side, arr)) {
-                        this.classification = '大号标准尺寸'
-                        this.feeComputed(this.sizeType.Large.weight)
-                    } else if (this.matchConditions(this.sizeType.LargeLarge.side, arr)) {
-                        this.classification = '大号大件'
-                        this.feeComputed(this.sizeType.LargeLarge.weight)
+                    for (let sizeTypeKey in this.sizeType) {
+                        const sizeTypeVal = this.sizeType[sizeTypeKey]
+                        if (this.matchConditions(sizeTypeVal.side, arr)) {
+                            sizeTypeNameBySize = sizeTypeKey
+                            break
+                        }
+                    }
+                }
+                // 尺寸和重量都在一个标准时为同一个标准
+                if (sizeTypeNameBySize && Object.keys(weightRangeMap).length) {
+                    let deliveryFee = null
+                    let highDeliveryFee = null
+                    if (weightRangeMap[sizeTypeNameBySize] !== null) {
+                        // 标准FBA费用
+                        const weightRange = weightRangeMap[sizeTypeNameBySize]
+                        deliveryFee = this.getDeliveryFee(weightRange)
+                        this.classification = this.sizeType[sizeTypeNameBySize].name
+
+                        // 高一阶
+                        const nextRange = weightRange['next']
+                        if (nextRange) {
+                            // 有高一阶时直接使用
+                            this.highClassification = this.sizeType[sizeTypeNameBySize].name
+                            highDeliveryFee = this.getDeliveryFee(nextRange)
+                        } else {
+                            // 没有高一阶时，查找重量在更大尺寸的匹配区间
+                            const keys = Object.keys(weightRangeMap)
+                            for (let i = keys.indexOf(sizeTypeNameBySize) + 1; i < keys.length; i++) {
+                                // 取下一尺寸取适配重量，获取next
+                                const range = weightRangeMap[keys[i]]
+                                if (range !== null && range['next']) {
+                                    // 有高一阶时直接输入
+                                    highDeliveryFee = this.getDeliveryFee(range['next'])
+                                    this.highClassification = this.sizeType[keys[i]].name
+                                    break
+                                }
+                            }
+                        }
                     } else {
-                        this.classification = '超大号'
-                        this.feeComputed(this.sizeType.Oversized.weight)
+                        // 尺寸和重量不在一个标准时，查找重量在更大尺寸的匹配区间
+                        const keys = Object.keys(weightRangeMap)
+                        for (let i = keys.indexOf(sizeTypeNameBySize) + 1; i < keys.length; i++) {
+                            const weightRange = weightRangeMap[keys[i]]
+                            if (weightRange !== null) {
+                                deliveryFee = this.getDeliveryFee(weightRange)
+                                this.classification = this.sizeType[keys[i]].name
+                                // 高一阶
+                                const nextRange = weightRange['next']
+                                if (nextRange) {
+                                    // 有高一阶时直接使用
+                                    highDeliveryFee = this.getDeliveryFee(nextRange)
+                                    this.highClassification = this.sizeType[keys[i]].name
+                                } else {
+                                    // 没有高一阶时，查找重量在更大尺寸的匹配区间
+                                    const keys = Object.keys(weightRangeMap)
+                                    for (let j = i + 1; i < keys.length; i++) {
+                                        // 取下一尺寸取适配重量，获取next
+                                        const range = weightRangeMap[keys[j]]
+                                        if (range !== null && range['next']) {
+                                            // 有高一阶时直接输入
+                                            highDeliveryFee = this.getDeliveryFee(range['next'])
+                                            this.highClassification = this.sizeType[keys[j]].name
+                                            break
+                                        }
+                                    }
+                                }
+                                break
+                            }
+                        }
+                    }
+                    if (deliveryFee) {
+                        this.FBADeliveryFee.standard = deliveryFee.fee
+                        this.FBADeliveryFee.lowPrice = deliveryFee.lowFee
+                    }
+                    if (highDeliveryFee) {
+                        this.FBADeliveryFee.highStandard = highDeliveryFee.fee
+                        this.FBADeliveryFee.highLowPrice = highDeliveryFee.lowFee
+                    }
+                } else if (sizeTypeNameBySize) {// 只有尺寸时
+                    this.classification = this.sizeType[sizeTypeNameBySize].name
+                } else if (Object.keys(weightRangeMap).length) {// 只有重量时，直接取符合条件的第一个区间
+                    let deliveryFee = null
+                    let highDeliveryFee = null
+                    // 尺寸和重量不在一个标准时，查找重量在更大尺寸的匹配区间
+                    const keys = Object.keys(weightRangeMap)
+                    for (let i = 0; i < keys.length; i++) {
+                        const weightRange = weightRangeMap[keys[i]]
+                        if (weightRange !== null) {
+                            deliveryFee = this.getDeliveryFee(weightRange)
+                            this.classification = this.sizeType[keys[i]].name
+                            // 高一阶
+                            const nextRange = weightRange['next']
+                            if (nextRange) {
+                                // 有高一阶时直接使用
+                                highDeliveryFee = this.getDeliveryFee(nextRange)
+                                this.highClassification = this.sizeType[keys[i]].name
+                            } else {
+                                // 没有高一阶时，查找重量在更大尺寸的匹配区间
+                                const keys = Object.keys(weightRangeMap)
+                                for (let j = i + 1; i < keys.length; i++) {
+                                    // 取下一尺寸取适配重量，获取next
+                                    const range = weightRangeMap[keys[j]]
+                                    if (range !== null && range['next']) {
+                                        // 有高一阶时直接输入
+                                        highDeliveryFee = this.getDeliveryFee(range['next'])
+                                        this.highClassification = this.sizeType[keys[j]].name
+                                        break
+                                    }
+                                }
+                            }
+                            break
+                        }
+                    }
+                    if (deliveryFee) {
+                        this.FBADeliveryFee.standard = deliveryFee.fee
+                        this.FBADeliveryFee.lowPrice = deliveryFee.lowFee
+                    }
+                    if (highDeliveryFee) {
+                        this.FBADeliveryFee.highStandard = highDeliveryFee.fee
+                        this.FBADeliveryFee.highLowPrice = highDeliveryFee.lowFee
                     }
                 }
-            },
-            // 计算FBA配送费
-            getDeliveryFee(weightCondition) {
-                let fee = 0
-                let lowFee = 0
-                // 统一重量单位
-                const weightValue = this.weight[weightCondition.unit]
-                // 计算费用
-                fee = weightCondition.standardDeliveryFee
-                lowFee = weightCondition.lowPriceDeliveryFee
-                if (weightCondition.hasOwnProperty('excessWeight')) {
-                    // 计算超重部分
-                    let excessWeightValue = weightValue - weightCondition.start
-                    // 判断并统一重量单位
-                    if (weightCondition.unit !== weightCondition.excessWeight.unit) {
-                        excessWeightValue = this.convert(excessWeightValue, weightCondition.unit, weightCondition.excessWeight.unit, this.weightUnits)
-                    }
-                    const excessWeightFee = excessWeightValue / weightCondition.excessWeight.segmentation * weightCondition.excessWeight.surcharge
-                    fee = fee + excessWeightFee
-                    lowFee = lowFee + excessWeightFee
-                }
-                return { fee, lowFee }
             },
             // 配送费计算
-            feeComputed(weight) {
+            deliveryFeeComputed(sizeTypeAttr) {
+                this.classification = sizeTypeAttr.name
                 if (this.weight.lb === 0) return
+                const weight = sizeTypeAttr.weight
                 const deliveryFee = {
                     lowPrice: 0.0,// 售价不超过10刀的低价商品FBA配送费
                     standard: 0.0,// 标准配送费
                     highLowPrice: 0.0,// 高一档低价配送费
                     highStandard: 0.0// 高一档标准配送费
                 }
+                // 先获取是否有符合的重量区间，如果有就进行计算，如果没有就找下一个区间
                 const keys = Object.keys(weight)
                 for (let i = 0; i < keys.length; i++) {
                     const weightCondition = weight[keys[i]]
@@ -1180,9 +1287,48 @@
                         break
                     }
                 }
-                this.FBADeliveryFee = deliveryFee
+                this.FBADeliveryFee = {...deliveryFee}
             },
-            // 是否符合条件
+            // 获取指定尺寸内符合实际重量的重量区间
+            getWeightCondition(weight) {
+                const keys = Object.keys(weight)
+                for (let i = 0; i < keys.length; i++) {
+                    const weightCondition = weight[keys[i]]
+                    // 统一重量单位后的重量
+                    const weightValue = this.weight[weightCondition.unit]
+                    // 判断是否在重量区间内
+                    if (weightValue >= weightCondition.start && weightValue < weightCondition.end) {
+                        if (keys.length > i + 1) {
+                            weightCondition['next'] = weight[keys[i+1]]
+                        }
+                        return weightCondition
+                    }
+                }
+                return null
+            },
+            // 根据重量计算FBA配送费
+            getDeliveryFee(weightCondition) {
+                let fee = 0
+                let lowFee = 0
+                // 统一重量单位
+                const weightValue = this.weight[weightCondition.unit]
+                // 计算基本费用及超重费用
+                fee = weightCondition.standardDeliveryFee
+                lowFee = weightCondition.lowPriceDeliveryFee
+                if (weightCondition.hasOwnProperty('excessWeight')) {
+                    // 计算超重部分
+                    let excessWeightValue = weightValue - weightCondition.start
+                    // 判断并统一重量单位
+                    if (weightCondition.unit !== weightCondition.excessWeight.unit) {
+                        excessWeightValue = this.convert(excessWeightValue, weightCondition.unit, weightCondition.excessWeight.unit, this.weightUnits)
+                    }
+                    const excessWeightFee = excessWeightValue / weightCondition.excessWeight.segmentation * weightCondition.excessWeight.surcharge
+                    fee = fee + excessWeightFee
+                    lowFee = lowFee + excessWeightFee
+                }
+                return { fee, lowFee }
+            },
+            // 尺寸是否符合条件
             matchConditions(side, arr) {
                 arr.sort((a, b) => a - b);
                 return side.shortestSide >= arr[0] && side.secondSide >= arr[1] && side.longestSide >= arr[2]
@@ -1223,6 +1369,8 @@
                 sizeObj.ft = this.convertSize(value, unit, 'ft')
                 if (this.size.length[unit] && this.size.width[unit] && this.size.height[unit]) {
                     this.handleVolumeInput(this.size.length[unit] * this.size.width[unit] * this.size.height[unit], unit)
+                    // 计算FBA配送费
+                    this.classificationHandler()
                 }
             },
             // 体积置换
@@ -1238,6 +1386,8 @@
                 this.weight.kg = this.convertMass(value, unit, 'kg')
                 this.weight.lb = this.convertMass(value, unit, 'lb')
                 this.weight.oz = this.convertMass(value, unit, 'oz')
+                // 计算FBA配送费
+                this.classificationHandler()
             },
             // 汇率置换
             handleRatesInput(value, unit) {
@@ -1256,16 +1406,11 @@
             },
             // 转换质量
             convertMass(value, fromUnit, toUnit) {
-                const mass = this.convert(value, fromUnit, toUnit, this.weightUnits)
-                this.classificationHandler()
-                return mass
+                return this.convert(value, fromUnit, toUnit, this.weightUnits)
             },
             // 转换尺寸
             convertSize(value, fromUnit, toUnit) {
-                const size = this.convert(value, fromUnit, toUnit, this.sizeUnits)
-                // 尺寸费用计算
-                this.classificationHandler()
-                return size
+                return this.convert(value, fromUnit, toUnit, this.sizeUnits)
             },
             // 转换体积
             convertVolume(value, fromUnit, toUnit) {
