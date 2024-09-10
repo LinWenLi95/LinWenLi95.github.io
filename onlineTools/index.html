@@ -116,6 +116,9 @@
                 }
             }
         },
+        mounted() {
+            this.showTip = true
+        },
         methods: {
             handleTools(value) {
                 this.iframe.show = !this.iframe.show
