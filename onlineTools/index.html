@@ -43,6 +43,12 @@
 <div id="app">
     <!--可选菜单居中-->
     <div v-show="!iframe.show" class="centered">
+        <el-popover
+                placement="right"
+                trigger="hover">
+            <label>好东西，亚马逊工具集合网站</label>
+            <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('amazon123')">Amazon123</el-button>
+        </el-popover><br/><br/>
         <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位转换工具</el-button><br/><br/>
         <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">表格上架工具</el-button><br/><br/>
         <el-button type="primary" style="width: 200px" @click="handleOpenPDFWeb">PDF添加Made In China</el-button><br/><br/>
@@ -69,6 +75,7 @@
                     src: ''
                 },
                 toolsSrc: {
+                    amazon123: 'https://www.amz123.com',
                     copySiteExcel: 'https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html',// 站点上架表格复制
                     unitConvert: 'https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html',// 单位转换工具
                     fireFlower: 'https://linwenli95.github.io/onlineTools/tools/Fireworks/index.html'
