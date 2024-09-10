@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>亚马逊备忘</title>
+    <link href="css/element-ui.css" rel="stylesheet">
+    <style>
+        .success-row {
+            background: #f0f9eb;
+        }
+        .danger-row {
+            background: #fef0f0;
+        }
+        .warning-row {
+            background: #fdf6ec;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div>
+        <el-table
+                :data="tableData"
+                border
+                @cell-click="handleCellClick">
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
+            <el-table-column prop="siteNameZH" label="站点" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="siteName" label="站点缩写" width="80"></el-table-column>
+            <el-table-column prop="currencyZH" label="币种" width="110"></el-table-column>
+            <el-table-column prop="currency" label="币种缩写" width="100"></el-table-column>
+            <el-table-column prop="rate" label="汇率" width="100" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="language" label="语言" width="100" sortable></el-table-column>
+            <el-table-column prop="shop" label="前台网址" width="180" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="sellerCentral" label="卖家后台网址" width="180" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="FBA" label="FBA" width="100" :formatter="YNFormatter"></el-table-column>
+            <el-table-column prop="FBM" label="FBM购买配送" width="110" :formatter="YNFormatter"></el-table-column>
+            <el-table-column label="城市邮编" width="700" show-overflow-tooltip>
+                <template slot-scope="scope">
+                    <!-- 遍历数组并展示每个元素 -->
+                    <div v-for="(item, index) in scope.row.zipCode" :key="index" style="display: inline-block;padding: 5px 5px 0 0">
+                        <el-tag @click="copyText(item.code)">{{item.city}}</el-tag>-
+                        <el-tag @click="copyText(item.code)">{{item.code}}</el-tag>
+                    </div>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+</div>
+<!-- 引入Vue.js -->
+<script src="js/vue.min.2.6.14.js"></script>
+<!-- 引入Element UI的JavaScript库 -->
+<script src="js/element-ui.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            rateUnits: {},
+            currencys: ['CNY', 'USD', 'CAD', 'MXN', 'BRL', 'GBP', 'EUR', 'SEK', 'PLN', 'TRY', 'JPY', 'SGD', 'AUD', 'AED', 'SAR'],
+            searchByImg: 'www.amazon.com/shopthelook',//以图搜
+            siteAll: [
+                {
+                    siteTitle: '北美',
+                    sites: [
+                        {
+                            siteRegion: '',
+                            siteName: 'US',
+                            siteNameZH: '美国',
+                            shop: 'www.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '纽约',code: 10001},
+                                {city: '洛杉矶',code: 90001},
+                                {city: '芝加哥',code: 60601},
+                                {city: '华盛顿',code: 20541},
+                                {city: '旧金山',code: 94101},
+                                {city: '底特律',code: 48201},
+                                {city: '得克萨斯州',code: 76226},
+                                {city: '圣地亚哥',code: 92101}
+                            ],
+                            currency: 'USD',
+                            currencyZH: '美元',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'CA',
+                            siteNameZH: '加拿大',
+                            shop: 'www.amazon.ca',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '多伦多',code: 'M4Y1M7'},
+                                {city: '蒙特利尔',code: 'H1A0A1'},
+                                {city: '渥太华',code: 'K1V'},
+                                {city: '温哥华',code: 'V5K1K5'}
+                            ],
+                            currency: 'CAD',
+                            currencyZH: '加拿大元',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'MX',
+                            siteNameZH: '墨西哥',
+                            shop: 'www.amazon.com.mx',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '墨西哥城',code: '11529'},
+                                {city: '瓜达拉哈拉',code: '21950'},
+                                {city: '蒙特雷',code: '64600'},
+                                {city: '莱昂',code: '66055'},
+                                {city: '普埃布拉',code: '72004'}
+                            ],
+                            currency: 'MXN',
+                            currencyZH: '墨西哥比索',
+                            rate: '',
+                            language: '西班牙语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'BR',
+                            siteNameZH: '巴西',
+                            shop: 'www.amazon.com.br',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '圣保罗',code: '01000-000'},
+                                {city: '里约热内卢',code: '20000-000'},
+                                {city: '巴西利亚',code: '70000-000'}
+                            ],
+                            currency: 'BRL',
+                            currencyZH: '巴西雷亚尔',
+                            rate: '',
+                            language: '葡萄牙语',
+                            FBA: true,
+                            FBM: true
+                        }
+                    ]
+                },
+                {
+                    siteTitle: '欧洲',
+                    sites: [
+                        {
+                            siteName: 'UK',
+                            siteNameZH: '英国',
+                            shop: 'www.amazon.co.uk',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '伦敦',code: 'E1W1BQ'},
+                                {city: '伯明翰',code: 'B100AB'},
+                                {city: '利兹',code: 'LS101AD'}
+                            ],
+                            currency: 'GBP',
+                            currencyZH: '英镑',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'FR',
+                            siteNameZH: '法国',
+                            shop: 'www.amazon.fr',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '巴黎',code: 75000},
+                                {city: '里昂',code: 69000},
+                                {city: '马赛',code: 13000}
+                            ],
+                            currency: 'EUR',
+                            currencyZH: '欧元',
+                            rate: '',
+                            language: '法语',
+                            FBA: false,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'DE',
+                            siteNameZH: '德国',
+                            shop: 'www.amazon.de',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '柏林',code: 10115},
+                                {city: '汉堡',code: 20095},
+                                {city: '慕尼黑',code: 86830}
+                            ],
+                            currency: 'EUR',
+                            currencyZH: '欧元',
+                            rate: '',
+                            language: '德语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'IT',
+                            siteNameZH: '意大利',
+                            shop: 'www.amazon.it',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '罗马',code: 48100},
+                                {city: '米兰',code: 48015},
+                                {city: '都灵',code: 65013}
+                            ],
+                            currency: 'EUR',
+                            currencyZH: '欧元',
+                            rate: '',
+                            language: '意大利语',
+                            FBA: false,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'ES',
+                            siteNameZH: '西班牙',
+                            shop: 'www.amazon.es',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '马德里',code: '28001'},
+                                {city: '巴塞罗那',code: '08001'},
+                                {city: '瓦伦西瓦',code: '46001'},
+
+                            ],
+                            currency: 'EUR',
+                            currencyZH: '欧元',
+                            rate: '',
+                            language: '西班牙语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'BE',
+                            siteNameZH: '比利时',
+                            shop: 'www.amazon.be',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                // {city: '纽约',code: 10001},
+                            ],
+                            currency: 'EUR',
+                            currencyZH: '欧元',
+                            rate: '',
+                            language: '法语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'NL',
+                            siteNameZH: '荷兰',
+                            shop: 'www.amazon.pl',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '阿姆斯特丹',code: 1011},
+                                {city: '鹿特丹',code: 3011},
+                                {city: '海牙',code: 9833},
+                            ],
+                            currency: 'EUR',
+                            currencyZH: '欧元',
+                            rate: '',
+                            language: '荷兰语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'SE',
+                            siteNameZH: '瑞典',
+                            shop: 'www.amazon.se',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '斯德哥尔摩',code: 11228},
+                                {city: '哥德堡',code: 40010},
+                                {city: '马尔默',code: 20001}
+                            ],
+                            currency: 'SEK',
+                            currencyZH: '瑞典克朗',
+                            rate: '',
+                            language: '瑞典语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'PL',
+                            siteNameZH: '波兰',
+                            shop: 'www.amazon.pl',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '华沙',code: '00-002'},
+                                {city: '克拉科夫',code: '98-290'},
+                                {city: '罗兹',code: '90-001'}
+                            ],
+                            currency: 'PLN',
+                            currencyZH: '波兰兹罗提',
+                            rate: '',
+                            language: '波兰语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'PL',
+                            siteNameZH: '土耳其',
+                            shop: 'www.amazon.com.tr',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '土耳其',code: 999042},
+                            ],
+                            currency: 'TRY',
+                            currencyZH: '土耳其里拉',
+                            rate: '',
+                            language: '土耳其语',
+                            FBA: true,
+                            FBM: true
+                        }
+                    ]
+                },
+                {
+                    siteTitle: '亚太',
+                    sites: [
+                        {
+                            siteName: 'JP',
+                            siteNameZH: '日本',
+                            shop: 'www.amazon.co.jp',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '东京',code: '163-8001'},
+                                {city: '大阪',code: '017-0292'},
+                                {city: '名古屋',code: '289-0116'}
+                            ],
+                            currency: 'JPY',
+                            currencyZH: '日元',
+                            rate: '',
+                            language: '日语',
+                            FBA: true,
+                            FBM: false
+                        },
+                        {
+                            siteName: 'AU',
+                            siteNameZH: '澳大利亚',
+                            shop: 'www.amazon.com.au',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '堪培拉',code: 2600},
+                                {city: '墨尔本',code: 3000},
+                                {city: '悉尼',code: 1001}
+                            ],
+                            currency: 'AUD',
+                            currencyZH: '澳元',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: false
+                        },
+                        {
+                            siteName: 'SG',
+                            siteNameZH: '新加坡',
+                            shop: 'www.amazon.sg',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                {city: '新加坡市',code: '699010'},
+                                {city: '淡马锡',code: '039190'}
+                            ],
+                            currency: 'SGD',
+                            currencyZH: '新加坡元',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: true
+                        }
+                    ]
+                },
+                {
+                    siteTitle: '中东',
+                    sites: [
+                        {
+                            siteName: 'SA',
+                            siteNameZH: '沙特阿拉伯',
+                            shop: 'www.amazon.sa',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                // {city: '纽约',code: 10001},
+                            ],
+                            currency: 'SAR',
+                            currencyZH: '沙特里亚尔',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: true
+                        },
+                        {
+                            siteName: 'AE',
+                            siteNameZH: '阿拉伯联合酋长国',
+                            shop: 'www.amazon.ae',
+                            sellerCentral: 'sellercentral.amazon.com',
+                            zipCode: [
+                                // {city: '纽约',code: 10001},
+                            ],
+                            currency: 'AED',
+                            currencyZH: '阿联酋迪拉姆',
+                            rate: '',
+                            language: '英语',
+                            FBA: true,
+                            FBM: true
+                        }
+                    ]
+                },
+
+            ],
+            tableData: []
+        },
+        created() {
+            this.getRateUnits()
+        },
+        mounted() {
+            for (let siteElement of this.siteAll) {
+                siteElement.sites.forEach(site => site.siteRegion = siteElement.siteTitle)
+                this.tableData.push(...siteElement.sites)
+            }
+            const self = this
+            setTimeout(function(){
+                for (let tableDatum of self.tableData) {
+                    tableDatum.rate = self.rateUnits[tableDatum.currency]
+                }
+            }, 100)
+        },
+        methods: {
+            // 格式化
+            YNFormatter(row, column, cellValue, index) {
+                return cellValue ? '√': ''
+            },
+            // 点单元格时复制值
+            handleCellClick(row, column, cell, event) {
+                // console.log(`点击了单元格：${column.property} - ${column.label}`);
+                // 这里可以添加你的逻辑代码
+                if (column.property && cell.innerText!=='') {
+                    this.copyText(cell.innerText)
+                }
+            },
+            // 将值存入剪切板
+            copyText(text) {
+                navigator.clipboard.writeText(text)
+                this.$message({message: '"'+text+'" 已复制到剪切板',type: 'success'});
+            },
+            // 获取汇率
+            getRateUnits() {
+                const rateUnits = this.getCookie('rateUnits')
+                if (rateUnits) {
+                    console.log('获取到缓存rateUnits')
+                    this.rateUnits = JSON.parse(rateUnits)
+                    return
+                }
+                if (Object.keys(this.rateUnits).length !== 0) return
+                const self = this
+                fetch("https://api.exchangerate-api.com/v4/latest/CNY", {method: 'GET'})
+                    .then(response => response.json())
+                    .then(data => {
+                        const rates = data.rates
+                        for (let rateKey in rates) {
+                            if (this.currencys.includes(rateKey)) {
+                                this.rateUnits[rateKey] = 1 / rates[rateKey]
+                            }
+                        }
+                        this.setCookie('rateUnits', JSON.stringify(this.rateUnits), 1)
+                    })
+                    .catch(error => console.error('Error:', error));
+            },
+            // 设置cookie
+            setCookie(name, value, hourToLive) {
+                let cookie = name + "=" + encodeURIComponent(value)
+                if (typeof hourToLive === "number") {
+                    cookie += "; max-age=" + (hourToLive*60*60) // max-age单位是秒
+                }
+                document.cookie = cookie
+            },
+            // 获取cookie
+            getCookie(name) {
+                let cookies = document.cookie.split(';')
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim()
+                    // 查找名称为name的cookie
+                    if (cookie.indexOf(name + "=") === 0) {
+                        return decodeURIComponent(cookie.substring(name.length + 1, cookie.length));
+                    }
+                }
+                return null // 未找到cookie
+            }
+        }
+    })
+</script>
+</body>
+</html>
