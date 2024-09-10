@@ -1306,8 +1306,8 @@
                     const excessWeightFee = Math.ceil(excessWeightValue / weightCondition.excessWeight.segmentation) * weightCondition.excessWeight.surcharge
                     console.log('基本重量费用：'+fee)
                     console.log('超重重量费用：'+Math.ceil(excessWeightValue / weightCondition.excessWeight.segmentation)+'*'+weightCondition.excessWeight.surcharge+'='+excessWeightFee)
-                    fee = fee + excessWeightFee
-                    lowFee = lowFee + excessWeightFee
+                    fee = parseFloat(fee + excessWeightFee).toFixed(2)
+                    lowFee = parseFloat(lowFee + excessWeightFee).toFixed(2)
                 }
                 return { fee, lowFee }
             },
