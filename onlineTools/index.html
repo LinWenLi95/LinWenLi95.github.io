@@ -44,16 +44,47 @@
     <!--可选菜单居中-->
     <div v-show="!iframe.show" class="centered">
         <el-popover
+                v-model="showTip"
                 placement="right"
                 trigger="hover">
-            <label>好东西，亚马逊工具集合网站</label>
+            <label>好东西，亚马逊工具集合网站，网址：https://www.amz123.com</label>
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('amazon123')">Amazon123</el-button>
         </el-popover><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位转换工具</el-button><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">表格上架工具</el-button><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">各站点基本信息</el-button><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleOpenPDFWeb">PDF添加Made In China</el-button><br/><br/>
-        <el-button type="primary" style="width: 200px" @click="handleTools('fireFlower')">一起看烟花吧</el-button>
+        <el-popover
+                v-model="showTip"
+                placement="right"
+                trigger="hover">
+            <label>亚马逊常用的尺寸/重量/汇率的转换、美国FBA配送费计算、售价和毛利计算器</label>
+            <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位转换工具</el-button>
+        </el-popover><br/><br/>
+        <el-popover
+                v-model="showTip"
+                placement="right"
+                trigger="hover">
+            <label>表格上架多站点的辅助工具，将表格已填写的数据根据其他表格不同表头顺序进行排序，减少重复性工作量</label>
+            <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">表格上架工具</el-button>
+        </el-popover><br/><br/>
+        <el-popover
+                v-model="showTip"
+                placement="right"
+                trigger="hover">
+            <label>整理各站点信息，让你对各站点上架商品所用的币种、汇率、语言、前后台网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息一目了然</label>
+            <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('siteInfo')">各站点基本信息(调整中)</el-button>
+        </el-popover><br/><br/>
+        <el-popover
+                v-model="showTip"
+                placement="right"
+                trigger="hover">
+            <label>简单给标签添加Made In China文字</label>
+            <el-button slot="reference" type="primary" style="width: 200px" @click="handleOpenPDFWeb">PDF添加Made In China</el-button>
+        </el-popover><br/><br/>
+        <el-popover
+                v-model="showTip"
+                placement="right"
+                trigger="hover">
+            <label>好看的烟花，效果逼真，还可以点击屏幕放烟花，可以通过右上角设置进行调整烟花选项</label>
+            <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('fireFlower')">一起看烟花吧</el-button>
+        </el-popover>
     </div>
     <div v-if="iframe.show" >
         <el-button type="primary" class="backButton" @click="handleBack">返回</el-button>
@@ -71,6 +102,7 @@
         el: '#app',
         data() {
             return {
+                showTip: false,
                 iframe: {
                     show: false,
                     src: ''
