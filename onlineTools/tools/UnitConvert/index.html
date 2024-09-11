@@ -40,6 +40,10 @@
             font-weight: bold;
         }
 
+        /* 如果需要，可以调整el-select的外边距来进一步调整位置 */
+        .el-select {
+            margin-right: -5px; /* 根据实际情况调整这个值 */
+        }
     </style>
 </head>
 <body>
@@ -427,15 +431,17 @@
                               style="width: 200px;display: inline-block"
                               type="number"
                               v-model="priceCalculation.purchasingCost">
-                        <el-select @change="priceCalculationHandle('currency')" slot='suffix' style="width: 100px;"
-                                   v-model="priceCalculation.currency">
-                            <el-option
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"
-                                    v-for="item in priceCalculation.currencyOptions">
-                            </el-option>
-                        </el-select>
+                        <template slot="suffix">
+                            <el-select @change="priceCalculationHandle('currency')" slot='suffix' style="width: 100px;"
+                                       v-model="priceCalculation.currency">
+                                <el-option
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                        v-for="item in priceCalculation.currencyOptions">
+                                </el-option>
+                            </el-select>
+                        </template>
                     </el-input>
                     <el-input @input="priceCalculationHandle('purchasingCostCNY')"
                               style="width: 200px;display: inline-block"
@@ -916,6 +922,7 @@
                     {label: '欧元(EUR)', value: 'EUR'},
                     {label: '瑞典克朗(SEK)', value: 'SEK'},
                     {label: '波兰兹罗提(PLN)', value: 'PLN'},
+                    {label: '土耳其里拉(TRY)', value: 'TRY'},
                     {label: '日元(JPY)', value: 'JPY'},
                     {label: '新加坡元(SGD)', value: 'SGD'},
                     {label: '澳元(AUD)', value: 'AUD'},
