@@ -303,6 +303,11 @@
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$PLN</i>
                     </el-input>
                 </el-form-item>
+                <el-form-item label="土耳其里拉">
+                    <el-input @input="handleRatesInput($event, 'TRY')" type="number" v-model="rates.TRY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$TRY</i>
+                    </el-input>
+                </el-form-item>
                 <el-form-item label="沙特里亚尔">
                     <el-input @input="handleRatesInput($event, 'SAR')" type="number" v-model="rates.SAR">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SAR</i>
@@ -591,6 +596,7 @@
                 EUR: 0.0,
                 SEK: 0.0,
                 PLN: 0.0,
+                TRY: 0.0,
                 JPY: 0.0,
                 SGD: 0.0,
                 AUD: 0.0,
@@ -944,6 +950,7 @@
                     {label: '欧元(EUR)', value: 'EUR'},
                     {label: '瑞典克朗(SEK)', value: 'SEK'},
                     {label: '波兰兹罗提(PLN)', value: 'PLN'},
+                    {label: '土耳其里拉(TRY)', value: 'TRY'},
                     {label: '日元(JPY)', value: 'JPY'},
                     {label: '新加坡元(SGD)', value: 'SGD'},
                     {label: '澳元(AUD)', value: 'AUD'},
@@ -1399,8 +1406,7 @@
             },
             // 汇率置换
             handleRatesInput(value, unit) {
-                const currency = ['CNY', 'USD', 'CAD', 'MXN', 'BRL', 'GBP', 'EUR', 'SEK', 'PLN', 'JPY', 'SGD', 'AUD', 'AED', 'SAR']
-                for (const str of currency) {
+                for (const str of this.currencys) {
                     this.rates[str] = this.convertRate(value, unit, str)
                 }
             },
