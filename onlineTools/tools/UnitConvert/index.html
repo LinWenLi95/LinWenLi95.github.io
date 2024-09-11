@@ -49,6 +49,12 @@
         <el-row :gutter="20">
             <el-col :span="sizeAndWeightSpanNum">
                 <label class="label-title">长：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
                 <el-form-item label="厘米">
                     <el-input @input="handleSizeInput($event, 'cm', size.length)" class="min-width-col" type="number"
                               v-model="size.length.cm">
@@ -92,6 +98,12 @@
             </el-col>
             <el-col :span="sizeAndWeightSpanNum">
                 <label class="label-title">宽：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
                 <el-form-item label="厘米">
                     <el-input @input="handleSizeInput($event, 'cm', size.width)" class="min-width-col" type="number"
                               v-model="size.width.cm">
@@ -113,6 +125,12 @@
             </el-col>
             <el-col :span="sizeAndWeightSpanNum">
                 <label class="label-title">高：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
                 <el-form-item label="厘米">
                     <el-input @input="handleSizeInput($event, 'cm', size.height)" class="min-width-col" type="number"
                               v-model="size.height.cm">
@@ -538,16 +556,19 @@
             },
             size: {
                 length: {
+                    mm: 0,
                     cm: 0.0,
                     in: 0.0,
                     ft: 0.0
                 },
                 width: {
+                    mm: 0,
                     cm: 0.0,
                     in: 0.0,
                     ft: 0.0
                 },
                 height: {
+                    mm: 0,
                     cm: 0.0,
                     in: 0.0,
                     ft: 0.0
@@ -582,11 +603,13 @@
                 oz: 28.3495
             },
             sizeUnits: {
+                mm: 0.1,
                 cm: 1,
                 in: 2.54,
                 ft: 30.48
             },
             volumeUnits: {
+                mm: 0.001,
                 cm: 1,
                 m: 1000000,
                 in: 16.387037,
@@ -1347,6 +1370,7 @@
             },
             // 长度置换
             handleSizeInput(value, unit, sizeObj) {
+                sizeObj.mm = Number(this.convertSize(value, unit, 'mm'))
                 sizeObj.cm = this.convertSize(value, unit, 'cm')
                 sizeObj.in = this.convertSize(value, unit, 'in')
                 sizeObj.ft = this.convertSize(value, unit, 'ft')
