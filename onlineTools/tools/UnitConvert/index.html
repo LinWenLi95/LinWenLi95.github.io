@@ -88,13 +88,15 @@
                         <label class="label-tip">售价计算毛利润文本框宽度：</label>
                         <input style="width: 20px;height:20px;border-radius: 4px" type="number"
                                v-model="costProfitSpanNum"></input><br/>
-                        <label class="label-tip">小数位数设置：</label>
+                        <label class="label-tip">有效小数位设置：</label>
                         <el-checkbox @change="handleFixedData" v-model="showFixedTextInput">
                             {{ showFixedTextInput ? '开启' : '关闭' }}
                         </el-checkbox>
-                        <input @input="handleDataToFixed" style="width: 20px;height:20px;border-radius: 4px"
-                               type="number"
-                               v-model="toFixedNum" v-show="showFixedTextInput"></input>
+                        <el-tooltip class="item" effect="dark" content="小数点后无效的0不补" placement="top-start">
+                            <input @input="handleDataToFixed" style="width: 20px;height:20px;border-radius: 4px"
+                                   type="number"
+                                   v-model="toFixedNum" v-show="showFixedTextInput"></input>
+                        </el-tooltip>
                         <label class="label-tip" v-show="showFixedTextInput">位</label>
                         <el-button slot="reference">界面设置</el-button>
                     </el-popover>
@@ -1373,7 +1375,7 @@
                             obj[key] = value ? Number(value.toFixed(fixed)) : 0
                         }
                     } else {
-                        obj[key] = value ? value.toFixed(fixed) : 0
+                        obj[key] = value ? Number(value.toFixed(fixed)) : 0
                     }
                 }
             },
@@ -1423,7 +1425,7 @@
                 // Convert from original unit to specified unit
                 const original = value * units[fromUnit];
                 // Convert to target unit from specified unit
-                return this.toFixedNum === -1 ? original / units[toUnit] : (original / units[toUnit]).toFixed(this.toFixedNum)
+                return this.toFixedNum === -1 ? original / units[toUnit] : Number((original / units[toUnit]).toFixed(this.toFixedNum))
             },
             // 转换质量
             convertMass(value, fromUnit, toUnit) {
