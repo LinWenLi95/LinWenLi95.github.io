@@ -190,14 +190,14 @@
                         trigger="hover">
                     <img src="img/standard.png">
                     <img src="img/low.png">
-                    <a href="javascript:;" slot="reference">费用标准</a>
+                    <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
                 </el-popover>
                 <el-popover
                         placement="bottom"
                         trigger="hover">
                     <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
                     <img src="img/fba外箱要求.png">
-                    <a href="javascript:;" slot="reference">外箱要求</a>
+                    <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
                 </el-popover>
                 <el-form-item label="标准尺寸">
                     <el-input class="min-width-col" v-model="classification"></el-input>
@@ -428,6 +428,22 @@
             </el-col>
             <el-col :span="costProfitSpanNum">
                 <label class="label-title">成本计算售价：</label>
+                <el-popover
+                        placement="top"
+                        trigger="hover">
+                    <label style="font-size: 18px;">计算产品在多个站点售价，</label><br/>
+                    <label style="font-size: 18px;">下载表格后自行调整Excel函数公式，</label><br/>
+                    <label style="font-size: 18px;">让表格更符合自己的计算习惯</label>
+                    <a href="https://linwenli95.github.io/onlineTools/tools/ExcelEdit/多站点定价表格.xlsx" slot="reference" style="color: grey">定价表格下载</a>
+                </el-popover>
+                <el-popover
+                        placement="top"
+                        trigger="hover">
+                    <label style="font-size: 18px;">点击打开Excel在线编辑器页面</label><br/>
+                    <label style="font-size: 18px;">如果想下载此编辑器到本地使用，请点击：</label>
+                    <a href="https://linwenli95.github.io/onlineTools/tools/ExcelEdit/SpreadJsExcel.zip" style="color: grey">Excel编辑器下载</a>
+                    <a href="javascript:;" @click="showOnlineExcelEditor" slot="reference" style="color: grey">Excel在线编辑器</a>
+                </el-popover>
                 <el-form-item label="采购成本">
                     <el-input @input="priceCalculationHandle('purchasingCost')" ref="inputRef"
                               style="width: 200px;display: inline-block"
@@ -981,6 +997,9 @@
             }
         },
         methods: {
+            showOnlineExcelEditor() {
+                window.open('https://demo.grapecity.com.cn/SpreadJS/WebDesigner/index.html')
+            },
             // 售价计算
             priceCalculationHandle(value) {
                 const priceCalculation = {...this.priceCalculation}
