@@ -47,12 +47,14 @@
     <!--可选菜单居中-->
     <div v-show="!iframe.show" class="centered">
         <el-popover
+                v-model="showTip.tip1"
                 placement="right"
                 trigger="hover">
             <label>好东西，亚马逊工具集、跨境资讯网站，有空可以逛逛，网址：https://www.amz123.com</label>
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('amazon123')">Amazon123</el-button>
         </el-popover><br/><br/>
         <el-popover
+                v-model="showTip.tip2"
                 placement="right"
                 trigger="hover">
             <label>海关编码查询,HSCode在填货代发票时使用</label>
@@ -60,11 +62,12 @@
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('hsCode')">海关编码查询</el-button>
         </el-popover><br/><br/>
         <el-popover
+                v-model="showTip.tip3"
                 placement="right"
                 trigger="hover">
-            <label>使用PDF编辑器时，单文件要求5M以下，超过5M的可拆分后再编辑，或者动用钞能力解除此限制</label><br/><br/>
+            <label>使用PDF编辑器时，单文件要求5M以下，超过5M的可拆分后再编辑，或者动用钞能力解除此限制</label><br/>
             <label>PDF工具集合，可编辑PDF、合并、拆分、转格式等</label>
-            <label>网址：https://onlinepdfedit.com/zh-cn/</label><br/><br/>
+            <label>网址：https://onlinepdfedit.com/zh-cn/</label><br/>
             <label>快捷添加Made In China点这里：</label>
             <el-popover
                     placement="right"
@@ -75,24 +78,28 @@
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('pdfEditor')">PDF在线编辑器</el-button>
         </el-popover><br/><br/>
         <el-popover
+                v-model="showTip.tip4"
                 placement="right"
                 trigger="hover">
             <label>亚马逊常用的尺寸/重量/汇率的转换、美国FBA配送费计算、售价和毛利计算器、多站点产品定价等</label>
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('unitConvert')">计量单位转换工具</el-button>
         </el-popover><br/><br/>
         <el-popover
+                v-model="showTip.tip5"
                 placement="right"
                 trigger="hover">
             <label>亚马逊表格上架多站点的辅助工具，将表格已填写的数据根据其他表格不同表头顺序进行排序，减少重复性工作量</label>
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">Amazon多站点上架工具</el-button>
         </el-popover><br/><br/>
         <el-popover
+                v-model="showTip.tip6"
                 placement="right"
                 trigger="hover">
             <label>亚马逊站点信息，包含各站点所用的币种、汇率、语言、前后台网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息</label>
             <el-button slot="reference" type="primary" style="width: 200px" @click="handleTools('siteInfo')">Amazon站点基本信息</el-button>
         </el-popover><br/><br/>
         <el-popover
+                v-model="showTip.tip7"
                 placement="right"
                 trigger="hover">
             <label>好看的烟花，效果逼真，还可以点击屏幕放烟花，可以通过右上角设置进行调整烟花选项</label>
@@ -115,7 +122,15 @@
         el: '#app',
         data() {
             return {
-                showTip: false,
+                showTip: {
+                    tip1: false,
+                    tip2: false,
+                    tip3: false,
+                    tip4: false,
+                    tip5: false,
+                    tip6: false,
+                    tip7: false,
+                },
                 iframe: {
                     show: false,
                     src: ''
@@ -133,7 +148,13 @@
             }
         },
         mounted() {
-            this.showTip = true
+            this.showTip.tip1 = true
+            this.showTip.tip2 = true
+            this.showTip.tip3 = true
+            this.showTip.tip4 = true
+            this.showTip.tip5 = true
+            this.showTip.tip6 = true
+            this.showTip.tip7 = true
         },
         methods: {
             handleTools(value) {
