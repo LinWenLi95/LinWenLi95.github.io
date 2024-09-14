@@ -31,7 +31,7 @@
             <el-table-column prop="rate" label="汇率" width="100" show-overflow-tooltip></el-table-column>
             <el-table-column prop="language" label="语言" width="100" sortable></el-table-column>
             <el-table-column prop="shop" label="前台网址" width="180" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="sellerCentral" label="卖家后台网址" width="180" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="sellerCentral" label="卖家后台网址" width="200" show-overflow-tooltip></el-table-column>
             <el-table-column prop="FBA" label="FBA" width="100" :formatter="YNFormatter"></el-table-column>
             <el-table-column prop="FBM" label="FBM购买配送" width="110" :formatter="YNFormatter"></el-table-column>
             <el-table-column label="城市邮编" width="700" show-overflow-tooltip>
@@ -88,7 +88,7 @@
                             siteName: 'CA',
                             siteNameZH: '加拿大',
                             shop: 'www.amazon.ca',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.ca',
                             zipCode: [
                                 {city: '多伦多',code: 'M4Y1M7'},
                                 {city: '蒙特利尔',code: 'H1A0A1'},
@@ -106,7 +106,7 @@
                             siteName: 'MX',
                             siteNameZH: '墨西哥',
                             shop: 'www.amazon.com.mx',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.com.mx',
                             zipCode: [
                                 {city: '墨西哥城',code: '11529'},
                                 {city: '瓜达拉哈拉',code: '21950'},
@@ -125,7 +125,7 @@
                             siteName: 'BR',
                             siteNameZH: '巴西',
                             shop: 'www.amazon.com.br',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.com.br',
                             zipCode: [
                                 {city: '圣保罗',code: '01000-000'},
                                 {city: '里约热内卢',code: '20000-000'},
@@ -147,7 +147,7 @@
                             siteName: 'UK',
                             siteNameZH: '英国',
                             shop: 'www.amazon.co.uk',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.co.uk',
                             zipCode: [
                                 {city: '伦敦',code: 'E1W1BQ'},
                                 {city: '伯明翰',code: 'B100AB'},
@@ -164,7 +164,7 @@
                             siteName: 'FR',
                             siteNameZH: '法国',
                             shop: 'www.amazon.fr',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.fr',
                             zipCode: [
                                 {city: '巴黎',code: 75000},
                                 {city: '里昂',code: 69000},
@@ -181,7 +181,7 @@
                             siteName: 'DE',
                             siteNameZH: '德国',
                             shop: 'www.amazon.de',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.de',
                             zipCode: [
                                 {city: '柏林',code: 10115},
                                 {city: '汉堡',code: 20095},
@@ -198,7 +198,7 @@
                             siteName: 'IT',
                             siteNameZH: '意大利',
                             shop: 'www.amazon.it',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.it',
                             zipCode: [
                                 {city: '罗马',code: 48100},
                                 {city: '米兰',code: 48015},
@@ -215,7 +215,7 @@
                             siteName: 'ES',
                             siteNameZH: '西班牙',
                             shop: 'www.amazon.es',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.es',
                             zipCode: [
                                 {city: '马德里',code: '28001'},
                                 {city: '巴塞罗那',code: '08001'},
@@ -232,8 +232,8 @@
                         {
                             siteName: 'BE',
                             siteNameZH: '比利时',
-                            shop: 'www.amazon.be',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            shop: 'www.amazon.com.be',
+                            sellerCentral: 'sellercentral.amazon.com.be',
                             zipCode: [
                                 // {city: '纽约',code: 10001},
                             ],
@@ -247,8 +247,8 @@
                         {
                             siteName: 'NL',
                             siteNameZH: '荷兰',
-                            shop: 'www.amazon.pl',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            shop: 'www.amazon.nl',
+                            sellerCentral: 'sellercentral.amazon.nl',
                             zipCode: [
                                 {city: '阿姆斯特丹',code: 1011},
                                 {city: '鹿特丹',code: 3011},
@@ -265,7 +265,7 @@
                             siteName: 'SE',
                             siteNameZH: '瑞典',
                             shop: 'www.amazon.se',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.se',
                             zipCode: [
                                 {city: '斯德哥尔摩',code: 11228},
                                 {city: '哥德堡',code: 40010},
@@ -282,7 +282,7 @@
                             siteName: 'PL',
                             siteNameZH: '波兰',
                             shop: 'www.amazon.pl',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.pl',
                             zipCode: [
                                 {city: '华沙',code: '00-002'},
                                 {city: '克拉科夫',code: '98-290'},
@@ -299,7 +299,7 @@
                             siteName: 'PL',
                             siteNameZH: '土耳其',
                             shop: 'www.amazon.com.tr',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: '',
                             zipCode: [
                                 {city: '土耳其',code: 999042},
                             ],
@@ -319,7 +319,7 @@
                             siteName: 'JP',
                             siteNameZH: '日本',
                             shop: 'www.amazon.co.jp',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral-japan.amazon.com',
                             zipCode: [
                                 {city: '东京',code: '163-8001'},
                                 {city: '大阪',code: '017-0292'},
@@ -336,7 +336,7 @@
                             siteName: 'AU',
                             siteNameZH: '澳大利亚',
                             shop: 'www.amazon.com.au',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.com.au',
                             zipCode: [
                                 {city: '堪培拉',code: 2600},
                                 {city: '墨尔本',code: 3000},
@@ -353,7 +353,7 @@
                             siteName: 'SG',
                             siteNameZH: '新加坡',
                             shop: 'www.amazon.sg',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.sg',
                             zipCode: [
                                 {city: '新加坡市',code: '699010'},
                                 {city: '淡马锡',code: '039190'}
@@ -374,7 +374,7 @@
                             siteName: 'SA',
                             siteNameZH: '沙特阿拉伯',
                             shop: 'www.amazon.sa',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.sa',
                             zipCode: [
                                 // {city: '纽约',code: 10001},
                             ],
@@ -389,7 +389,7 @@
                             siteName: 'AE',
                             siteNameZH: '阿拉伯联合酋长国',
                             shop: 'www.amazon.ae',
-                            sellerCentral: 'sellercentral.amazon.com',
+                            sellerCentral: 'sellercentral.amazon.ae',
                             zipCode: [
                                 // {city: '纽约',code: 10001},
                             ],
