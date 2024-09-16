@@ -169,11 +169,11 @@ const store = {
 					config.size = data.size;
 					config.skyLighting = data.skyLighting;
 					break;
-				case '1.2':
+				case '1.2':// 初始值设置
 					config.quality = data.quality;
-					config.size = data.size;
+					config.size = 4//data.size;
 					config.skyLighting = data.skyLighting;
-					config.scaleFactor = data.scaleFactor;
+					config.scaleFactor = 0.75//data.scaleFactor;
 					break;
 				default:
 					throw new Error('version switch should be exhaustive');
