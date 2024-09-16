@@ -80,7 +80,7 @@
             <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">Amazon站点基本信息</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip7" placement="right" effect="light">
-            <label slot="content">好看的烟花，效果逼真，还可以点击屏幕放烟花，可以通过右上角设置进行调整烟花选项</label>
+            <label slot="content" style="font-size: 14px;color: #5b5b5b">好看的烟花，效果逼真，还可以点击屏幕放烟花，可以通过右上角设置进行调整烟花选项</label>
             <el-button type="primary" style="width: 200px" @click="handleTools('fireFlower')">一起看烟花吧</el-button>
         </el-tooltip>
     </div>
@@ -133,6 +133,15 @@
             this.showTip.tip5 = true
             this.showTip.tip6 = true
             this.showTip.tip7 = true
+            setTimeout(() => {
+                this.showTip.tip1 = false
+                this.showTip.tip2 = false
+                this.showTip.tip3 = false
+                this.showTip.tip4 = false
+                this.showTip.tip5 = false
+                this.showTip.tip6 = false
+                this.showTip.tip7 = false
+            }, 3000)
         },
         methods: {
             handleTools(value) {
