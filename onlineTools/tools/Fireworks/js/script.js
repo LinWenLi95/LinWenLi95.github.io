@@ -1474,8 +1474,13 @@ function colorSky(speed) {
 	currentSkyColor.r += (targetSkyColor.r - currentSkyColor.r) / colorChange * speed;
 	currentSkyColor.g += (targetSkyColor.g - currentSkyColor.g) / colorChange * speed;
 	currentSkyColor.b += (targetSkyColor.b - currentSkyColor.b) / colorChange * speed;
-
-	appNodes.canvasContainer.style.backgroundColor = `rgb(${currentSkyColor.r | 0}, ${currentSkyColor.g | 0}, ${currentSkyColor.b | 0})`;
+	if(IS_MOBILE) {
+		appNodes.canvasContainer.style.backgroundImage = `url("img/bg.jpg")`
+	} else {
+		appNodes.canvasContainer.style.backgroundImage = `url("img/bgPC.jpg")`
+	}
+	appNodes.canvasContainer.style.backgroundSize = `cover`;
+	// appNodes.canvasContainer.style.backgroundColor = `rgb(${currentSkyColor.r | 0}, ${currentSkyColor.g | 0}, ${currentSkyColor.b | 0})`;
 }
 
 mainStage.addEventListener('ticker', update);
