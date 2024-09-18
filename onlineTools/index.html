@@ -47,14 +47,32 @@
     <!--可选菜单居中-->
     <div v-show="!iframe.show" class="centered">
         <el-tooltip v-model="showTip.tip1" placement="right" effect="light">
-            <label slot="content">好东西，亚马逊工具集、跨境资讯网站，有空可以逛逛，网址：https://www.amz123.com</label>
-            <el-button type="primary" style="width: 200px" @click="handleTools('amazon123')">Amazon123</el-button>
+            <label slot="content">亚马逊常用尺寸/重量/汇率换算、美国FBA配送费计算、售价和毛利计算器、多站点产品定价等</label>
+            <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">👍&nbsp;&nbsp;单位换算/利润计算</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip2" placement="right" effect="light">
-            <label slot="content">海关编码查询,HSCode在填货代发票时使用 网址：https://www.hsbianma.com</label>
-            <el-button type="primary" style="width: 200px" @click="handleTools('hsCode')">海关编码查询</el-button>
+            <label slot="content">亚马逊表格上架多站点的辅助工具，将表格已填写的数据根据其他表格不同表头顺序进行排序，减少重复性工作量</label>
+            <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">🚀&nbsp;&nbsp;Amazon表格上架辅助</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip3" placement="right" effect="light">
+            <label slot="content">亚马逊站点信息，包含各站点所用的币种、汇率、语言、前后台网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息</label>
+            <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">📄&nbsp;&nbsp;Amazon站点邮编</el-button>
+        </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip4" placement="right" effect="light">
+            <div slot="content">
+                <label>好东西，亚马逊工具集、跨境资讯网站，有空可以逛逛</label><br/>
+                <label>网址：https://www.amz123.com</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('amazon123')">AMZ123跨境卖家导航</el-button>
+        </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip5" placement="right" effect="light">
+            <div slot="content">
+                <label>海关编码查询,HSCode在填货代发票时使用</label><br/>
+                <label>网址：https://www.hsbianma.com</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('hsCode')">海关编码查询</el-button>
+        </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip6" placement="right" effect="light">
             <div slot="content">
                 <label>使用PDF编辑器时，单文件要求5M以下，超过5M的可拆分后再编辑，或者动用钞能力解除此限制</label><br/>
                 <label>PDF工具集合，可编辑PDF、合并、拆分、转格式等</label>
@@ -67,20 +85,11 @@
             </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('pdfEditor')">PDF在线编辑器</el-button>
         </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip4" placement="right" effect="light">
-            <label slot="content">亚马逊常用的尺寸/重量/汇率的转换、美国FBA配送费计算、售价和毛利计算器、多站点产品定价等</label>
-            <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">计量单位转换工具</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip5" placement="right" effect="light">
-            <label slot="content">亚马逊表格上架多站点的辅助工具，将表格已填写的数据根据其他表格不同表头顺序进行排序，减少重复性工作量</label>
-            <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">Amazon多站点上架工具</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip6" placement="right" effect="light">
-            <label slot="content">亚马逊站点信息，包含各站点所用的币种、汇率、语言、前后台网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息</label>
-            <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">Amazon站点基本信息</el-button>
-        </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip7" placement="right" effect="light">
-            <label slot="content" style="font-size: 14px;color: #5b5b5b">好看的烟花，效果逼真，还可以点击屏幕放烟花，可以通过右上角设置进行调整烟花选项</label>
+            <div slot="content">
+                <label style="font-size: 14px;color: #5b5b5b">好看的烟花，效果逼真，可以点击屏幕放烟花，通过右上角设置调整烟花选项</label><br/>
+                <label style="font-size: 14px;color: #5b5b5b">网址：https://linwenli95.github.io/onlineTools/tools/Fireworks/</label>
+            </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('fireFlower')">一起看烟花吧</el-button>
         </el-tooltip>
     </div>
