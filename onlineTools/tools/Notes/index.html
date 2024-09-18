@@ -21,19 +21,29 @@
     <div>
         <el-table
                 :data="tableData"
+                align="center"
                 border
                 @cell-click="handleCellClick">
-            <el-table-column type="index" label="序号" width="50"></el-table-column>
-            <el-table-column prop="siteNameZH" label="站点" width="100" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="siteName" label="站点缩写" width="80"></el-table-column>
-            <el-table-column prop="currencyZH" label="币种" width="110"></el-table-column>
-            <el-table-column prop="currency" label="币种缩写" width="100"></el-table-column>
-            <el-table-column prop="rate" label="汇率" width="100" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="language" label="语言" width="100" sortable></el-table-column>
-            <el-table-column prop="shop" label="前台网址" width="180" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="sellerCentral" label="卖家后台网址" width="200" show-overflow-tooltip></el-table-column>
-            <el-table-column prop="FBA" label="FBA" width="100" :formatter="YNFormatter"></el-table-column>
-            <el-table-column prop="FBM" label="FBM购买配送" width="110" :formatter="YNFormatter"></el-table-column>
+            <el-table-column type="index" label="序号" width="50" align="center"></el-table-column>
+            <el-table-column prop="siteNameZH" label="站点" width="100" show-overflow-tooltip align="center"></el-table-column>
+            <el-table-column prop="siteName" label="站点缩写" width="80" align="center"></el-table-column>
+            <el-table-column prop="currencyZH" label="币种" width="110" align="center"></el-table-column>
+            <el-table-column prop="currency" label="币种缩写" width="100" align="center"></el-table-column>
+            <el-table-column prop="rate" label="汇率" width="100" show-overflow-tooltip align="center"></el-table-column>
+            <el-table-column prop="language" label="语言" width="100" sortable align="center"></el-table-column>
+            <el-table-column prop="shop" label="前台网址" width="180" show-overflow-tooltip align="center"></el-table-column>
+            <el-table-column prop="shop" label="前台以图搜商品" width="200" :formatter="shopFormatter" show-overflow-tooltip align="center">
+                <template slot="header" slot-scope="scope">
+                    <span>前台以图搜商品</span>
+                    <el-tooltip class="item" effect="dark" placement="top">
+                        <div slot="content">放空的站点可自行在网址后加“/shopthelook”试一下</div>
+                        <i class="el-icon-info"></i>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+            <el-table-column prop="sellerCentral" label="卖家后台网址" width="200" show-overflow-tooltip align="center"></el-table-column>
+            <el-table-column prop="FBA" label="FBA" width="100" :formatter="YNFormatter" align="center"></el-table-column>
+            <el-table-column prop="FBM" label="FBM购买配送" width="110" :formatter="YNFormatter" align="center"></el-table-column>
             <el-table-column label="城市邮编" width="700" show-overflow-tooltip>
                 <template slot-scope="scope">
                     <!-- 遍历数组并展示每个元素 -->
@@ -420,8 +430,16 @@
                     tableDatum.rate = self.rateUnits[tableDatum.currency]
                 }
             }, 100)
+            this.$message({message: '点击文字即可复制到剪切板',type: 'success'});
         },
         methods: {
+            shopFormatter(row, column, cellValue, index) {
+                const site = ['US','UK','FR','DE','IT','ES']
+                if (site.includes(row.siteName)) {
+                    return cellValue?cellValue + '/shopthelook':''
+                }
+                return ''
+            },
             // 格式化
             YNFormatter(row, column, cellValue, index) {
                 return cellValue ? '√': ''
