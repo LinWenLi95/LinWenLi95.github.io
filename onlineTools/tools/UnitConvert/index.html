@@ -64,513 +64,519 @@
     </style>
 </head>
 <body>
-<div id="app" class="container">
-    <el-form label-width="auto" label-position="left" v-model="size">
-        <!--长-->
-        <div class="divItem">
-            <label class="label-title">长：</label>
-            <el-form-item label="毫米">
-                <el-input @input="handleSizeInput($event, 'mm', size.length)" class="min-width-col" type="number"
-                          v-model="size.length.mm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="厘米">
-                <el-input @input="handleSizeInput($event, 'cm', size.length)" class="min-width-col" type="number"
-                          v-model="size.length.cm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英寸">
-                <el-input @input="handleSizeInput($event, 'in', size.length)" class="min-width-col" type="number"
-                          v-model="size.length.in">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英尺">
-                <el-input @input="handleSizeInput($event, 'ft', size.length)" class="min-width-col" type="number"
-                          v-model="size.length.ft">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--宽-->
-        <div class="divItem">
-            <label class="label-title">宽：</label>
-            <el-form-item label="毫米">
-                <el-input @input="handleSizeInput($event, 'mm', size.width)" class="min-width-col" type="number"
-                          v-model="size.width.mm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="厘米">
-                <el-input @input="handleSizeInput($event, 'cm', size.width)" class="min-width-col" type="number"
-                          v-model="size.width.cm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英寸">
-                <el-input @input="handleSizeInput($event, 'in', size.width)" class="min-width-col" type="number"
-                          v-model="size.width.in">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英尺">
-                <el-input @input="handleSizeInput($event, 'ft', size.width)" class="min-width-col" type="number"
-                          v-model="size.width.ft">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--高-->
-        <div class="divItem">
-            <label class="label-title">高：</label>
-            <el-form-item label="毫米">
-                <el-input @input="handleSizeInput($event, 'mm', size.height)" class="min-width-col" type="number"
-                          v-model="size.height.mm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="厘米">
-                <el-input @input="handleSizeInput($event, 'cm', size.height)" class="min-width-col" type="number"
-                          v-model="size.height.cm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英寸">
-                <el-input @input="handleSizeInput($event, 'in', size.height)" class="min-width-col" type="number"
-                          v-model="size.height.in">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英尺">
-                <el-input @input="handleSizeInput($event, 'ft', size.height)" class="min-width-col" type="number"
-                          v-model="size.height.ft">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--重量-->
-        <div class="divItem">
-            <label class="label-title">重量：</label>
-            <el-form-item label="克">
-                <el-input @input="handleWeightInput($event, 'g')" class="min-width-col" type="number"
-                          v-model="weight.g">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">g</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="千克">
-                <el-input @input="handleWeightInput($event, 'kg')" class="min-width-col" type="number"
-                          v-model="weight.kg">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">kg</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="磅">
-                <el-input @input="handleWeightInput($event, 'lb')" class="min-width-col" type="number"
-                          v-model="weight.lb">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">lb</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="盎司">
-                <el-input @input="handleWeightInput($event, 'oz')" class="min-width-col" type="number"
-                          v-model="weight.oz">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">oz</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--FBA费用计算-->
-        <div class="divItem">
-            <label class="label-title">FBA费用计算：</label>
-            <el-popover
-                    placement="bottom"
-                    trigger="hover">
-                <img src="img/standard.png">
-                <img src="img/low.png">
-                <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
-            </el-popover>
-            <el-popover
-                    placement="bottom"
-                    trigger="hover">
-                <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
-                <img src="img/fba外箱要求.png">
-                <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
-            </el-popover>
-            <el-form-item label="标准尺寸">
-                <el-input class="min-width-col" v-model="classification"></el-input>
-            </el-form-item>
-            <el-form-item class="min-width-col" label="标准配送费">
-                <el-input v-model="FBADeliveryFee.standard">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item class="min-width-col" label="低价配送费">
-                <el-input v-model="FBADeliveryFee.lowPrice">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="高一档尺寸">
-                <el-input class="min-width-col" v-model="highClassification"></el-input>
-            </el-form-item>
-            <el-form-item class="min-width-col" label="高一档标准">
-                <el-input v-model="FBADeliveryFee.highStandard">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item class="min-width-col" label="高一档低价">
-                <el-input v-model="FBADeliveryFee.highLowPrice">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--体积-->
-        <div class="divItem" style="height: 416px;">
-            <label class="label-title">体积：</label>
-            <el-form-item label="立方厘米">
-                <el-input @input="handleVolumeInput($event, 'cm')" class="min-width-col" type="number"
-                          v-model="volume.cm">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm&sup3;</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="立方英尺">
-                <el-input @input="handleVolumeInput($event, 'ft')" class="min-width-col" type="number"
-                          v-model="volume.ft">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft&sup3;</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="立方英寸">
-                <el-input @input="handleVolumeInput($event, 'in')" class="min-width-col" type="number"
-                          v-model="volume.in">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in&sup3;</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item>
+<div id="app">
+    <div class="container">
+        <el-form label-width="auto" v-model="size">
+            <!--长-->
+            <div class="divItem">
+                <label class="label-title">长：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="厘米">
+                    <el-input @input="handleSizeInput($event, 'cm', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英寸">
+                    <el-input @input="handleSizeInput($event, 'in', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英尺">
+                    <el-input @input="handleSizeInput($event, 'ft', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--宽-->
+            <div class="divItem">
+                <label class="label-title">宽：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="厘米">
+                    <el-input @input="handleSizeInput($event, 'cm', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英寸">
+                    <el-input @input="handleSizeInput($event, 'in', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英尺">
+                    <el-input @input="handleSizeInput($event, 'ft', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--高-->
+            <div class="divItem">
+                <label class="label-title">高：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="厘米">
+                    <el-input @input="handleSizeInput($event, 'cm', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英寸">
+                    <el-input @input="handleSizeInput($event, 'in', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英尺">
+                    <el-input @input="handleSizeInput($event, 'ft', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--重量-->
+            <div class="divItem">
+                <label class="label-title">重量：</label>
+                <el-form-item label="克">
+                    <el-input @input="handleWeightInput($event, 'g')" class="min-width-col" type="number"
+                              v-model="weight.g">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">g</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="千克">
+                    <el-input @input="handleWeightInput($event, 'kg')" class="min-width-col" type="number"
+                              v-model="weight.kg">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">kg</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="磅">
+                    <el-input @input="handleWeightInput($event, 'lb')" class="min-width-col" type="number"
+                              v-model="weight.lb">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">lb</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="盎司">
+                    <el-input @input="handleWeightInput($event, 'oz')" class="min-width-col" type="number"
+                              v-model="weight.oz">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">oz</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--FBA费用计算-->
+            <div class="divItem">
+                <label class="label-title">FBA费用计算：</label>
                 <el-popover
-                        placement="right"
-                        trigger="click"
-                        width="320">
-                    <label class="label-tip">有效小数位设置：</label>
-                    <el-checkbox @change="handleFixedData" v-model="showFixedTextInput">
-                        {{ showFixedTextInput ? '开启' : '关闭' }}
-                    </el-checkbox>
-                    <el-tooltip class="item" effect="dark" content="小数点后无效的0不补" placement="top-start">
-                        <input @input="handleDataToFixed" style="width: 20px;height:20px;border-radius: 4px"
-                               type="number"
-                               v-model="toFixedNum" v-show="showFixedTextInput"></input>
-                    </el-tooltip>
-                    <label class="label-tip" v-show="showFixedTextInput">位</label>
-                    <el-button slot="reference">有效小数位设置</el-button>
+                        placement="bottom"
+                        trigger="hover">
+                    <img src="img/standard.png">
+                    <img src="img/low.png">
+                    <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
                 </el-popover>
-            </el-form-item>
-        </div><br/>
-        <!--常用汇率-->
-        <div class="divItem divItem2">
-            <label class="label-title">常用汇率：</label>
-            <el-form-item label="人民币">
-                <el-input @input="handleRatesInput($event, 'CNY')" type="number" v-model="rates.CNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="美元">
-                <el-input @input="handleRatesInput($event, 'USD')" type="number" v-model="rates.USD">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="加拿大元">
-                <el-input @input="handleRatesInput($event, 'CAD')" type="number" v-model="rates.CAD">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$CAD</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="欧元">
-                <el-input @input="handleRatesInput($event, 'EUR')" type="number" v-model="rates.EUR">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$EUR</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="英镑">
-                <el-input @input="handleRatesInput($event, 'GBP')" type="number" v-model="rates.GBP">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$GBP</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="日元">
-                <el-input @input="handleRatesInput($event, 'JPY')" type="number" v-model="rates.JPY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$JPY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="澳元">
-                <el-input @input="handleRatesInput($event, 'AUD')" type="number" v-model="rates.AUD">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AUD</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--不常用汇率-->
-        <div class="divItem divItem2">
-            <label class="label-title">不常用汇率：</label>
-            <el-form-item label="新加坡元">
-                <el-input @input="handleRatesInput($event, 'SGD')" type="number" v-model="rates.SGD">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SGD</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="墨西哥比索">
-                <el-input @input="handleRatesInput($event, 'MXN')" type="number" v-model="rates.MXN">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$MXN</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="瑞典朗克">
-                <el-input @input="handleRatesInput($event, 'SEK')" type="number" v-model="rates.SEK">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SEK</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="波兰兹罗提">
-                <el-input @input="handleRatesInput($event, 'PLN')" type="number" v-model="rates.PLN">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$PLN</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="土耳其里拉">
-                <el-input @input="handleRatesInput($event, 'TRY')" type="number" v-model="rates.TRY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$TRY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="沙特里亚尔">
-                <el-input @input="handleRatesInput($event, 'SAR')" type="number" v-model="rates.SAR">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SAR</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="阿联酋迪拉姆">
-                <el-input @input="handleRatesInput($event, 'AED')" type="number" v-model="rates.AED">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AED</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--售价计算毛利润-->
-        <div class="divItem divItem2">
-            <label class="label-title">售价计算毛利润：</label>
-            <el-form-item label="售价">
-                <el-input @input="profitCalculationHandle('price')" style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="profitCalculation.price">
-                    <!--                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>-->
-                    <el-select @change="profitCalculationHandle('currency')" slot='suffix' style="width: 100px"
-                               v-model="profitCalculation.currency">
-                        <el-option
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value"
-                                v-for="item in profitCalculation.currencyOptions">
-                        </el-option>
-                    </el-select>
-                </el-input>
-                <el-input @input="profitCalculationHandle('priceCNY')" style="width: 200px;display: inline-block"
-                          type="number" v-model="profitCalculation.priceCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="佣金&税">
-                <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                    <el-input @input="profitCalculationHandle('commissionRate')"
-                              style="width: 80px;display: inline-block"
-                              type="number"
-                              v-model="profitCalculation.commissionRate">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                <el-popover
+                        placement="bottom"
+                        trigger="hover">
+                    <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
+                    <img src="img/fba外箱要求.png">
+                    <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
+                </el-popover>
+                <el-form-item label="标准尺寸">
+                    <el-input class="min-width-col" v-model="classification"></el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="标准配送费">
+                    <el-input v-model="FBADeliveryFee.standard">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
-                </el-tooltip>
-                <el-input @input="profitCalculationHandle('commission')" disabled
-                          style="width: 160px;display: inline-block" type="number"
-                          v-model="profitCalculation.commission">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="profitCalculationHandle('commissionCNY')" disabled
-                          style="width: 160px;display: inline-block" type="number"
-                          v-model="profitCalculation.commissionCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="广告费">
-                <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                    <el-input @input="profitCalculationHandle('adRate')" style="width: 80px;display: inline-block"
-                              type="number"
-                              v-model="profitCalculation.adRate">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="低价配送费">
+                    <el-input v-model="FBADeliveryFee.lowPrice">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
-                </el-tooltip>
-                <el-input @input="profitCalculationHandle('adCost')" style="width: 160px;display: inline-block"
-                          type="number" v-model="profitCalculation.adCost">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="profitCalculationHandle('adCostCNY')" style="width: 160px;display: inline-block"
-                          type="number" v-model="profitCalculation.adCostCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="配送费">
-                <el-input @input="profitCalculationHandle('deliverFee')" style="width: 200px;display: inline-block"
-                          type="number" v-model="profitCalculation.deliverFee">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="profitCalculationHandle('deliverFeeCNY')"
-                          style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="profitCalculation.deliverFeeCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="采购成本">
-                <el-input @input="profitCalculationHandle('purchasingCost')"
-                          style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="profitCalculation.purchasingCost">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="profitCalculationHandle('purchasingCostCNY')"
-                          style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="profitCalculation.purchasingCostCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="毛利润">
-                <el-input style="width: 200px;display: inline-block" type="number"
-                          v-model="profitCalculation.grossProfit">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
-                </el-input>
-                <el-input style="width: 200px;display: inline-block" type="number"
-                          v-model="profitCalculation.grossProfitCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-        </div>
-        <!--成本计算售价-->
-        <div class="divItem divItem2">
-            <label class="label-title">成本计算售价：</label>
-            <el-popover
-                    placement="top"
-                    trigger="hover">
-                <label style="font-size: 18px;">计算产品在多个站点售价，</label><br/>
-                <label style="font-size: 18px;">下载表格后自行调整Excel函数公式，</label><br/>
-                <label style="font-size: 18px;">让表格更符合自己的计算习惯</label>
-                <a href="https://linwenli95.github.io/onlineTools/tools/ExcelEdit/多站点定价表格.xlsx" slot="reference" style="color: grey">定价表格下载</a>
-            </el-popover>
-            <el-popover
-                    placement="top"
-                    trigger="hover">
-                <label style="font-size: 18px;">点击打开Excel在线编辑器页面</label><br/>
-                <label style="font-size: 18px;">如果想下载此编辑器到本地使用，请点击：</label>
-                <a href="https://linwenli95.github.io/onlineTools/tools/ExcelEdit/SpreadJsExcel.zip" style="color: grey">Excel编辑器下载</a>
-                <a href="javascript:;" @click="showOnlineExcelEditor" slot="reference" style="color: grey">Excel在线编辑器</a>
-            </el-popover>
-            <el-form-item label="采购成本">
-                <el-input @input="priceCalculationHandle('purchasingCost')" ref="inputRef"
-                          style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="priceCalculation.purchasingCost">
-                    <template slot="suffix">
-                        <el-select @change="priceCalculationHandle('currency')" slot='suffix' style="width: 100px;"
-                                   v-model="priceCalculation.currency">
+                </el-form-item>
+                <el-form-item label="高一档尺寸">
+                    <el-input class="min-width-col" v-model="highClassification"></el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="高一档标准">
+                    <el-input v-model="FBADeliveryFee.highStandard">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="高一档低价">
+                    <el-input v-model="FBADeliveryFee.highLowPrice">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--体积-->
+            <div class="divItem" style="height: 416px;">
+                <label class="label-title">体积：</label>
+                <el-form-item label="立方厘米">
+                    <el-input @input="handleVolumeInput($event, 'cm')" class="min-width-col" type="number"
+                              v-model="volume.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm&sup3;</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="立方英尺">
+                    <el-input @input="handleVolumeInput($event, 'ft')" class="min-width-col" type="number"
+                              v-model="volume.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft&sup3;</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="立方英寸">
+                    <el-input @input="handleVolumeInput($event, 'in')" class="min-width-col" type="number"
+                              v-model="volume.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in&sup3;</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-popover
+                            placement="right"
+                            trigger="click"
+                            width="320">
+                        <label class="label-tip">有效小数位设置：</label>
+                        <el-checkbox @change="handleFixedData" v-model="showFixedTextInput">
+                            {{ showFixedTextInput ? '开启' : '关闭' }}
+                        </el-checkbox>
+                        <el-tooltip class="item" effect="dark" content="小数点后无效的0不补" placement="top-start">
+                            <input @input="handleDataToFixed" style="width: 20px;height:20px;border-radius: 4px"
+                                   type="number"
+                                   v-model="toFixedNum" v-show="showFixedTextInput"></input>
+                        </el-tooltip>
+                        <label class="label-tip" v-show="showFixedTextInput">位</label>
+                        <el-button slot="reference">有效小数位设置</el-button>
+                    </el-popover>
+                </el-form-item>
+            </div><br/>
+        </el-form>
+    </div>
+    <div class="container">
+        <el-form label-width="auto" v-model="size">
+            <!--常用汇率-->
+            <div class="divItem divItem2">
+                <label class="label-title">常用汇率：</label>
+                <el-form-item label="人民币">
+                    <el-input @input="handleRatesInput($event, 'CNY')" type="number" v-model="rates.CNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="美元">
+                    <el-input @input="handleRatesInput($event, 'USD')" type="number" v-model="rates.USD">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="加拿大元">
+                    <el-input @input="handleRatesInput($event, 'CAD')" type="number" v-model="rates.CAD">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$CAD</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="欧元">
+                    <el-input @input="handleRatesInput($event, 'EUR')" type="number" v-model="rates.EUR">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$EUR</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英镑">
+                    <el-input @input="handleRatesInput($event, 'GBP')" type="number" v-model="rates.GBP">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$GBP</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="日元">
+                    <el-input @input="handleRatesInput($event, 'JPY')" type="number" v-model="rates.JPY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$JPY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="澳元">
+                    <el-input @input="handleRatesInput($event, 'AUD')" type="number" v-model="rates.AUD">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AUD</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--不常用汇率-->
+            <div class="divItem divItem2">
+                <label class="label-title">不常用汇率：</label>
+                <el-form-item label="新加坡元">
+                    <el-input @input="handleRatesInput($event, 'SGD')" type="number" v-model="rates.SGD">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SGD</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="墨西哥比索">
+                    <el-input @input="handleRatesInput($event, 'MXN')" type="number" v-model="rates.MXN">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$MXN</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="瑞典朗克">
+                    <el-input @input="handleRatesInput($event, 'SEK')" type="number" v-model="rates.SEK">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SEK</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="波兰兹罗提">
+                    <el-input @input="handleRatesInput($event, 'PLN')" type="number" v-model="rates.PLN">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$PLN</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="土耳其里拉">
+                    <el-input @input="handleRatesInput($event, 'TRY')" type="number" v-model="rates.TRY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$TRY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="沙特里亚尔">
+                    <el-input @input="handleRatesInput($event, 'SAR')" type="number" v-model="rates.SAR">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SAR</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="阿联酋迪拉姆">
+                    <el-input @input="handleRatesInput($event, 'AED')" type="number" v-model="rates.AED">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AED</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--售价计算毛利润-->
+            <div class="divItem divItem2">
+                <label class="label-title">售价计算毛利润：</label>
+                <el-form-item label="售价">
+                    <el-input @input="profitCalculationHandle('price')" style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="profitCalculation.price">
+                        <!--                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>-->
+                        <el-select @change="profitCalculationHandle('currency')" slot='suffix' style="width: 100px"
+                                   v-model="profitCalculation.currency">
                             <el-option
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
-                                    v-for="item in priceCalculation.currencyOptions">
+                                    v-for="item in profitCalculation.currencyOptions">
                             </el-option>
                         </el-select>
-                    </template>
-                </el-input>
-                <el-input @input="priceCalculationHandle('purchasingCostCNY')"
-                          style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="priceCalculation.purchasingCostCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="配送费">
-                <el-input @input="priceCalculationHandle('deliverFee')" style="width: 200px;display: inline-block"
-                          type="number" v-model="priceCalculation.deliverFee">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="priceCalculationHandle('deliverFeeCNY')"
-                          style="width: 200px;display: inline-block"
-                          type="number"
-                          v-model="priceCalculation.deliverFeeCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="毛利润">
-                <el-tooltip content="与采购成本的百分比" effect="light" placement="top">
-                    <el-input @input="priceCalculationHandle('grossProfitRate')"
-                              style="width: 80px;display: inline-block"
-                              type="number"
-                              v-model="priceCalculation.grossProfitRate">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                     </el-input>
-                </el-tooltip>
-                <el-input @input="priceCalculationHandle('grossProfit')" style="width: 160px;display: inline-block"
-                          type="number" v-model="priceCalculation.grossProfit">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="priceCalculationHandle('grossProfitCNY')"
-                          style="width: 160px;display: inline-block"
-                          type="number"
-                          v-model="priceCalculation.grossProfitCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="佣金&税">
-                <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                    <el-input @input="priceCalculationHandle('commissionRate')"
-                              style="width: 80px;display: inline-block"
-                              type="number"
-                              v-model="priceCalculation.commissionRate">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                    <el-input @input="profitCalculationHandle('priceCNY')" style="width: 200px;display: inline-block"
+                              type="number" v-model="profitCalculation.priceCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
                     </el-input>
-                </el-tooltip>
-                <el-input @input="priceCalculationHandle('commission')" disabled
-                          style="width: 160px;display: inline-block" type="number"
-                          v-model="priceCalculation.commission">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="priceCalculationHandle('commissionCNY')" disabled
-                          style="width: 160px;display: inline-block" type="number"
-                          v-model="priceCalculation.commissionCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="广告费">
-                <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                    <el-input @input="priceCalculationHandle('adRate')" style="width: 80px;display: inline-block"
-                              type="number"
-                              v-model="priceCalculation.adRate">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                </el-form-item>
+                <el-form-item label="佣金&税">
+                    <el-tooltip content="与售价的百分比" effect="light" placement="top">
+                        <el-input @input="profitCalculationHandle('commissionRate')"
+                                  style="width: 80px;display: inline-block"
+                                  type="number"
+                                  v-model="profitCalculation.commissionRate">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input @input="profitCalculationHandle('commission')" disabled
+                              style="width: 160px;display: inline-block" type="number"
+                              v-model="profitCalculation.commission">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
                     </el-input>
-                </el-tooltip>
-                <el-input @input="priceCalculationHandle('adCost')" style="width: 160px;display: inline-block"
-                          type="number"
-                          v-model="priceCalculation.adCost">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
-                </el-input>
-                <el-input @input="priceCalculationHandle('adCostCNY')" style="width: 160px;display: inline-block"
-                          type="number" v-model="priceCalculation.adCostCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-            <el-form-item label="售价">
-                <el-input style="width: 200px;display: inline-block" type="number" v-model="priceCalculation.price">
-                    <i slot='suffix'
-                       style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
-                </el-input>
-                <el-input style="width: 200px;display: inline-block" type="number"
-                          v-model="priceCalculation.priceCNY">
-                    <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                </el-input>
-            </el-form-item>
-        </div>
-    </el-form>
+                    <el-input @input="profitCalculationHandle('commissionCNY')" disabled
+                              style="width: 160px;display: inline-block" type="number"
+                              v-model="profitCalculation.commissionCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="广告费">
+                    <el-tooltip content="与售价的百分比" effect="light" placement="top">
+                        <el-input @input="profitCalculationHandle('adRate')" style="width: 80px;display: inline-block"
+                                  type="number"
+                                  v-model="profitCalculation.adRate">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input @input="profitCalculationHandle('adCost')" style="width: 160px;display: inline-block"
+                              type="number" v-model="profitCalculation.adCost">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="profitCalculationHandle('adCostCNY')" style="width: 160px;display: inline-block"
+                              type="number" v-model="profitCalculation.adCostCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="配送费">
+                    <el-input @input="profitCalculationHandle('deliverFee')" style="width: 200px;display: inline-block"
+                              type="number" v-model="profitCalculation.deliverFee">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="profitCalculationHandle('deliverFeeCNY')"
+                              style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="profitCalculation.deliverFeeCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="采购成本">
+                    <el-input @input="profitCalculationHandle('purchasingCost')"
+                              style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="profitCalculation.purchasingCost">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="profitCalculationHandle('purchasingCostCNY')"
+                              style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="profitCalculation.purchasingCostCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="毛利润">
+                    <el-input style="width: 200px;display: inline-block" type="number"
+                              v-model="profitCalculation.grossProfit">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
+                    </el-input>
+                    <el-input style="width: 200px;display: inline-block" type="number"
+                              v-model="profitCalculation.grossProfitCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--成本计算售价-->
+            <div class="divItem divItem2">
+                <label class="label-title">成本计算售价：</label>
+                <el-popover
+                        placement="top"
+                        trigger="hover">
+                    <label style="font-size: 18px;">计算产品在多个站点售价，</label><br/>
+                    <label style="font-size: 18px;">下载表格后自行调整Excel函数公式，</label><br/>
+                    <label style="font-size: 18px;">让表格更符合自己的计算习惯</label>
+                    <a href="https://linwenli95.github.io/onlineTools/tools/ExcelEdit/多站点定价表格.xlsx" slot="reference" style="color: grey">定价表格下载</a>
+                </el-popover>
+                <el-popover
+                        placement="top"
+                        trigger="hover">
+                    <label style="font-size: 18px;">点击打开Excel在线编辑器页面</label><br/>
+                    <label style="font-size: 18px;">如果想下载此编辑器到本地使用，请点击：</label>
+                    <a href="https://linwenli95.github.io/onlineTools/tools/ExcelEdit/SpreadJsExcel.zip" style="color: grey">Excel编辑器下载</a>
+                    <a href="javascript:;" @click="showOnlineExcelEditor" slot="reference" style="color: grey">Excel在线编辑器</a>
+                </el-popover>
+                <el-form-item label="采购成本">
+                    <el-input @input="priceCalculationHandle('purchasingCost')" ref="inputRef"
+                              style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="priceCalculation.purchasingCost">
+                        <template slot="suffix">
+                            <el-select @change="priceCalculationHandle('currency')" slot='suffix' style="width: 100px;"
+                                       v-model="priceCalculation.currency">
+                                <el-option
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value"
+                                        v-for="item in priceCalculation.currencyOptions">
+                                </el-option>
+                            </el-select>
+                        </template>
+                    </el-input>
+                    <el-input @input="priceCalculationHandle('purchasingCostCNY')"
+                              style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="priceCalculation.purchasingCostCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="配送费">
+                    <el-input @input="priceCalculationHandle('deliverFee')" style="width: 200px;display: inline-block"
+                              type="number" v-model="priceCalculation.deliverFee">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="priceCalculationHandle('deliverFeeCNY')"
+                              style="width: 200px;display: inline-block"
+                              type="number"
+                              v-model="priceCalculation.deliverFeeCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="毛利润">
+                    <el-tooltip content="与采购成本的百分比" effect="light" placement="top">
+                        <el-input @input="priceCalculationHandle('grossProfitRate')"
+                                  style="width: 80px;display: inline-block"
+                                  type="number"
+                                  v-model="priceCalculation.grossProfitRate">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input @input="priceCalculationHandle('grossProfit')" style="width: 160px;display: inline-block"
+                              type="number" v-model="priceCalculation.grossProfit">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="priceCalculationHandle('grossProfitCNY')"
+                              style="width: 160px;display: inline-block"
+                              type="number"
+                              v-model="priceCalculation.grossProfitCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="佣金&税">
+                    <el-tooltip content="与售价的百分比" effect="light" placement="top">
+                        <el-input @input="priceCalculationHandle('commissionRate')"
+                                  style="width: 80px;display: inline-block"
+                                  type="number"
+                                  v-model="priceCalculation.commissionRate">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input @input="priceCalculationHandle('commission')" disabled
+                              style="width: 160px;display: inline-block" type="number"
+                              v-model="priceCalculation.commission">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="priceCalculationHandle('commissionCNY')" disabled
+                              style="width: 160px;display: inline-block" type="number"
+                              v-model="priceCalculation.commissionCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="广告费">
+                    <el-tooltip content="与售价的百分比" effect="light" placement="top">
+                        <el-input @input="priceCalculationHandle('adRate')" style="width: 80px;display: inline-block"
+                                  type="number"
+                                  v-model="priceCalculation.adRate">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input @input="priceCalculationHandle('adCost')" style="width: 160px;display: inline-block"
+                              type="number"
+                              v-model="priceCalculation.adCost">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="priceCalculationHandle('adCostCNY')" style="width: 160px;display: inline-block"
+                              type="number" v-model="priceCalculation.adCostCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="售价">
+                    <el-input style="width: 200px;display: inline-block" type="number" v-model="priceCalculation.price">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
+                    </el-input>
+                    <el-input style="width: 200px;display: inline-block" type="number"
+                              v-model="priceCalculation.priceCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+        </el-form>
+    </div>
 </div>
 <!-- 引入Vue.js -->
 <script src="js/vue.min.2.6.14.js"></script>
