@@ -578,6 +578,32 @@
                 </el-form-item>
             </div>
         </el-form>
+        <el-form label-width="auto" >
+            <!--成本计算售价-->
+            <div>
+                <label class="label-title">bid计算：</label>
+                <el-popover
+                        placement="top"
+                        trigger="hover">
+                    <label style="font-size: 18px;">* 基础CPC决定曝光量的大小</label><br/>
+                    <label style="font-size: 18px;">* bid+决定曝光的广告位置</label><br/>
+                    <label style="font-size: 18px;">* 当商品在某个广告位转化效果好时，可调整bid+让竞价接近广告位CPC，增加商品在该广告位的展示量</label><br/>
+                    <label style="font-size: 18px;">* bid计算：(广告位CPC/基础CPC-1)*100</label>
+                    <i slot="reference" class="el-icon-warning-outline"></i>
+                </el-popover>
+                <el-form-item label="基础CPC">
+                    <el-input style="width: 200px;display: inline-block" type="number" v-model="ads.basePrice" @input="bidCalculationHandle"></el-input>
+                </el-form-item>
+                <el-form-item label="广告位CPC">
+                    <el-input style="width: 200px;display: inline-block" type="number" v-model="ads.targetPrice" @input="bidCalculationHandle"></el-input>
+                </el-form-item>
+                <el-form-item label="BID+">
+                    <el-input style="width: 200px;display: inline-block" type="number" v-model="ads.bidRate">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+        </el-form>
     </div>
 </div>
 <!-- 引入Vue.js -->
@@ -1000,6 +1026,11 @@
                     {label: '沙特里亚尔(SAR)', value: 'SAR'},
                     {label: '卢布(RUB)', value: 'RUB'}
                 ]
+            },
+            ads: {
+                basePrice: '0',
+                targetPrice: '0',
+                bidRate: '0'
             }
         },
         mounted() {
@@ -1007,8 +1038,18 @@
             this.getRateUnits()
         },
         methods: {
-            showOnlineExcelEditor() {
+            showOnlineExcelEditor() {// 在线Excel编辑器跳转
                 window.open('https://demo.grapecity.com.cn/SpreadJS/WebDesigner/index.html')
+            },
+            bidCalculationHandle() {
+                const ads = {...this.ads}
+                ads.basePrice = this.removeBeginningZero(ads.basePrice)
+                ads.targetPrice = this.removeBeginningZero(ads.targetPrice)
+                if (ads.targetPrice && ads.basePrice) {
+                    this.ads.basePrice = this.removeBeginningZero(ads.basePrice)
+                    this.ads.targetPrice = this.removeBeginningZero(ads.targetPrice)
+                    this.ads.bidRate = Number((ads.targetPrice / ads.basePrice - 1) * 100).toFixed(this.toFixedNum)
+                }
             },
             // 售价计算
             priceCalculationHandle(value) {
