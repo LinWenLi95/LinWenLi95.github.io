@@ -87,6 +87,13 @@
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip7" placement="top-start" effect="light">
             <div slot="content">
+                <label>外观专利查询网站</label><br/>
+                <label>网址：https://designdb.wipo.int/designdb/en/index.jsp</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('patent')">外观专利查询</el-button>
+        </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip8" placement="top-start" effect="light">
+            <div slot="content">
                 <label style="font-size: 14px;color: #5b5b5b">好看的烟花，效果逼真，可以点击屏幕放烟花，通过右上角设置调整烟花选项</label><br/>
                 <label style="font-size: 14px;color: #5b5b5b">网址：https://linwenli95.github.io/onlineTools/tools/Fireworks/</label>
             </div>
@@ -118,6 +125,7 @@
                     tip5: false,
                     tip6: false,
                     tip7: false,
+                    tip8: false
                 },
                 iframe: {
                     show: false,
@@ -131,7 +139,8 @@
                     siteInfo: 'https://linwenli95.github.io/onlineTools/tools/Notes/index.html',// 各站点记录
                     fireFlower: 'https://linwenli95.github.io/onlineTools/tools/Fireworks/index.html',
                     pdfWeb: 'http://amztool.moyuren.cn/index',// pdf快捷添加Made in China
-                    pdfEditor: 'https://onlinepdfedit.com/zh-cn/edit-pdf.html'// pdf编辑器
+                    pdfEditor: 'https://onlinepdfedit.com/zh-cn/edit-pdf.html',// pdf编辑器
+                    patent: 'https://designdb.wipo.int/designdb/en/index.jsp'// 外观专利查询
                 }
             }
         },
