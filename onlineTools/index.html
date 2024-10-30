@@ -74,6 +74,20 @@
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip6" placement="top-start" effect="light">
             <div slot="content">
+                <label>商标信息查询网站</label><br/>
+                <label>网址：https://tmsearch.uspto.gov</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('uspto')">商标信息查询🔍️</el-button>
+        </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip7" placement="top-start" effect="light">
+            <div slot="content">
+                <label>外观专利查询网站</label><br/>
+                <label>网址：https://designdb.wipo.int/designdb/en/index.jsp</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('patent')">外观专利查询🔍️</el-button>
+        </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip8" placement="top-start" effect="light">
+            <div slot="content">
                 <label>使用PDF编辑器时，单文件要求5M以下，超过5M的可拆分后再编辑，或者动用钞能力解除此限制</label><br/>
                 <label>PDF工具集合，可编辑PDF、合并、拆分、转格式等</label>
                 <label>网址：https://onlinepdfedit.com/zh-cn/</label><br/>
@@ -85,14 +99,7 @@
             </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('pdfEditor')">PDF在线编辑器⌨️</el-button>
         </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip7" placement="top-start" effect="light">
-            <div slot="content">
-                <label>外观专利查询网站</label><br/>
-                <label>网址：https://designdb.wipo.int/designdb/en/index.jsp</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('patent')">外观专利查询</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip8" placement="top-start" effect="light">
+        <el-tooltip v-model="showTip.tip9" placement="top-start" effect="light">
             <div slot="content">
                 <label style="font-size: 14px;color: #5b5b5b">好看的烟花，效果逼真，可以点击屏幕放烟花，通过右上角设置调整烟花选项</label><br/>
                 <label style="font-size: 14px;color: #5b5b5b">网址：https://linwenli95.github.io/onlineTools/tools/Fireworks/</label>
@@ -125,7 +132,8 @@
                     tip5: false,
                     tip6: false,
                     tip7: false,
-                    tip8: false
+                    tip8: false,
+                    tip9: false
                 },
                 iframe: {
                     show: false,
@@ -140,27 +148,13 @@
                     fireFlower: 'https://linwenli95.github.io/onlineTools/tools/Fireworks/index.html',
                     pdfWeb: 'http://amztool.moyuren.cn/index',// pdf快捷添加Made in China
                     pdfEditor: 'https://onlinepdfedit.com/zh-cn/edit-pdf.html',// pdf编辑器
-                    patent: 'https://designdb.wipo.int/designdb/en/index.jsp'// 外观专利查询
+                    patent: 'https://designdb.wipo.int/designdb/en/index.jsp',// 外观专利查询
+                    uspto: 'https://tmsearch.uspto.gov'// 商标信息查询
                 }
             }
         },
         mounted() {
-            // this.showTip.tip1 = true
-            // this.showTip.tip2 = true
-            // this.showTip.tip3 = true
-            // this.showTip.tip4 = true
-            // this.showTip.tip5 = true
-            // this.showTip.tip6 = true
-            // this.showTip.tip7 = true
-            // setTimeout(() => {
-            //     this.showTip.tip1 = false
-            //     this.showTip.tip2 = false
-            //     this.showTip.tip3 = false
-            //     this.showTip.tip4 = false
-            //     this.showTip.tip5 = false
-            //     this.showTip.tip6 = false
-            //     this.showTip.tip7 = false
-            // }, 3000)
+
         },
         methods: {
             handleTools(value) {
