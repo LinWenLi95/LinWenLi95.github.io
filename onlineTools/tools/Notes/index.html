@@ -429,7 +429,7 @@
                 for (let tableDatum of self.tableData) {
                     tableDatum.rate = self.rateUnits[tableDatum.currency]
                 }
-            }, 500)
+            }, 1000)
             this.$message({message: '点击文字即可复制到剪切板',type: 'success'});
         },
         methods: {
