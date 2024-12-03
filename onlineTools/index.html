@@ -47,15 +47,24 @@
     <!--可选菜单居中-->
     <div v-show="!iframe.show" class="centered">
         <el-tooltip v-model="showTip.tip1" placement="top-start" effect="light">
-            <label slot="content">亚马逊常用尺寸/重量/汇率换算、美国FBA配送费计算、售价和毛利计算器、多站点产品定价等</label>
+            <div slot="content">
+                <label>亚马逊常用尺寸/重量/汇率换算、美国FBA配送费计算、售价和毛利计算器、多站点产品定价等</label><br/>
+                <label>网址：https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html</label>
+            </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位换算📏&nbsp;&nbsp;利润计算💰</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip2" placement="top-start" effect="light">
-            <label slot="content">亚马逊表格上架多站点的辅助工具，将表格已填写的数据根据其他表格不同表头顺序进行排序，减少重复性工作量</label>
+            <div slot="content">
+                <label>亚马逊表格上架多站点的辅助工具，将表格已填写的数据根据其他表格不同表头顺序进行排序，减少重复性工作量</label><br/>
+                <label>网址：https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html</label>
+            </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">多站点表格上架辅助🚀</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip3" placement="top-start" effect="light">
-            <label slot="content">亚马逊站点信息，包含各站点所用的币种、汇率、语言、前后台网址、以图搜商品网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息</label>
+            <div slot="content">
+                <label>亚马逊站点信息，包含各站点所用的币种、汇率、语言、前后台网址、以图搜商品网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息</label><br/>
+                <label>网址：https://linwenli95.github.io/onlineTools/tools/Notes/index.html</label>
+            </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">各站点城市邮编📝</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip4" placement="top-start" effect="light">
