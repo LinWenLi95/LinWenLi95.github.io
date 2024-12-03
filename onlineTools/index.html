@@ -46,6 +46,13 @@
 <div id="app">
     <!--可选菜单居中-->
     <div v-show="!iframe.show" class="centered">
+        <el-tooltip v-model="showTip.tip0" placement="top-start" effect="light">
+            <div slot="content">
+                <label>亚马逊FBA配送费计算</label><br/>
+                <label>网址：https://linwenli95.github.io/onlineTools/tools/FBADeliveryFeeCalculation/index.html</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('FBADeliveryFeeCalculation')">FBA配送费计算💰</el-button>
+        </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip1" placement="top-start" effect="light">
             <div slot="content">
                 <label>亚马逊常用尺寸/重量/汇率换算、美国FBA配送费计算、售价和毛利计算器、多站点产品定价等</label><br/>
@@ -134,6 +141,7 @@
         data() {
             return {
                 showTip: {
+                    tip0: false,
                     tip1: false,
                     tip2: false,
                     tip3: false,
@@ -153,6 +161,7 @@
                     hsCode: 'https://www.hsbianma.com',// 海关编码查询
                     copySiteExcel: 'https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html',// 站点上架表格复制
                     unitConvert: 'https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html',// 单位转换工具
+                    FBADeliveryFeeCalculation: 'https://linwenli95.github.io/onlineTools/tools/FBADeliveryFeeCalculation/index.html',// FBA配送费计算
                     siteInfo: 'https://linwenli95.github.io/onlineTools/tools/Notes/index.html',// 各站点记录
                     fireFlower: 'https://linwenli95.github.io/onlineTools/tools/Fireworks/index.html',
                     pdfWeb: 'http://amztool.moyuren.cn/index',// pdf快捷添加Made in China

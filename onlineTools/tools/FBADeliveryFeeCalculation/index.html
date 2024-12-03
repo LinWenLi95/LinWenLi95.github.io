@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FBA配送费计算器</title>
+    <!-- 引入Element UI的CSS样式 -->
+    <link href="css/element-ui.css" rel="stylesheet">
+    <style>
+        /* 隐藏input type=number上下箭头 */
+        input::-webkit-inner-spin-button,
+        input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* 组件字体加大 */
+        .el-button,
+        .el-input,
+        .el-form-item__label,
+        .el-select,
+        label {
+            font-size: 20px; /* 这里的字体大小可以根据需求调整 */
+        }
+        .divItem{
+            display: inline-block;
+            position: relative;
+            float: left;
+            max-width: 420px;
+            min-width: 220px;
+        }
+        /*售价计算的最大宽度增加*/
+        .divItem2 {
+            max-width: 600px;
+            min-width: 510px;
+            height: 460px;
+        }
+        .container {
+            display: flex;
+            align-items: flex-start; /* 这会使得左侧容器的顶部对齐 */
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <br/>
+    <div class="container">
+        <el-form label-width="auto" v-model="size">
+            <!--长-->
+            <div class="divItem">
+                <label class="label-title">长：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="厘米">
+                    <el-input @input="handleSizeInput($event, 'cm', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英寸">
+                    <el-input @input="handleSizeInput($event, 'in', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英尺">
+                    <el-input @input="handleSizeInput($event, 'ft', size.length)" class="min-width-col" type="number"
+                              v-model="size.length.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--宽-->
+            <div class="divItem">
+                <label class="label-title">宽：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="厘米">
+                    <el-input @input="handleSizeInput($event, 'cm', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英寸">
+                    <el-input @input="handleSizeInput($event, 'in', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英尺">
+                    <el-input @input="handleSizeInput($event, 'ft', size.width)" class="min-width-col" type="number"
+                              v-model="size.width.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--高-->
+            <div class="divItem">
+                <label class="label-title">高：</label>
+                <el-form-item label="毫米">
+                    <el-input @input="handleSizeInput($event, 'mm', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.mm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">mm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="厘米">
+                    <el-input @input="handleSizeInput($event, 'cm', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英寸">
+                    <el-input @input="handleSizeInput($event, 'in', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="英尺">
+                    <el-input @input="handleSizeInput($event, 'ft', size.height)" class="min-width-col" type="number"
+                              v-model="size.height.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--重量-->
+            <div class="divItem">
+                <label class="label-title">重量：</label>
+                <el-form-item label="克">
+                    <el-input @input="handleWeightInput($event, 'g')" class="min-width-col" type="number"
+                              v-model="weight.g">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">g</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="千克">
+                    <el-input @input="handleWeightInput($event, 'kg')" class="min-width-col" type="number"
+                              v-model="weight.kg">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">kg</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="磅">
+                    <el-input @input="handleWeightInput($event, 'lb')" class="min-width-col" type="number"
+                              v-model="weight.lb">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">lb</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="盎司">
+                    <el-input @input="handleWeightInput($event, 'oz')" class="min-width-col" type="number"
+                              v-model="weight.oz">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">oz</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--FBA费用计算-->
+            <div class="divItem">
+                <label class="label-title">FBA费用计算：</label>
+                <el-select v-model="siteName" style="width: 100px" @change="changeSiteHandler">
+                    <el-option :key="item"
+                            :label="item"
+                            :value="item"
+                            v-for="item in sites"></el-option>
+                </el-select>
+                <el-popover
+                        placement="bottom"
+                        trigger="hover">
+                    <img v-if="siteName==='US'" src="img/standard.png">
+                    <img v-if="siteName==='US'" src="img/low.png">
+                    <img v-if="siteName==='AU'" src="img/AU-1.png" style="width: 600px;height:1000px">
+                    <img v-if="siteName==='AU'" src="img/AU-2.png" style="width: 600px;height:1000px">
+                    <img v-if="siteName==='JP'" src="img/JP-1.png" style="width: 800px;height:1000px">
+                    <img v-if="siteName==='JP'" src="img/JP-2.png" style="width: 800px;height:1000px">
+                    <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
+                </el-popover>
+                <el-popover
+                        placement="bottom"
+                        trigger="hover">
+                    <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
+                    <img src="img/fba外箱要求.png">
+                    <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
+                </el-popover>
+                <el-form-item label="标准尺寸">
+                    <el-input class="min-width-col" v-model="classification"></el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="标准配送费">
+                    <el-input v-model="FBADeliveryFee.standard">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="低价配送费">
+                    <el-input v-model="FBADeliveryFee.lowPrice">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="高一档尺寸">
+                    <el-input class="min-width-col" v-model="highClassification"></el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="高一档标准">
+                    <el-input v-model="FBADeliveryFee.highStandard">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item class="min-width-col" label="高一档低价">
+                    <el-input v-model="FBADeliveryFee.highLowPrice">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+            <!--体积-->
+            <div class="divItem" style="height: 416px;">
+                <label class="label-title">体积：</label>
+                <el-form-item label="立方厘米">
+                    <el-input @input="handleVolumeInput($event, 'cm')" class="min-width-col" type="number"
+                              v-model="volume.cm">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">cm&sup3;</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="立方英尺">
+                    <el-input @input="handleVolumeInput($event, 'ft')" class="min-width-col" type="number"
+                              v-model="volume.ft">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">ft&sup3;</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="立方英寸">
+                    <el-input @input="handleVolumeInput($event, 'in')" class="min-width-col" type="number"
+                              v-model="volume.in">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">in&sup3;</i>
+                    </el-input>
+                </el-form-item>
+            </div>
+        </el-form>
+    </div>
+</div>
+<!-- 引入Vue.js -->
+<script src="js/vue.min.2.6.14.js"></script>
+<!-- 引入Element UI的JavaScript库 -->
+<script src="js/element-ui.js"></script>
+<script>
+    // 创建一个Vue实例
+    new Vue({
+        el: '#app',
+        data: {
+            weight: {
+                g: 0.0,
+                kg: 0.0,
+                lb: 0.0,
+                oz: 0.0
+            },
+            size: {
+                length: {
+                    mm: 0,
+                    cm: 0.0,
+                    in: 0.0,
+                    ft: 0.0
+                },
+                width: {
+                    mm: 0,
+                    cm: 0.0,
+                    in: 0.0,
+                    ft: 0.0
+                },
+                height: {
+                    mm: 0,
+                    cm: 0.0,
+                    in: 0.0,
+                    ft: 0.0
+                }
+            },
+            volume: {
+                cm: 0.0,
+                m: 0.0,
+                in: 0.0,
+                ft: 0.0
+            },
+            weightUnits: {
+                g: 1,
+                kg: 1000,
+                lb: 453.592,
+                oz: 28.3495
+            },
+            sizeUnits: {
+                mm: 0.1,
+                cm: 1,
+                in: 2.54,
+                ft: 30.48
+            },
+            volumeUnits: {
+                mm: 0.001,
+                cm: 1,
+                m: 1000000,
+                in: 16.387037,
+                ft: 28316.8
+            },
+            sites: ['US', 'AU', 'JP'],
+            siteCurrencys: {
+                US: 'USD',
+                CA: 'CAD',
+                MX: 'MXN',
+                BR: 'BRL',
+                UK: 'GBP',
+                JP: 'JPY',
+                SG: 'SGD',
+                AU: 'AUD',
+                AE: 'AED',
+                SA: 'SAR'
+            },
+            siteName: 'US',
+            sizeTypes: {
+                US: {
+                    Small: {// 小号标准尺寸
+                        name: '小号标准尺寸',
+                        side: {//边长标准
+                            longestSide: 15,// 最长边不超过15英寸
+                            secondSide: 12,// 次长边不超过12英寸
+                            shortestSide: 0.75,// 最短边不超过0.75英寸
+                            unit: 'in'
+                        },
+                        weight: {
+                            from0To2: {
+                                start: 0,
+                                end: 2,// 不超过2盎司
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.48,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 3.25// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from2To4: {
+                                start: 2,
+                                end: 4,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.57,
+                                standardDeliveryFee: 3.34
+                            },
+                            from4To6: {
+                                start: 4,
+                                end: 6,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.67,
+                                standardDeliveryFee: 3.44
+                            },
+                            from6To8: {
+                                start: 6,
+                                end: 8,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.76,
+                                standardDeliveryFee: 3.53
+                            },
+                            from8To10: {
+                                start: 8,
+                                end: 10,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.87,
+                                standardDeliveryFee: 3.64
+                            },
+                            from10To12: {
+                                start: 10,
+                                end: 12,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.97,
+                                standardDeliveryFee: 3.74
+                            },
+                            from12To14: {
+                                start: 12,
+                                end: 14,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.05,
+                                standardDeliveryFee: 3.82
+                            },
+                            from14To16: {
+                                start: 14,
+                                end: 16,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.1,
+                                standardDeliveryFee: 3.87
+                            }
+                        }
+                    },
+                    Large: {// 大号标准尺寸
+                        name: '大号标准尺寸',
+                        side: {//边长标准
+                            longestSide: 18,
+                            secondSide: 14,
+                            shortestSide: 8,
+                            unit: 'in'
+                        },
+                        weight: {
+                            from0To4: {
+                                start: 0,
+                                end: 4,// 不超过4盎司
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.15,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 3.92// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from4To8: {
+                                start: 4,
+                                end: 8,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.39,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 4.16// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from8To12: {
+                                start: 8,
+                                end: 12,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.66,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 4.43// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from12To16: {
+                                start: 12,
+                                end: 16,// 不超过16盎司
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 4.07,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 4.85// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from100To125: {
+                                start: 1,
+                                end: 1.25,// 不超过1.25磅
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 4.52,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.29// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from125To150: {
+                                start: 1.25,
+                                end: 1.5,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 4.91,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.68// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from150To175: {
+                                start: 1.5,
+                                end: 1.75,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.07,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.84// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from175To200: {
+                                start: 1.75,
+                                end: 2,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.33,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.1// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from200To225: {
+                                start: 2,
+                                end: 2.25,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.47,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.24// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from225To250: {
+                                start: 2.25,
+                                end: 2.5,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.67,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.44// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from250To275: {
+                                start: 2.5,
+                                end: 2.75,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.84,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.61// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from275To300: {
+                                start: 2.75,
+                                end: 3,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 6.26,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 7.03// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from300To2000: {
+                                start: 3,
+                                end: 20,// 不超过20磅
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 6.69,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 7.46,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'oz',
+                                    segmentation: 4, // 超出首重 3 磅的部分，每 4 盎司 $0.08
+                                    surcharge: 0.08// 超重部分附加费
+                                }
+                            }
+                        }
+                    },
+                    LargeLarge: {// 大号大件
+                        name: '大号大件',
+                        side: {
+                            longestSide: 59,
+                            secondSide: 33,
+                            shortestSide: 33,
+                            unit: 'in'
+                            // 另外要求长度+围长不超过 130 英寸，此处不进行处理
+                        },
+                        weight: {
+                            from0To50: {
+                                start: 0,
+                                end: 50,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 9.88,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 10.65,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首磅的部分，每磅 $0.38
+                                    surcharge: 0.38// 超重部分附加费
+                                }
+                            }
+                        }
+                    },
+                    Oversized: {// 超大件
+                        name: '超大件',
+                        side: {
+                            longestSide: 59,
+                            secondSide: 33,
+                            shortestSide: 33,
+                            unit: 'in'
+                            // 另外要求长度+围长不超过 130 英寸，此处不进行处理
+                        },
+                        weight: {
+                            from0To50: {
+                                start: 0,
+                                end: 50,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 28.29,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 29.06,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首磅的部分，每磅 $0.38
+                                    surcharge: 0.38// 超重部分附加费
+                                }
+                            },
+                            from50To70: {
+                                start: 50,
+                                end: 70,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 42.17,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 42.93,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首重的部分，每磅 $0.38
+                                    surcharge: 0.75// 超重部分附加费
+                                }
+                            },
+                            from70To150: {
+                                start: 70,
+                                end: 150,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 58.46,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 59.23,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首重的部分，每磅 $0.75
+                                    surcharge: 0.75// 超重部分附加费
+                                }
+                            },
+                            from150To999: {
+                                start: 150,
+                                end: 999,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 202.69,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 203.46,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首重的部分，每磅 $0.38
+                                    surcharge: 0.19// 超重部分附加费
+                                }
+                            }
+                        }
+                    },
+                },
+                AU: {
+                    '小号信封': {
+                        name: '小号信封',
+                        side: {//边长标准
+                            longestSide: 20,// 最长边
+                            secondSide: 15,// 次长边
+                            shortestSide: 1,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To75: {
+                                start: 0,
+                                end: 75,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 3.36,// 售价不超过13澳元的低价商品FBA配送费
+                                standardDeliveryFee: 4.27// 售价超过13澳元的标准商品FBA配送费
+                            }
+                        }
+                    },
+                    '标准信封': {
+                        name: '标准信封',
+                        side: {//边长标准
+                            longestSide: 33,// 最长边
+                            secondSide: 23,// 次长边
+                            shortestSide: 2.5,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to75: {start: 0,end: 75, unit: 'g',lowPriceDeliveryFee: 3.36,standardDeliveryFee: 4.27},
+                            from76to225: {start: 76,end: 225, unit: 'g',lowPriceDeliveryFee: 3.9,standardDeliveryFee: 4.81},
+                            from226to475: {start: 226,end: 475, unit: 'g',lowPriceDeliveryFee: 4.45,standardDeliveryFee: 5.36}
+                        }
+                    },
+                    '大号信封': {
+                        name: '大号信封',
+                        side: {//边长标准
+                            longestSide: 33,// 最长边
+                            secondSide: 23,// 次长边
+                            shortestSide: 5,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to225: {start: 0,end: 225, unit: 'g',lowPriceDeliveryFee: 5.41,standardDeliveryFee: 6.32},
+                            from226to475: {start: 226,end: 475, unit: 'g',lowPriceDeliveryFee: 5.8,standardDeliveryFee: 6.71},
+                            from476to975: {start: 476,end: 975, unit: 'g',lowPriceDeliveryFee: 7.37,standardDeliveryFee: 8.28}
+                        }
+                    },
+                    '包裹': {
+                        name: '包裹',
+                        side: {//边长标准
+                            longestSide: 45,// 最长边
+                            secondSide: 34,// 次长边
+                            shortestSide: 20,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to250: {start: 0,end: 250, unit: 'g',lowPriceDeliveryFee: 5.89,standardDeliveryFee: 6.8},
+                            from251to500: {start: 251,end: 500, unit: 'g',lowPriceDeliveryFee: 6.39,standardDeliveryFee: 7.3},
+                            from501to1000: {start: 501,end: 1000, unit: 'g',lowPriceDeliveryFee: 7.98,standardDeliveryFee: 8.89},
+                            from1001to1500: {start: 1001,end: 1500, unit: 'g',lowPriceDeliveryFee: 8.36,standardDeliveryFee: 9.27},
+                            from1501to2000: {start: 1501,end: 2000, unit: 'g',lowPriceDeliveryFee: 8.8,standardDeliveryFee: 9.71},
+                            from2001to3000: {start: 2001,end: 3000, unit: 'g',lowPriceDeliveryFee: 9.26,standardDeliveryFee: 10.17},
+                            from3001to4000: {start: 3001,end: 4000, unit: 'g',lowPriceDeliveryFee: 10.04,standardDeliveryFee: 10.95},
+                            from4001to5000: {start: 4001,end: 5000, unit: 'g',lowPriceDeliveryFee: 10.05,standardDeliveryFee: 10.96},
+                            from5001to6000: {start: 5001,end: 6000, unit: 'g',lowPriceDeliveryFee: 10.08,standardDeliveryFee: 10.99},
+                            from6001to7000: {start: 6001,end: 7000, unit: 'g',lowPriceDeliveryFee: 10.14,standardDeliveryFee: 11.05},
+                            from7001to8000: {start: 7001,end: 8000, unit: 'g',lowPriceDeliveryFee: 10.18,standardDeliveryFee: 11.09},
+                            from8001to9000: {start: 8001,end: 9000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from9001to10000: {start: 9001,end: 10000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from10001to11000: {start: 10001,end: 11000, unit: 'g',lowPriceDeliveryFee: 11.52,standardDeliveryFee: 12.43},
+                            from11001to12000: {start: 11001,end: 12000, unit: 'g',lowPriceDeliveryFee: 11.75,standardDeliveryFee: 12.66}
+                        }
+                    },
+                    '小号大件': {
+                        name: '小号大件',
+                        side: {//边长标准
+                            longestSide: 61,// 最长边
+                            secondSide: 46,// 次长边
+                            shortestSide: 46,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from11001to12000: {start: 11001,end: 12000, unit: 'g',lowPriceDeliveryFee: 11.75,standardDeliveryFee: 12.66},
+                            from0to1000: {start: 0,end: 1000, unit: 'g',lowPriceDeliveryFee: 8.92,standardDeliveryFee: 9.83},
+                            from1001to1250: {start: 1001,end: 1250, unit: 'g',lowPriceDeliveryFee: 9.09,standardDeliveryFee: 10},
+                            from1251to1500: {start: 1251,end: 1500, unit: 'g',lowPriceDeliveryFee: 9.77,standardDeliveryFee: 10.68},
+                            from1501to1750: {start: 1501,end: 1750, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from1751to2000: {start: 1751,end: 2000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            // 重量超过 23 千克的商品，禁止使用亚马逊物流配送
+                            from2001to23000: {
+                                start: 2001,
+                                end: 23000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 10.59,
+                                standardDeliveryFee: 11.5,
+                                excessWeight: {
+                                    unit: 'kg',
+                                    segmentation: 1, // 首重2kg，超重部分收附加费
+                                    surcharge: 0.01// 超重部分附加费 0.01澳元/kg
+                                }
+                            }
+                        }
+                    },
+                    '标准大件': {
+                        name: '标准大件',
+                        side: {//边长标准
+                            longestSide: 105,// 最长边
+                            secondSide: 60,// 次长边
+                            shortestSide: 60,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to1000: {start: 0,end: 1000, unit: 'g',lowPriceDeliveryFee: 11.03,standardDeliveryFee: 11.94},
+                            from1001to2000: {start: 1001,end: 2000, unit: 'g',lowPriceDeliveryFee: 11.65,standardDeliveryFee: 12.56},
+                            from2001to3000: {start: 2001,end: 3000, unit: 'g',lowPriceDeliveryFee: 11.94,standardDeliveryFee: 12.85},
+                            from3001to4000: {start: 3001,end: 4000, unit: 'g',lowPriceDeliveryFee: 11.97,standardDeliveryFee: 12.88},
+                            from4001to5000: {start: 4001,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.42,standardDeliveryFee: 13.33},
+                            from5001to6000: {start: 5001,end: 6000, unit: 'g',lowPriceDeliveryFee: 12.72,standardDeliveryFee: 13.63},
+                            from6001to7000: {start: 6001,end: 7000, unit: 'g',lowPriceDeliveryFee: 12.73,standardDeliveryFee: 13.64},
+                            from7001to8000: {start: 7001,end: 8000, unit: 'g',lowPriceDeliveryFee: 12.75,standardDeliveryFee: 13.66},
+                            from8001to9000: {start: 8001,end: 9000, unit: 'g',lowPriceDeliveryFee: 13.01,standardDeliveryFee: 13.92},
+                            from9001to10000: {start: 9001,end: 10000, unit: 'g',lowPriceDeliveryFee: 13.21,standardDeliveryFee: 14.12},
+                            from10001to15000: {start: 10001,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.27,standardDeliveryFee: 15.18},
+                            from15001to20000: {start: 15001,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.4,standardDeliveryFee: 16.31},
+                            from20001to22000: {start: 20001,end: 22000, unit: 'g',lowPriceDeliveryFee: 15.74,standardDeliveryFee: 16.65},
+                            // 重量超过 23 千克的商品，禁止使用亚马逊物流配送
+                            from22000to23000: {
+                                start: 22000,
+                                end: 23000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 15.94,
+                                standardDeliveryFee: 16.85,
+                                excessWeight: {
+                                    unit: 'kg',
+                                    segmentation: 1, // 首重22kg，超重部分收附加费
+                                    surcharge: 0.01// 超重部分附加费 0.01澳元/kg
+                                }
+                            }
+                        }
+                    },
+                    '大号大件': {
+                        name: '大号大件',
+                        side: {//边长标准  对于尺寸超过 116 厘米 x 116 厘米 x 102 厘米或重量超过 23 千克的商品，禁止使用亚马逊物流配送
+                            longestSide: 116,// 最长边
+                            secondSide: 116,// 次长边
+                            shortestSide: 102,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to5000: {start: 0,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.46,standardDeliveryFee: 13.37},
+                            from5001to10000: {start: 5001,end: 10000, unit: 'g',lowPriceDeliveryFee: 12.92,standardDeliveryFee: 13.83},
+                            from10001to15000: {start: 10001,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.33,standardDeliveryFee: 15.24},
+                            from15001to20000: {start: 15001,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.95,standardDeliveryFee: 16.86},
+                            from20001to25000: {start: 20001,end: 25000, unit: 'g',lowPriceDeliveryFee: 18.04,standardDeliveryFee: 18.95},
+                            from25001to30000: {start: 25001,end: 30000, unit: 'g',lowPriceDeliveryFee: 19.09,standardDeliveryFee: 20},
+                            from30001to35000: {start: 30001,end: 35000, unit: 'g',lowPriceDeliveryFee: 24.09,standardDeliveryFee: 25}
+                        }
+                    },
+                    '超大件': {
+                        name: '超大件',
+                        side: {//边长标准
+                            longestSide: 116,// 最长边
+                            secondSide: 116,// 次长边
+                            shortestSide: 102,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to35000: {
+                                start: 0,
+                                end: 35000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 64.09,
+                                standardDeliveryFee: 65
+                            }
+                        }
+                    }
+                },
+                JP: {
+                    '小号信封': {
+                        name: '小号信封',
+                        side: {//边长标准
+                            longestSide: 20,// 最长边
+                            secondSide: 15,// 次长边
+                            shortestSide: 1,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To75: {
+                                start: 0,
+                                end: 75,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 3.36,// 售价不超过13澳元的低价商品FBA配送费
+                                standardDeliveryFee: 4.27// 售价超过13澳元的标准商品FBA配送费
+                            }
+                        }
+                    },
+                }
+            },
+            sizeType: {},
+            classification: '',
+            highClassification: '',
+            lowPriceDeliveryFee: 0.0,// 售价不超过10刀的低价商品FBA配送费
+            standardDeliveryFee: 0.0,// 标准配送费
+            highStandardDeliveryFee: 0.0,// 标准配送费
+            FBADeliveryFee: {// 标准配送费
+                lowPrice: 0.0,// 售价不超过10刀的低价商品FBA配送费
+                standard: 0.0,// 标准配送费
+                highLowPrice: 0.0,// 高一档低价配送费
+                highStandard: 0.0// 高一档标准配送费
+            }
+        },
+        mounted() {
+            this.sizeType = this.sizeTypes[this.siteName]
+        },
+        methods: {
+            // 长度置换
+            handleSizeInput(value, unit, sizeObj) {
+                sizeObj.mm = Number(this.convertSize(value, unit, 'mm'))
+                sizeObj.cm = this.convertSize(value, unit, 'cm')
+                sizeObj.in = this.convertSize(value, unit, 'in')
+                sizeObj.ft = this.convertSize(value, unit, 'ft')
+                if (this.size.length[unit] && this.size.width[unit] && this.size.height[unit]) {
+                    this.handleVolumeInput(this.size.length[unit] * this.size.width[unit] * this.size.height[unit], unit)
+                    // 计算FBA配送费
+                    this.classificationHandler()
+                }
+            },
+            // 体积置换
+            handleVolumeInput(value, unit) {
+                this.volume.cm = this.convertVolume(value, unit, 'cm')
+                this.volume.m = this.convertVolume(value, unit, 'm')
+                this.volume.in = this.convertVolume(value, unit, 'in')
+                this.volume.ft = this.convertVolume(value, unit, 'ft')
+            },
+            // 重量置换
+            handleWeightInput(value, unit) {
+                this.weight.g = this.convertMass(value, unit, 'g')
+                this.weight.kg = this.convertMass(value, unit, 'kg')
+                this.weight.lb = this.convertMass(value, unit, 'lb')
+                this.weight.oz = this.convertMass(value, unit, 'oz')
+                // 计算FBA配送费
+                this.classificationHandler()
+            },
+            // 转换尺寸、体积、重量、汇率数据
+            convert(value, fromUnit, toUnit, units) {
+                if (fromUnit === toUnit) return this.removeBeginningZero(value) // 正在输入的内容去除整数首位的0
+                // Convert from original unit to specified unit
+                const original = value * units[fromUnit];
+                // Convert to target unit from specified unit
+                return original / units[toUnit]
+            },
+            // 转换质量
+            convertMass(value, fromUnit, toUnit) {
+                return this.convert(value, fromUnit, toUnit, this.weightUnits)
+            },
+            // 转换尺寸
+            convertSize(value, fromUnit, toUnit) {
+                return this.convert(value, fromUnit, toUnit, this.sizeUnits)
+            },
+            // 转换体积
+            convertVolume(value, fromUnit, toUnit) {
+                return this.convert(value, fromUnit, toUnit, this.volumeUnits)
+            },
+            // 先根据重量再看尺寸进行配送费计算
+            classificationHandler() {
+                // 取出尺寸中符合重量要求的重量区间
+                const weightRangeMap = {}
+                if (this.weight.lb > 0) {
+                    for (let sizeTypeKey in this.sizeType) {
+                        const sizeTypeVal = this.sizeType[sizeTypeKey]
+                        weightRangeMap[sizeTypeKey] = this.getWeightCondition(sizeTypeVal.weight)
+                    }
+                }
+                // 获取匹配的标准尺寸
+                let sizeTypeNameBySize = ''
+                if (this.size.length['in'] && this.size.width['in'] && this.size.height['in']) {
+                    for (let sizeTypeKey in this.sizeType) {
+                        const sizeTypeVal = this.sizeType[sizeTypeKey]
+                        const arr = [this.size.length[sizeTypeVal.side.unit], this.size.width[sizeTypeVal.side.unit], this.size.height[sizeTypeVal.side.unit]]
+                        if (this.matchConditions(sizeTypeVal.side, arr)) {
+                            sizeTypeNameBySize = sizeTypeKey
+                            break
+                        }
+                    }
+                }
+                // 尺寸和重量都在一个标准时为同一个标准
+                if (sizeTypeNameBySize && Object.keys(weightRangeMap).length) {
+                    console.log('尺寸和重量都在一个标准时为同一个标准')
+                    let deliveryFee = null
+                    let highDeliveryFee = null
+                    if (weightRangeMap[sizeTypeNameBySize] !== null) {
+                        // 标准FBA费用
+                        const weightRange = weightRangeMap[sizeTypeNameBySize]
+                        deliveryFee = this.getDeliveryFee(weightRange)
+                        this.classification = this.sizeType[sizeTypeNameBySize].name
+                        // 高一阶
+                        const nextRange = weightRange['next']
+                        if (nextRange) {
+                            console.log('有高一阶直接使用')
+                            // 有高一阶时直接使用
+                            this.highClassification = this.sizeType[sizeTypeNameBySize].name
+                            highDeliveryFee = this.getDeliveryFee(nextRange)
+                        } else {
+                            console.log('没有高一阶时，查找重量在更大尺寸的匹配区间')
+                            // 没有高一阶时，查找重量在更大尺寸的匹配区间
+                            const keys = Object.keys(weightRangeMap)
+                            for (let i = keys.indexOf(sizeTypeNameBySize) + 1; i < keys.length; i++) {
+                                // 取下一尺寸取适配重量，获取next
+                                let range = weightRangeMap[keys[i]]
+                                if (i === 1) {
+                                    range = range['next']
+                                }
+                                if (range !== null) {
+                                    // 有高一阶时直接输入
+                                    highDeliveryFee = this.getDeliveryFee(range)
+                                    this.highClassification = this.sizeType[keys[i]].name
+                                    break
+                                }
+                            }
+                        }
+                    } else {
+                        console.log('尺寸和重量不在一个标准，查找重量在更大尺寸的匹配区间')
+                        // 尺寸和重量不在一个标准时，查找重量在更大尺寸的匹配区间
+                        const keys = Object.keys(weightRangeMap)
+                        for (let i = keys.indexOf(sizeTypeNameBySize) + 1; i < keys.length; i++) {
+                            const weightRange = weightRangeMap[keys[i]]
+                            if (weightRange !== null) {
+                                deliveryFee = this.getDeliveryFee(weightRange)
+                                this.classification = this.sizeType[keys[i]].name
+                                // 高一阶
+                                const nextRange = weightRange['next']
+                                if (nextRange) {
+                                    // 有高一阶时直接使用
+                                    console.log('有高一阶时直接使用')
+                                    highDeliveryFee = this.getDeliveryFee(nextRange)
+                                    this.highClassification = this.sizeType[keys[i]].name
+                                } else {
+                                    console.log('没有高一阶时，查找重量在更大尺寸的匹配区间')
+                                    // 没有高一阶时，查找重量在更大尺寸的匹配区间
+                                    const keys = Object.keys(weightRangeMap)
+                                    for (let j = i + 1; i < keys.length; i++) {
+                                        // 取下一尺寸取适配重量，获取next
+                                        let range = weightRangeMap[keys[j]]
+                                        if (j === 1) {
+                                            range = range['next']
+                                        }
+                                        if (range !== null) {
+                                            // 有高一阶时直接输入
+                                            highDeliveryFee = this.getDeliveryFee(range)
+                                            console.log('取下一尺寸取适配重量，获取next:'+highDeliveryFee.fee)
+                                            this.highClassification = this.sizeType[keys[j]].name
+                                            break
+                                        }
+                                    }
+                                }
+                                break
+                            }
+                        }
+                    }
+                    if (deliveryFee) {
+                        this.FBADeliveryFee.standard = deliveryFee.fee
+                        this.FBADeliveryFee.lowPrice = deliveryFee.lowFee
+                    }
+                    if (highDeliveryFee) {
+                        this.FBADeliveryFee.highStandard = highDeliveryFee.fee
+                        this.FBADeliveryFee.highLowPrice = highDeliveryFee.lowFee
+                    }
+                } else if (sizeTypeNameBySize) {// 只有尺寸时
+                    this.classification = this.sizeType[sizeTypeNameBySize].name
+                } else if (Object.keys(weightRangeMap).length) {// 只有重量时，直接取符合条件的第一个区间
+                    let deliveryFee = null
+                    let highDeliveryFee = null
+                    // 尺寸和重量不在一个标准时，查找重量在更大尺寸的匹配区间
+                    console.log('尺寸和重量不在一个标准，查找重量在更大尺寸的匹配区间')
+                    const keys = Object.keys(weightRangeMap)
+                    for (let i = 0; i < keys.length; i++) {
+                        const weightRange = weightRangeMap[keys[i]]
+                        if (weightRange !== null) {
+                            deliveryFee = this.getDeliveryFee(weightRange)
+                            this.classification = this.sizeType[keys[i]].name
+                            // 高一阶
+                            const nextRange = weightRange['next']
+                            if (nextRange) {
+                                // 有高一阶时直接使用
+                                console.log('有高一阶时直接使用')
+                                highDeliveryFee = this.getDeliveryFee(nextRange)
+                                this.highClassification = this.sizeType[keys[i]].name
+                            } else {
+                                // 没有高一阶时，查找重量在更大尺寸的匹配区间
+                                console.log('没有高一阶时，查找重量在更大尺寸的匹配区间')
+                                const keys = Object.keys(weightRangeMap)
+                                for (let j = i + 1; i < keys.length; i++) {
+                                    // 取下一尺寸取适配重量，获取next
+                                    let range = weightRangeMap[keys[j]]
+                                    if (j === 1) {
+                                        range = range['next']
+                                    }
+                                    if (range !== null) {
+                                        // 有高一阶时直接输入
+                                        highDeliveryFee = this.getDeliveryFee(range)
+                                        this.highClassification = this.sizeType[keys[j]].name
+                                        break
+                                    }
+                                }
+                            }
+                            break
+                        }
+                    }
+                    if (deliveryFee) {
+                        this.FBADeliveryFee.standard = deliveryFee.fee
+                        this.FBADeliveryFee.lowPrice = deliveryFee.lowFee
+                    }
+                    if (highDeliveryFee) {
+                        this.FBADeliveryFee.highStandard = highDeliveryFee.fee
+                        this.FBADeliveryFee.highLowPrice = highDeliveryFee.lowFee
+                    }
+                }
+            },
+            // 获取指定尺寸内符合实际重量的重量区间
+            getWeightCondition(weight) {
+                const keys = Object.keys(weight)
+                for (let i = 0; i < keys.length; i++) {
+                    const weightCondition = weight[keys[i]]
+                    // 统一重量单位后的重量
+                    const weightValue = this.weight[weightCondition.unit]
+                    // 判断是否在重量区间内
+                    if (weightValue > weightCondition.start && weightValue <= weightCondition.end) {
+                        if (keys.length > i + 1) {
+                            weightCondition['next'] = weight[keys[i+1]]
+                        }
+                        return weightCondition
+                    }
+                }
+                return null
+            },
+            // 根据重量计算FBA配送费
+            getDeliveryFee(weightCondition) {
+                let fee = 0
+                let lowFee = 0
+                // 统一重量单位
+                const weightValue = this.weight[weightCondition.unit]
+                // 计算基本费用及超重费用
+                fee = weightCondition.standardDeliveryFee
+                lowFee = weightCondition.lowPriceDeliveryFee
+                if (weightCondition.hasOwnProperty('excessWeight')) {
+                    // 计算超重部分
+                    let excessWeightValue = weightValue - (weightCondition.start === 0 ? 1 : weightCondition.start)
+                    if (excessWeightValue < 0) excessWeightValue = 0
+                    // 判断并统一重量单位
+                    if (weightCondition.unit !== weightCondition.excessWeight.unit) {
+                        excessWeightValue = this.convert(excessWeightValue, weightCondition.unit, weightCondition.excessWeight.unit, this.weightUnits)
+                    }
+                    const excessWeightFee = Math.ceil(excessWeightValue / weightCondition.excessWeight.segmentation) * weightCondition.excessWeight.surcharge
+                    console.log('基本重量费用：'+fee)
+                    console.log('超重重量费用：'+Math.ceil(excessWeightValue / weightCondition.excessWeight.segmentation)+'*'+weightCondition.excessWeight.surcharge+'='+excessWeightFee)
+                    fee = parseFloat(fee + excessWeightFee).toFixed(2)
+                    lowFee = parseFloat(lowFee + excessWeightFee).toFixed(2)
+                }
+                return { fee, lowFee }
+            },
+            // 尺寸是否符合条件
+            matchConditions(side, arr) {
+                arr.sort((a, b) => a - b);
+                return side.shortestSide >= arr[0] && side.secondSide >= arr[1] && side.longestSide >= arr[2]
+            },
+            // 去掉整数开头多余的0 防止输入时输入小数点后的0时，0被删除
+            removeBeginningZero(num = '0') {
+                num = String(num)
+                const index = num.indexOf('.')
+                return index === -1 ? Number(num) : Number(num.substring(0, index)) + '.' + num.substring(index + 1, num.length)
+            },
+            // 切换站点时计算费用
+            changeSiteHandler() {
+                this.sizeType = this.sizeTypes[this.siteName]
+                this.classificationHandler()
+            }
+        }
+    })
+</script>
+</body>
+</html>
