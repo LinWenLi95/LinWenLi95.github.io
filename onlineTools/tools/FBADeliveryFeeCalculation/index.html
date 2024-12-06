@@ -172,8 +172,7 @@
                     <img v-if="siteName==='US'" src="img/low.png">
                     <img v-if="siteName==='AU'" src="img/AU-1.png" style="width: 600px;height:1000px">
                     <img v-if="siteName==='AU'" src="img/AU-2.png" style="width: 600px;height:1000px">
-                    <img v-if="siteName==='JP'" src="img/JP-1.png" style="width: 800px;height:1000px">
-                    <img v-if="siteName==='JP'" src="img/JP-2.png" style="width: 800px;height:1000px">
+                    <img v-if="siteName==='JP'" src="img/JP-1.png">
                     <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
                 </el-popover>
                 <el-popover
@@ -599,8 +598,8 @@
                         },
                         weight: {
                             from0to75: {start: 0,end: 75, unit: 'g',lowPriceDeliveryFee: 3.36,standardDeliveryFee: 4.27},
-                            from76to225: {start: 76,end: 225, unit: 'g',lowPriceDeliveryFee: 3.9,standardDeliveryFee: 4.81},
-                            from226to475: {start: 226,end: 475, unit: 'g',lowPriceDeliveryFee: 4.45,standardDeliveryFee: 5.36}
+                            from76to225: {start: 75,end: 225, unit: 'g',lowPriceDeliveryFee: 3.9,standardDeliveryFee: 4.81},
+                            from226to475: {start: 225,end: 475, unit: 'g',lowPriceDeliveryFee: 4.45,standardDeliveryFee: 5.36}
                         }
                     },
                     '大号信封': {
@@ -613,8 +612,8 @@
                         },
                         weight: {
                             from0to225: {start: 0,end: 225, unit: 'g',lowPriceDeliveryFee: 5.41,standardDeliveryFee: 6.32},
-                            from226to475: {start: 226,end: 475, unit: 'g',lowPriceDeliveryFee: 5.8,standardDeliveryFee: 6.71},
-                            from476to975: {start: 476,end: 975, unit: 'g',lowPriceDeliveryFee: 7.37,standardDeliveryFee: 8.28}
+                            from226to475: {start: 225,end: 475, unit: 'g',lowPriceDeliveryFee: 5.8,standardDeliveryFee: 6.71},
+                            from476to975: {start: 475,end: 975, unit: 'g',lowPriceDeliveryFee: 7.37,standardDeliveryFee: 8.28}
                         }
                     },
                     '包裹': {
@@ -627,20 +626,20 @@
                         },
                         weight: {
                             from0to250: {start: 0,end: 250, unit: 'g',lowPriceDeliveryFee: 5.89,standardDeliveryFee: 6.8},
-                            from251to500: {start: 251,end: 500, unit: 'g',lowPriceDeliveryFee: 6.39,standardDeliveryFee: 7.3},
-                            from501to1000: {start: 501,end: 1000, unit: 'g',lowPriceDeliveryFee: 7.98,standardDeliveryFee: 8.89},
-                            from1001to1500: {start: 1001,end: 1500, unit: 'g',lowPriceDeliveryFee: 8.36,standardDeliveryFee: 9.27},
-                            from1501to2000: {start: 1501,end: 2000, unit: 'g',lowPriceDeliveryFee: 8.8,standardDeliveryFee: 9.71},
-                            from2001to3000: {start: 2001,end: 3000, unit: 'g',lowPriceDeliveryFee: 9.26,standardDeliveryFee: 10.17},
-                            from3001to4000: {start: 3001,end: 4000, unit: 'g',lowPriceDeliveryFee: 10.04,standardDeliveryFee: 10.95},
-                            from4001to5000: {start: 4001,end: 5000, unit: 'g',lowPriceDeliveryFee: 10.05,standardDeliveryFee: 10.96},
-                            from5001to6000: {start: 5001,end: 6000, unit: 'g',lowPriceDeliveryFee: 10.08,standardDeliveryFee: 10.99},
-                            from6001to7000: {start: 6001,end: 7000, unit: 'g',lowPriceDeliveryFee: 10.14,standardDeliveryFee: 11.05},
-                            from7001to8000: {start: 7001,end: 8000, unit: 'g',lowPriceDeliveryFee: 10.18,standardDeliveryFee: 11.09},
-                            from8001to9000: {start: 8001,end: 9000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
-                            from9001to10000: {start: 9001,end: 10000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
-                            from10001to11000: {start: 10001,end: 11000, unit: 'g',lowPriceDeliveryFee: 11.52,standardDeliveryFee: 12.43},
-                            from11001to12000: {start: 11001,end: 12000, unit: 'g',lowPriceDeliveryFee: 11.75,standardDeliveryFee: 12.66}
+                            from251to500: {start: 250,end: 500, unit: 'g',lowPriceDeliveryFee: 6.39,standardDeliveryFee: 7.3},
+                            from501to1000: {start: 500,end: 1000, unit: 'g',lowPriceDeliveryFee: 7.98,standardDeliveryFee: 8.89},
+                            from1001to1500: {start: 1000,end: 1500, unit: 'g',lowPriceDeliveryFee: 8.36,standardDeliveryFee: 9.27},
+                            from1501to2000: {start: 1500,end: 2000, unit: 'g',lowPriceDeliveryFee: 8.8,standardDeliveryFee: 9.71},
+                            from2001to3000: {start: 2000,end: 3000, unit: 'g',lowPriceDeliveryFee: 9.26,standardDeliveryFee: 10.17},
+                            from3001to4000: {start: 3000,end: 4000, unit: 'g',lowPriceDeliveryFee: 10.04,standardDeliveryFee: 10.95},
+                            from4001to5000: {start: 4000,end: 5000, unit: 'g',lowPriceDeliveryFee: 10.05,standardDeliveryFee: 10.96},
+                            from5001to6000: {start: 5000,end: 6000, unit: 'g',lowPriceDeliveryFee: 10.08,standardDeliveryFee: 10.99},
+                            from6001to7000: {start: 6000,end: 7000, unit: 'g',lowPriceDeliveryFee: 10.14,standardDeliveryFee: 11.05},
+                            from7001to8000: {start: 7000,end: 8000, unit: 'g',lowPriceDeliveryFee: 10.18,standardDeliveryFee: 11.09},
+                            from8001to9000: {start: 8000,end: 9000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from9001to10000: {start: 9000,end: 10000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from10001to11000: {start: 10000,end: 11000, unit: 'g',lowPriceDeliveryFee: 11.52,standardDeliveryFee: 12.43},
+                            from11001to12000: {start: 11000,end: 12000, unit: 'g',lowPriceDeliveryFee: 11.75,standardDeliveryFee: 12.66}
                         }
                     },
                     '小号大件': {
@@ -652,15 +651,14 @@
                             unit: 'cm'
                         },
                         weight: {
-                            from11001to12000: {start: 11001,end: 12000, unit: 'g',lowPriceDeliveryFee: 11.75,standardDeliveryFee: 12.66},
                             from0to1000: {start: 0,end: 1000, unit: 'g',lowPriceDeliveryFee: 8.92,standardDeliveryFee: 9.83},
-                            from1001to1250: {start: 1001,end: 1250, unit: 'g',lowPriceDeliveryFee: 9.09,standardDeliveryFee: 10},
-                            from1251to1500: {start: 1251,end: 1500, unit: 'g',lowPriceDeliveryFee: 9.77,standardDeliveryFee: 10.68},
-                            from1501to1750: {start: 1501,end: 1750, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
-                            from1751to2000: {start: 1751,end: 2000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from1001to1250: {start: 1000,end: 1250, unit: 'g',lowPriceDeliveryFee: 9.09,standardDeliveryFee: 10},
+                            from1251to1500: {start: 1250,end: 1500, unit: 'g',lowPriceDeliveryFee: 9.77,standardDeliveryFee: 10.68},
+                            from1501to1750: {start: 1500,end: 1750, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from1751to2000: {start: 1750,end: 2000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
                             // 重量超过 23 千克的商品，禁止使用亚马逊物流配送
                             from2001to23000: {
-                                start: 2001,
+                                start: 2000,
                                 end: 23000,
                                 unit: 'g',
                                 lowPriceDeliveryFee: 10.59,
@@ -683,18 +681,18 @@
                         },
                         weight: {
                             from0to1000: {start: 0,end: 1000, unit: 'g',lowPriceDeliveryFee: 11.03,standardDeliveryFee: 11.94},
-                            from1001to2000: {start: 1001,end: 2000, unit: 'g',lowPriceDeliveryFee: 11.65,standardDeliveryFee: 12.56},
-                            from2001to3000: {start: 2001,end: 3000, unit: 'g',lowPriceDeliveryFee: 11.94,standardDeliveryFee: 12.85},
-                            from3001to4000: {start: 3001,end: 4000, unit: 'g',lowPriceDeliveryFee: 11.97,standardDeliveryFee: 12.88},
-                            from4001to5000: {start: 4001,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.42,standardDeliveryFee: 13.33},
-                            from5001to6000: {start: 5001,end: 6000, unit: 'g',lowPriceDeliveryFee: 12.72,standardDeliveryFee: 13.63},
-                            from6001to7000: {start: 6001,end: 7000, unit: 'g',lowPriceDeliveryFee: 12.73,standardDeliveryFee: 13.64},
-                            from7001to8000: {start: 7001,end: 8000, unit: 'g',lowPriceDeliveryFee: 12.75,standardDeliveryFee: 13.66},
-                            from8001to9000: {start: 8001,end: 9000, unit: 'g',lowPriceDeliveryFee: 13.01,standardDeliveryFee: 13.92},
-                            from9001to10000: {start: 9001,end: 10000, unit: 'g',lowPriceDeliveryFee: 13.21,standardDeliveryFee: 14.12},
-                            from10001to15000: {start: 10001,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.27,standardDeliveryFee: 15.18},
-                            from15001to20000: {start: 15001,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.4,standardDeliveryFee: 16.31},
-                            from20001to22000: {start: 20001,end: 22000, unit: 'g',lowPriceDeliveryFee: 15.74,standardDeliveryFee: 16.65},
+                            from1001to2000: {start: 1000,end: 2000, unit: 'g',lowPriceDeliveryFee: 11.65,standardDeliveryFee: 12.56},
+                            from2001to3000: {start: 2000,end: 3000, unit: 'g',lowPriceDeliveryFee: 11.94,standardDeliveryFee: 12.85},
+                            from3001to4000: {start: 3000,end: 4000, unit: 'g',lowPriceDeliveryFee: 11.97,standardDeliveryFee: 12.88},
+                            from4001to5000: {start: 4000,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.42,standardDeliveryFee: 13.33},
+                            from5001to6000: {start: 5000,end: 6000, unit: 'g',lowPriceDeliveryFee: 12.72,standardDeliveryFee: 13.63},
+                            from6001to7000: {start: 6000,end: 7000, unit: 'g',lowPriceDeliveryFee: 12.73,standardDeliveryFee: 13.64},
+                            from7001to8000: {start: 7000,end: 8000, unit: 'g',lowPriceDeliveryFee: 12.75,standardDeliveryFee: 13.66},
+                            from8001to9000: {start: 8000,end: 9000, unit: 'g',lowPriceDeliveryFee: 13.01,standardDeliveryFee: 13.92},
+                            from9001to10000: {start: 9000,end: 10000, unit: 'g',lowPriceDeliveryFee: 13.21,standardDeliveryFee: 14.12},
+                            from10001to15000: {start: 10000,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.27,standardDeliveryFee: 15.18},
+                            from15001to20000: {start: 15000,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.4,standardDeliveryFee: 16.31},
+                            from20001to22000: {start: 20000,end: 22000, unit: 'g',lowPriceDeliveryFee: 15.74,standardDeliveryFee: 16.65},
                             // 重量超过 23 千克的商品，禁止使用亚马逊物流配送
                             from22000to23000: {
                                 start: 22000,
@@ -720,12 +718,12 @@
                         },
                         weight: {
                             from0to5000: {start: 0,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.46,standardDeliveryFee: 13.37},
-                            from5001to10000: {start: 5001,end: 10000, unit: 'g',lowPriceDeliveryFee: 12.92,standardDeliveryFee: 13.83},
-                            from10001to15000: {start: 10001,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.33,standardDeliveryFee: 15.24},
-                            from15001to20000: {start: 15001,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.95,standardDeliveryFee: 16.86},
-                            from20001to25000: {start: 20001,end: 25000, unit: 'g',lowPriceDeliveryFee: 18.04,standardDeliveryFee: 18.95},
-                            from25001to30000: {start: 25001,end: 30000, unit: 'g',lowPriceDeliveryFee: 19.09,standardDeliveryFee: 20},
-                            from30001to35000: {start: 30001,end: 35000, unit: 'g',lowPriceDeliveryFee: 24.09,standardDeliveryFee: 25}
+                            from5001to10000: {start: 5000,end: 10000, unit: 'g',lowPriceDeliveryFee: 12.92,standardDeliveryFee: 13.83},
+                            from10001to15000: {start: 10000,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.33,standardDeliveryFee: 15.24},
+                            from15001to20000: {start: 15000,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.95,standardDeliveryFee: 16.86},
+                            from20001to25000: {start: 20000,end: 25000, unit: 'g',lowPriceDeliveryFee: 18.04,standardDeliveryFee: 18.95},
+                            from25001to30000: {start: 25000,end: 30000, unit: 'g',lowPriceDeliveryFee: 19.09,standardDeliveryFee: 20},
+                            from30001to35000: {start: 30000,end: 35000, unit: 'g',lowPriceDeliveryFee: 24.09,standardDeliveryFee: 25}
                         }
                     },
                     '超大件': {
@@ -748,24 +746,49 @@
                     }
                 },
                 JP: {
-                    '小号信封': {
-                        name: '小号信封',
+                    '小号': {
+                        name: '小号',
                         side: {//边长标准
-                            longestSide: 20,// 最长边
-                            secondSide: 15,// 次长边
-                            shortestSide: 1,// 最短边
+                            longestSide: 25,// 最长边
+                            secondSide: 18,// 次长边
+                            shortestSide: 2,// 最短边
                             unit: 'cm'
                         },
                         weight: {
-                            from0To75: {
+                            from0To250: {
                                 start: 0,
-                                end: 75,
+                                end: 250,
                                 unit: 'g',
-                                lowPriceDeliveryFee: 3.36,// 售价不超过13澳元的低价商品FBA配送费
-                                standardDeliveryFee: 4.27// 售价超过13澳元的标准商品FBA配送费
+                                lowPriceDeliveryFee: 222,// 售价不超过1000日元的低价商品FBA配送费
+                                standardDeliveryFee: 288// 售价超过1000日元的标准商品FBA配送费
                             }
                         }
                     },
+                    '标准尺寸1': {
+                        name: '标准尺寸1',
+                        side: {//边长标准
+                            longestSide: 35,// 最长边
+                            secondSide: 30,// 次长边
+                            shortestSide: 3.3,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To250: {
+                                start: 0,
+                                end: 250,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 252,// 售价不超过1000日元的低价商品FBA配送费
+                                standardDeliveryFee: 318// 售价超过1000日元的标准商品FBA配送费
+                            },
+                            from250To1000: {
+                                start: 250,
+                                end: 1000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 252,// 售价不超过1000日元的低价商品FBA配送费
+                                standardDeliveryFee: 318// 售价超过1000日元的标准商品FBA配送费
+                            }
+                        }
+                    }
                 }
             },
             sizeType: {},
@@ -835,6 +858,15 @@
             },
             // 先根据重量再看尺寸进行配送费计算
             classificationHandler() {
+                this.FBADeliveryFee = {...{// 标准配送费
+                        lowPrice: 0.0,// 售价不超过10刀的低价商品FBA配送费
+                        standard: 0.0,// 标准配送费
+                        highLowPrice: 0.0,// 高一档低价配送费
+                        highStandard: 0.0// 高一档标准配送费
+                    }}
+                this.classification = ''
+                this.highClassification = ''
+
                 // 取出尺寸中符合重量要求的重量区间
                 const weightRangeMap = {}
                 if (this.weight.lb > 0) {
@@ -849,7 +881,15 @@
                     for (let sizeTypeKey in this.sizeType) {
                         const sizeTypeVal = this.sizeType[sizeTypeKey]
                         const arr = [this.size.length[sizeTypeVal.side.unit], this.size.width[sizeTypeVal.side.unit], this.size.height[sizeTypeVal.side.unit]]
-                        if (this.matchConditions(sizeTypeVal.side, arr)) {
+                        // 日本专属尺寸标准，没有次长边则进入此处
+                        if (this.siteName === 'JP' && !sizeTypeVal.side.secondSide) {
+                            const unit = sizeTypeVal.side.unit
+                            // 长宽高和
+                            if (this.size.length[unit] + this.size.width[unit] + this.size.height[unit] <= sizeTypeVal.side.longestSide) {
+                                sizeTypeNameBySize = sizeTypeKey
+                                break
+                            }
+                        } else if (this.matchConditions(sizeTypeVal.side, arr)) {
                             sizeTypeNameBySize = sizeTypeKey
                             break
                         }
@@ -882,7 +922,7 @@
                                 if (i === 1) {
                                     range = range['next']
                                 }
-                                if (range !== null) {
+                                if (range !== null && range !== undefined) {
                                     // 有高一阶时直接输入
                                     highDeliveryFee = this.getDeliveryFee(range)
                                     this.highClassification = this.sizeType[keys[i]].name
@@ -916,7 +956,7 @@
                                         if (j === 1) {
                                             range = range['next']
                                         }
-                                        if (range !== null) {
+                                        if (range !== null && range !== undefined) {
                                             // 有高一阶时直接输入
                                             highDeliveryFee = this.getDeliveryFee(range)
                                             console.log('取下一尺寸取适配重量，获取next:'+highDeliveryFee.fee)
@@ -967,7 +1007,7 @@
                                     if (j === 1) {
                                         range = range['next']
                                     }
-                                    if (range !== null) {
+                                    if (range !== null && range !== undefined) {
                                         // 有高一阶时直接输入
                                         highDeliveryFee = this.getDeliveryFee(range)
                                         this.highClassification = this.sizeType[keys[j]].name
