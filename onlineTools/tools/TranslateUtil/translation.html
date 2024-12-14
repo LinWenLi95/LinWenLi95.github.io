@@ -116,9 +116,9 @@
             // 提取文案
             extractHandler(response, file, fileList) {
                 // 限制只保留一个文件
-                if (fileList.length > 1) {
-                    this.fileList = [fileList[fileList.length - 1]];
-                }
+                // if (fileList.length > 1) {
+                //     this.fileList = [fileList[fileList.length - 1]];
+                // }
                 this.fileName = file.name
                 // 提取
                 const reader = new FileReader();
