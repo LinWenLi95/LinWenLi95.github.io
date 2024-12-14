@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>翻译测试</title>
+    <!-- 引入Element UI的CSS样式 -->
+    <link href="css/element-ui.css" rel="stylesheet">
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 使容器的高度为窗口高度 */
+        }
+    </style>
+</head>
+<body>
+<div id="app" class="container">
+    <el-card>
+        <div slot="header" class="clearfix">
+            <span>多站点翻译</span>
+<!--            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>-->
+        </div>
+        <el-form style="width: 580px;">
+            <el-form-item label="源站点表格:" style="margin-left: 50px">
+                <el-upload
+                    ref="upload"
+                    drag
+                    action
+                    :multiple="false"
+                    :on-success="extractHandler"
+                    :file-list="fileList"
+                >
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item label="翻译语言:" style="margin-left: 50px">
+                <div style="display:inline-block;width: 500px;">
+                    <el-checkbox :checked="true" disabled>英语</el-checkbox>
+                    <el-checkbox v-for="item in languages" :key="item.code" v-model="item.selected">{{item.name}}</el-checkbox>
+                </div>
+            </el-form-item>
+            <el-form-item label="翻译文案:" style="margin-left: 50px">
+                <el-checkbox v-for="item in translateAttrOptions" :key="item.code" v-model="item.selected" v-show="!item.hide" @change="bulletPointHandler(item.code,item.selected)">{{item.name}}</el-checkbox>
+            </el-form-item>
+            <div style="display: flex; justify-content: center;">
+                <span v-show="btn.disabled" style="color: #0099FF">{{progress}}%</span>
+            </div>
+            <div style="display: flex; justify-content: center;">
+                <el-button type="primary" :disabled="btn.disabled" @click="btnHandler" :icon="btn.icon">{{btn.text}}</el-button>
+            </div>
+        </el-form>
+
+<!--        <el-input v-model="text"></el-input>-->
+<!--        <el-button @click="translateHandler">测试</el-button>-->
+    </el-card>
+</div>
+<!-- 引入Vue.js -->
+<script src="js/vue.min.2.6.14.js"></script>
+<!-- 引入Element UI的JavaScript库 -->
+<script src="js/element-ui.js"></script>
+<script src='js/md5.js' charset='utf-8'></script>
+<script>
+    // 创建一个Vue实例
+    new Vue({
+        el: '#app',
+        data: {
+            showUpload: true,
+            text: '',
+            languages: [
+                { name: '法语', code: 'fra', selected: true },
+                { name: '德语', code: 'de', selected: false },
+                { name: '意大利语', code: 'it', selected: true },
+                { name: '西班牙语', code: 'spa', selected: true },
+                { name: '瑞典语', code: 'swe', selected: true },
+                { name: '荷兰语', code: 'nl', selected: true },
+                { name: '波兰语', code: 'pl', selected: true },
+                { name: '日语', code: 'jp', selected: true },
+                { name: '土耳其语', code: 'tr', selected: false }
+            ],
+            translateAttrOptions: [
+                { name: '标题', enName: 'itemName', code: 'item_name', selected: true },
+                { name: '五点', enName: 'bulletPoint', code: 'bullet_point', selected: true },
+                { name: '五点1', enName: 'bulletPoint1', code: 'bullet_point1', selected: true, hide: true },
+                { name: '五点2', enName: 'bulletPoint2', code: 'bullet_point2', selected: true, hide: true },
+                { name: '五点3', enName: 'bulletPoint3', code: 'bullet_point3', selected: true, hide: true },
+                { name: '五点4', enName: 'bulletPoint4', code: 'bullet_point4', selected: true, hide: true },
+                { name: '五点5', enName: 'bulletPoint5', code: 'bullet_point5', selected: true, hide: true },
+                { name: '详情', enName: 'productDescription', code: 'product_description', selected: true },
+                { name: '搜索关键词', enName: 'genericKeywords', code: 'generic_keywords', selected: true },
+            ],
+            fileList: [],
+            fileName: '',
+            btn: {
+                text: '提取文案并翻译',
+                icon: '',
+                disabled: false
+            },
+            progress: 0
+        },
+        mounted() {
+        },
+        methods: {
+            // 选择五点
+            bulletPointHandler(code, selected) {
+                if (code === 'bullet_point') {
+                    for (const option of this.translateAttrOptions) {
+                        if (option.code.includes('bullet_point')) {
+                            option.selected = selected
+                        }
+                    }
+                }
+            },
+            // 提取文案
+            extractHandler(response, file, fileList) {
+                // 限制只保留一个文件
+                if (fileList.length > 1) {
+                    this.fileList = [fileList[fileList.length - 1]];
+                }
+                this.fileName = file.name
+                // 提取
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    console.log(jsonData);
+                    // 处理jsonData，例如：更新组件的数据等
+                };
+                reader.readAsArrayBuffer(file.raw);
+            },
+            btnLoading() {
+                this.btn.icon = 'el-icon-loading'
+                this.btn.disabled = true
+            },
+            btnReset() {
+                this.btn = {
+                    text: '提取文案并翻译',
+                    icon: '',
+                    disabled: false
+                }
+            },
+            btnHandler() {
+                // 按钮改加载状态
+                this.btnLoading()
+                // 获取要翻译的站点
+                // 获取要翻译的文案
+                setInterval(() => {
+                    this.progress+=10
+                }, 1000);
+            },
+            translateHandler() {
+                const q = this.text
+                const from = 'en'
+                const to = 'jp'
+                this.translate(q, from, to)
+                // item_name	product_description	bullet_point1	bullet_point2	bullet_point3	bullet_point4	bullet_point5	generic_keywords
+                // 单次最长字符
+                // 勾选需翻译项
+                // 勾选需要翻译的站点
+        //                 标准版：提供基础文本翻译服务，无需认证即可使用。如需使用自定义术语翻译功能，请完成个人/企业认证。
+        // 			  每月5万字符免费，QPS 为 1，单次最长请求1000字符。
+        // 高级版：完成个人认证可升级使用高级版服务，提供基础文本翻译服务，支持自定义术语翻译功能。
+        //               每月100万字符免费， QPS 为 10，单次最长请求6000字符。
+        // 尊享版：完成企业认证可可升级使用尊享版服务，提供基础文本翻译服务，支持自定义术语翻译功能。
+        //               每月200万字符免费， QPS 为 100，单次最长请求6000字符。
+            },
+            translate(q, from, to) {
+                const appid = '20200914000565844'
+                const secretKey = 'okF8YhFY_VFTvCc1KT9t'
+                const siteCode = ['zh','en','fra','de','it','spa','swe','nl','pl','jp','tr']
+                let url = 'https://fanyi-api.baidu.com/api/trans/vip/translate'
+
+                const param = {
+                    q: encodeURI(q),//	string	是	请求翻译query	UTF-8编码
+                    from,//	string	是	翻译源语言	可设置为auto
+                    to,//	string	是	翻译目标语言	不可设置为auto
+                    appid,//	string	是	APPID	可在管理控制台查看
+                    salt: this.generateRandom(),//	string	是	随机数	可为字母或数字的字符串
+                    sign: '' //	string	是	签名	appid+q+salt+密钥的MD5值
+                }
+                param.sign = md5(appid+q+param.salt+secretKey)
+                console.log(JSON.stringify(param))
+                // {
+                //     "from": "en",
+                //     "to": "jp",
+                //     "trans_result": [
+                //         {
+                //             "src": "The weather is really nice today",
+                //             "dst": "今日はいい天気ですね"
+                //         }
+                //     ]
+                // }
+                // fetch(url, {
+                //     method: 'post',
+                //     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                //     body: JSON.stringify(param)
+                // })
+                //     .then(response => response.json())
+                //     .then(data => {
+                //         console.log('data:')
+                //         console.log(data)
+                //         data['trans_result']
+                //
+                //     })
+                //     .catch(error => console.error('Error:', error));
+            },
+            generateRandom() {
+                return Math.random().toString(16).slice(2);
+            }
+        }
+    })
+</script>
+</body>
+</html>
