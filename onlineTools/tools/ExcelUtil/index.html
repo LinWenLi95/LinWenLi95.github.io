@@ -107,7 +107,7 @@
 <body>
 <div class="container">
     <div id="borderDiv" class="div-3d-border">
-        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.6</label><br/>
+        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.8</label><br/>
         <div id="bodyDiv">
             <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(1)">功能说明</a>
             <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(2)">使用步骤</a>
@@ -156,6 +156,7 @@
         "NL": "荷兰",
         "SE": "瑞典",
         "PL": "波兰",
+        "TR": "土耳其",
         "JP": "日本",
         "AU": "澳大利亚",
         "SG": "新加坡",
@@ -176,6 +177,7 @@
         "NL": 5,
         "SE": 52,
         "PL": 20,
+        "TR": 9,
         "JP": 780,
         "AU": 8,
         "SG": 7,
@@ -251,13 +253,6 @@
                         targetWorkBookMap[site] = workBook
                         // 显示文件名及页面下拉框
                         const targetDiv = document.getElementById('targetDiv')
-                        // const html = `<div style="display: inline-block;width: 100px">` +
-                        //     `<label style="font-size: 12px">${shortenStr(file.name)}</label></div>`+
-                        //     `<label>Sheet:</label><select id="${site + 'ListPricePlus'}"></select>` +
-                        //     `<label>Price+</label>` +
-                        //     `<input id="${site + 'ListPricePlus'}" type="number" value="${listPricePlus[site]}" style="width: 40px;">` +
-                        //     `<br/>`
-                        // targetDiv.innerHTML = html
 
                         // 文件名
                         const div1 = document.createElement('div');
@@ -393,7 +388,9 @@
                             <label>&nbsp;&nbsp;1. 补充操作逻辑验证及文件校验</label><br/>
                             <label>&nbsp;&nbsp;2. 界面优化调整</label><br/>
                             <label>&nbsp;&nbsp;3. 添加窗体拖动</label><br/><br/>
-                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/>`
+                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/>
+                            <label>12.13 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;添加固定项按站点调整选项</label><br/>
                 }
             }
             div.style.display = 'block'
@@ -434,7 +431,440 @@
         console.log(listPricePlus)
         executeData2Excel();
     });
-
+    // 属性列表 不同站点对应同一属性的不同选项
+    const attrWords = {
+        update_delete: {
+            'US': ['Update', 'PartialUpdate', 'Delete'],
+            'CA': ['Update', 'PartialUpdate', 'Delete'],
+            'MX': ['Actualizar', 'Actualizar Parcialmente', 'Borrar'],
+            'BR': [],//暂无表格
+            'UK': ['Update', 'PartialUpdate', 'Delete'],
+            'FR': ['Actualisation', 'Actualisation partielle', 'Supprimer'],
+            'DE': ['Aktualisierung', 'Partielle Aktualisierung', 'Löschung'],
+            'IT': ['Aggiorna', 'AggiornamentoParziale', 'Elimina'],
+            'ES': ['Actualización', 'Actualizar parcialmente', 'Eliminación'],
+            'BE': ['update', 'partialupdate', 'delete'],
+            'NL': ['Verwijderen', 'Partiaalupdate', 'Bijwerken'],
+            'SE': ['Radera', 'Partielluppdatering', 'Uppdatera'],
+            'PL': ['Aktualizuj', 'partialupdate', 'delete'],
+            'TR': [],// 暂无表格
+            'JP': ['Update', 'PartialUpdate', 'Delete'],
+            'AU': ['Update', 'PartialUpdate', 'Delete'],
+            'SG': ['Update', 'PartialUpdate', 'Delete'],
+            'AE': ['Update', 'partialupdate', 'delete'],
+            'SA': ['Update', 'partialupdate', 'delete'],
+        },
+        external_product_id_type: {
+            'US': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'CA': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'MX': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'BR': [],
+            'UK': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'FR': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'DE': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'IT': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'ES': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'BE': ['gtin', 'ean', 'gcid','upc', 'asin', 'isbn'],
+            'NL': ['GTIN', 'EAN', 'GCID (algemene catalogus-id)', 'UPC', 'ASIN'],
+            'SE': ['Gtin', 'Ean', 'Gcid (gcid)', 'Upc', 'asin', 'ISBN'],
+            'PL': ['gtin', 'ean', 'gcid','upc', 'asin'],
+            'TR': [],
+            'JP': ['GTIN', 'EAN/JAN', 'GCID', 'UPC', 'ASIN'],
+            'AU': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'SG': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
+            'AE': ['Gtin', 'Ean', 'Gcid','Upc', 'asin', 'ISBN'],
+            'SA': ['Gtin', 'Ean', 'Gcid','Upc', 'asin', 'ISBN'],
+        },
+        // 父子变体关系
+        parent_child: {
+            'US': ['Parent', 'Child'],
+            'CA': ['Parent', 'Child'],
+            'MX': ['Padre', 'Niño'],
+            'BR': [],
+            'UK': ['Parent', 'Child'],
+            'FR': ['Parent', 'Enfant'],
+            'DE': ['Parent', 'Child'],
+            'IT': ['Parent', 'Child'],
+            'ES': ['Principal', 'Hijo'],
+            'BE': ['parent', 'child'],
+            'NL': ['Onderliggend', 'Bovenliggend'],
+            'SE': ['Barn', 'Förälder'],
+            'PL': ['Nadrzędny', 'Dziecko'],
+            'TR': [],
+            'JP': ['Parent', 'Child'],
+            'AU': ['Parent', 'Child'],
+            'SG': ['Parent', 'Child'],
+            'AE': ['Parent', 'Child'],
+            'SA': ['Parent', 'Child'],
+        },
+        // 变体关系
+        relationship_type: {
+            'US': ['Accessory', 'Variation', 'package_contains'],
+            'CA': ['Accessory', 'Variation'],
+            'MX': ['Accesorio', 'Variation', 'variation'],
+            'BR': [],
+            'UK': ['Accessory', 'Variation', 'package_contains'],
+            'FR': ['Accessory', 'Variation', 'package_contains'],
+            'DE': ['Accessory', 'Variation', 'package_contains'],
+            'IT': ['Accessory', 'Variation', 'package_contains'],
+            'ES': ['Accessory', 'Variation', 'package_contains'],
+            'BE': ['', 'variation'],
+            'NL': ['Accessoire', 'Variatie', 'variation'],
+            'SE': ['Tillbehör', 'Variation', 'Variationer'],
+            'PL': ['', 'Opcja'],
+            'TR': [],
+            'JP': ['Accessory', 'Variation', 'package_contains'],
+            'AU': ['', 'Variation'],
+            'SG': ['Accessory', 'Variation'],
+            'AE': ['', 'Variation'],
+            'SA': ['Accessory', 'Variation'],
+        },
+        // Months/Years
+        mfg_minimum_unit_of_measure: {
+            'US': ['Months', 'Years'],
+            'CA': ['Months', 'Years'],
+            'MX': ['Meses', 'Años'],
+            'BR': [],
+            'UK': ['Months', 'Years'],
+            'FR': ['Mois', 'Années'],
+            'DE': ['Monate', 'Jahre'],
+            'IT': ['Mesi', 'Anni'],
+            'ES': ['Meses', 'Años'],
+            'BE': ['months', 'years'],
+            'NL': ['6 maanden', 'Jaren'],
+            'SE': ['Månader', 'År'],
+            'PL': ['Miesiące', 'Lata'],
+            'TR': [],
+            'JP': ['Months', 'Years'],
+            'AU': ['Months', 'Years'],
+            'SG': ['Months', 'Years'],
+            'AE': ['Months', 'Years'],
+            'SA': ['Months', 'Years'],
+        },
+        mfg_maximum_unit_of_measure: {
+            'US': ['Months', 'Years'],
+            'CA': ['Months', 'Years'],
+            'MX': ['Meses', 'Años'],
+            'BR': [],
+            'UK': ['Months', 'Years'],
+            'FR': ['Mois', 'Années'],
+            'DE': ['Monate', 'Jahre'],
+            'IT': ['Mesi', 'Anni'],
+            'ES': ['Meses', 'Años'],
+            'BE': ['months', 'years'],
+            'NL': ['6 maanden', 'Jaren'],
+            'SE': ['Månader', 'År'],
+            'PL': ['Miesiące', 'Lata'],
+            'TR': [],
+            'JP': ['Months', 'Years'],
+            'AU': ['Months', 'Years'],
+            'SG': ['Months', 'Years'],
+            'AE': ['Months', 'Years'],
+            'SA': ['Months', 'Years'],
+        },
+        target_audience_keywords: {
+            'US': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+            'CA': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+            'MX': ['Mujeres', 'Niños unisex', 'Hombres', 'Niños', 'Niñas', 'Adultos unisex'],
+            'BR': [],
+            'UK': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+            'FR': ['Femme', 'Enfants unisexes', 'Homme', 'Garçon', 'Fille', 'Adulte unisexe'],
+            'DE': ['Damen', 'Unisex-Kinder', 'Herren', 'Jungen', 'Mädchen', 'Unisex – Erwachsene'],
+            'IT': ['Donna', 'Bambini unisex', 'Uomo', 'Ragazzo', 'Ragazza', 'Unisex adulto'],
+            'ES': ['Mujeres', 'Niños unisex', 'Hombres', 'Niños', 'Niñas', 'Adultos unisex'],
+            'BE': ['Femme', 'Enfants unisexes', 'Homme', 'Garçon','Fille', 'Adulte unisexe'],
+            'NL': ['Vrouwen', 'Uniseks kinderen', 'Mannen', 'Jongens', 'Meisjes', 'Unisex volwassene'],
+            'SE': ['Kvinnor', 'Unisex – barn', 'Män', 'pojkar', 'flickor', 'Unisex – vuxen'],
+            'PL': ['Kobiety', 'Unisex — dla dorosłych', 'Dla meżczyzn', 'dla chłopców', 'dziewczyny', 'Unisex — dla dzieci'],
+            'TR': [],
+            'JP': ['女性用', '男女子両用', '男性用', '男子用', '女子用', '男女両用'],
+            'AU': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+            'SG': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+            'AE': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+            'SA': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
+        },
+        // Yes/No
+        is_assembly_required: {
+            'US': ['Yes', 'No'],
+            'CA': ['Yes', 'No'],
+            'MX': ['Sí', 'No'],
+            'BR': [],
+            'UK': ['Yes', 'No'],
+            'FR': ['Oui', 'Non'],
+            'DE': ['Ja', 'Nein'],
+            'IT': ['Sì', 'No'],
+            'ES': ['Sí', 'No'],
+            'BE': ['Oui', 'Non'],
+            'NL': ['Actief', 'Niet-actief'],
+            'SE': ['Ja', 'Nej'],
+            'PL': ['Tak', 'Nie'],
+            'TR': [],
+            'JP': ['はい', 'いいえ'],
+            'AU': ['Yes', 'No'],
+            'SG': ['Yes', 'No'],
+            'AE': ['Yes', 'No'],
+            'SA': ['Yes', 'No'],
+        },
+        includes_remote: {
+            'US': ['Yes', 'No'],
+            'CA': ['Yes', 'No'],
+            'MX': ['Sí', 'No'],
+            'BR': [],
+            'UK': ['Yes', 'No'],
+            'FR': ['Oui', 'Non'],
+            'DE': ['Ja', 'Nein'],
+            'IT': ['Sì', 'No'],
+            'ES': ['Sí', 'No'],
+            'BE': ['Oui', 'Non'],
+            'NL': ['Actief', 'Niet-actief'],
+            'SE': ['Ja', 'Nej'],
+            'PL': ['Tak', 'Nie'],
+            'TR': [],
+            'JP': ['はい', 'いいえ'],
+            'AU': ['Yes', 'No'],
+            'SG': ['Yes', 'No'],
+            'AE': ['Yes', 'No'],
+            'SA': ['Yes', 'No'],
+        },
+        // DEFAULT
+        fulfillment_center_id: {
+            'US': ['AMAZON_NA', 'DEFAULT'],
+            'CA': ['AMAZON_NA', 'DEFAULT'],
+            'MX': ['AMAZON_NA', 'DEFAULT'],
+            'BR': [],
+            'UK': ['AMAZON_EU', 'DEFAULT'],
+            'FR': ['AMAZON_EU', 'DEFAULT'],
+            'DE': ['AMAZON_EU', 'DEFAULT'],
+            'IT': ['AMAZON_EU', 'DEFAULT'],
+            'ES': ['AMAZON_EU', 'DEFAULT'],
+            'BE': ['AMAZON_EU', 'DEFAULT'],
+            'NL': ['AMAZON_EU', 'DEFAULT'],
+            'SE': ['AMAZON_EU', 'default'],
+            'PL': ['AMAZON_EU', 'DEFAULT'],
+            'TR': [],
+            'JP': ['AMAZON_JP', 'DEFAULT'],
+            'AU': ['AMAZON_JP', 'DEFAULT'],
+            'SG': ['AMAZON_JP', 'DEFAULT'],
+            'AE': [],// 无此项
+            'SA': []// 无此项
+        },
+        // IN
+        item_length_unit_of_measure: {
+            'US': ['IN'],
+            'CA': ['IN'],
+            'MX': ['IN'],
+            'BR': [],
+            'UK': ['IN', 'CM', 'MM'],
+            'FR': ['IN', 'CM', 'MM'],
+            'DE': ['IN', 'CM', 'MM'],
+            'IT': ['IN', 'CM', 'MM'],
+            'ES': ['IN', 'CM', 'MM'],
+            'BE': ['inches', 'centimeters', 'millimeters'],
+            'NL': ['inch', 'centimeter', 'millimeter'],
+            'SE': ['Tum', 'centimeter', 'Millimeter'],
+            'PL': ['cale', 'centymetry', 'Milimetry'],
+            'TR': [],
+            'JP': ['IN', 'CM', 'MM'],
+            'AU': ['IN', 'CM', 'MM'],
+            'SG': ['IN', 'CM', 'MM'],
+            'AE': ['Inches', 'centimeters', 'Millimeters'],
+            'SA': ['Inches', 'centimeters', 'Millimeters'],
+        },
+        item_height_unit_of_measure: {
+            'US': ['IN'],
+            'CA': ['IN'],
+            'MX': ['IN'],
+            'BR': [],
+            'UK': ['IN', 'CM', 'MM'],
+            'FR': ['IN', 'CM', 'MM'],
+            'DE': ['IN', 'CM', 'MM'],
+            'IT': ['IN', 'CM', 'MM'],
+            'ES': ['IN', 'CM', 'MM'],
+            'BE': ['inches', 'centimeters', 'millimeters'],
+            'NL': ['inch', 'centimeter', 'millimeter'],
+            'SE': ['Tum', 'centimeter', 'Millimeter'],
+            'PL': ['cale', 'centymetry', 'Milimetry'],
+            'TR': [],
+            'JP': ['IN', 'CM', 'MM'],
+            'AU': ['IN', 'CM', 'MM'],
+            'SG': ['IN', 'CM', 'MM'],
+            'AE': ['Inches', 'centimeters', 'Millimeters'],
+            'SA': ['Inches', 'centimeters', 'Millimeters'],
+        },
+        item_width_unit_of_measure: {
+            'US': ['IN'],
+            'CA': ['IN'],
+            'MX': ['IN'],
+            'BR': [],
+            'UK': ['IN', 'CM', 'MM'],
+            'FR': ['IN', 'CM', 'MM'],
+            'DE': ['IN', 'CM', 'MM'],
+            'IT': ['IN', 'CM', 'MM'],
+            'ES': ['IN', 'CM', 'MM'],
+            'BE': ['inches', 'centimeters', 'millimeters'],
+            'NL': ['inch', 'centimeter', 'millimeter'],
+            'SE': ['Tum', 'centimeter', 'Millimeter'],
+            'PL': ['cale', 'centymetry', 'Milimetry'],
+            'TR': [],
+            'JP': ['IN', 'CM', 'MM'],
+            'AU': ['IN', 'CM', 'MM'],
+            'SG': ['IN', 'CM', 'MM'],
+            'AE': ['Inches', 'centimeters', 'Millimeters'],
+            'SA': ['Inches', 'centimeters', 'Millimeters'],
+        },
+        package_length_unit_of_measure: {
+            'US': ['IN'],
+            'CA': ['IN'],
+            'MX': ['IN'],
+            'BR': [],
+            'UK': ['IN', 'CM', 'MM'],
+            'FR': ['IN', 'CM', 'MM'],
+            'DE': ['IN', 'CM', 'MM'],
+            'IT': ['IN', 'CM', 'MM'],
+            'ES': ['IN', 'CM', 'MM'],
+            'BE': ['inches', 'centimeters', 'millimeters'],
+            'NL': ['inch', 'centimeter', 'millimeter'],
+            'SE': ['Tum', 'centimeter', 'Millimeter'],
+            'PL': ['cale', 'centymetry', 'Milimetry'],
+            'TR': [],
+            'JP': ['IN', 'CM', 'MM'],
+            'AU': ['IN', 'CM', 'MM'],
+            'SG': ['IN', 'CM', 'MM'],
+            'AE': ['Inches', 'centimeters', 'Millimeters'],
+            'SA': ['Inches', 'centimeters', 'Millimeters'],
+        },
+        package_height_unit_of_measure: {
+            'US': ['IN'],
+            'CA': ['IN'],
+            'MX': ['IN'],
+            'BR': [],
+            'UK': ['IN', 'CM', 'MM'],
+            'FR': ['IN', 'CM', 'MM'],
+            'DE': ['IN', 'CM', 'MM'],
+            'IT': ['IN', 'CM', 'MM'],
+            'ES': ['IN', 'CM', 'MM'],
+            'BE': ['inches', 'centimeters', 'millimeters'],
+            'NL': ['inch', 'centimeter', 'millimeter'],
+            'SE': ['Tum', 'centimeter', 'Millimeter'],
+            'PL': ['cale', 'centymetry', 'Milimetry'],
+            'TR': [],
+            'JP': ['IN', 'CM', 'MM'],
+            'AU': ['IN', 'CM', 'MM'],
+            'SG': ['IN', 'CM', 'MM'],
+            'AE': ['Inches', 'centimeters', 'Millimeters'],
+            'SA': ['Inches', 'centimeters', 'Millimeters'],
+        },
+        package_width_unit_of_measure: {
+            'US': ['IN'],
+            'CA': ['IN'],
+            'MX': ['IN'],
+            'BR': [],
+            'UK': ['IN', 'CM', 'MM'],
+            'FR': ['IN', 'CM', 'MM'],
+            'DE': ['IN', 'CM', 'MM'],
+            'IT': ['IN', 'CM', 'MM'],
+            'ES': ['IN', 'CM', 'MM'],
+            'BE': ['inches', 'centimeters', 'millimeters'],
+            'NL': ['inch', 'centimeter', 'millimeter'],
+            'SE': ['Tum', 'centimeter', 'Millimeter'],
+            'PL': ['cale', 'centymetry', 'Milimetry'],
+            'TR': [],
+            'JP': ['IN', 'CM', 'MM'],
+            'AU': ['IN', 'CM', 'MM'],
+            'SG': ['IN', 'CM', 'MM'],
+            'AE': ['Inches', 'centimeters', 'Millimeters'],
+            'SA': ['Inches', 'centimeters', 'Millimeters'],
+        },
+        // LB
+        maximum_weight_recommendation_unit_of_measure: {
+            'US': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'CA': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'MX': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Tons', 'OZ'],
+            'BR': [],
+            'UK': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'FR': ['LB', 'KG', 'GR', 'Centièmes de livre', 'MG', 'Tons', 'OZ'],
+            'DE': ['LB', 'KG', 'GR', 'Hundertstel Pfund', 'MG', 'Tonnen', 'OZ'],
+            'IT': ['LB', 'KG', 'GR', 'Centesimi libbre', 'MG', 'Tonnellate', 'OZ'],
+            'ES': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Toneladas', 'OZ'],
+            'BE': ['pounds', 'kilograms', 'grams', 'Centièmes de livre', 'Milligrammes', 'Tonnes', 'ounces'],
+            'NL': ['pond', 'kilo', 'gram', 'Hundertstel Pfund', 'Milligram', 'Tonnen', 'ounces'],
+            'SE': ['Pound', 'Kilogram', 'Gram', 'Hundredths Pounds', 'Milligram', 'Ton', 'Uns'],
+            'PL': ['Funty', 'Kilogramy', 'Gramy', 'Setne funtów', 'Miligramy', 'Tony', 'Uncje'],
+            'TR': [],
+            'JP': ['LB', 'KG', 'GR', '100分の1ポンド', 'MG', 'トン', 'OZ'],
+            'AU': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'Milligrams', 'Tons', 'OZ'],
+            'SG': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'AE': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces'],
+            'SA': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces'],
+        },
+        package_weight_unit_of_measure: {
+            'US': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'CA': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'MX': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Tons', 'OZ'],
+            'BR': [],
+            'UK': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'FR': ['LB', 'KG', 'GR', 'Centièmes de livre', 'MG', 'Tons', 'OZ'],
+            'DE': ['LB', 'KG', 'GR', 'Hundertstel Pfund', 'MG', 'Tonnen', 'OZ'],
+            'IT': ['LB', 'KG', 'GR', 'Centesimi libbre', 'MG', 'Tonnellate', 'OZ'],
+            'ES': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Toneladas', 'OZ'],
+            'BE': ['pounds', 'kilograms', 'grams', 'Centièmes de livre', 'Milligrammes', 'Tonnes', 'ounces'],
+            'NL': ['pond', 'kilo', 'gram', 'Hundertstel Pfund', 'Milligram', 'Tonnen', 'ounces'],
+            'SE': ['Pound', 'Kilogram', 'Gram', 'Hundredths Pounds', 'Milligram', 'Ton', 'Uns'],
+            'PL': ['Funty', 'Kilogramy', 'Gramy', 'Setne funtów', 'Miligramy', 'Tony', 'Uncje'],
+            'TR': [],
+            'JP': ['LB', 'KG', 'GR', '100分の1ポンド', 'MG', 'トン', 'OZ'],
+            'AU': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'Milligrams', 'Tons', 'OZ'],
+            'SG': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
+            'AE': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces'],
+            'SA': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces'],
+        },
+        // 强制性警示声明
+        // cpsia_cautionary_statement: {},
+        // China
+        country_of_origin: {
+            'US': ['China'],
+            'CA': ['China'],
+            'MX': ['China'],
+            'BR': [],
+            'UK': ['China'],
+            'FR': ['Chine'],
+            'DE': ['China'],
+            'IT': ['Cina'],
+            'ES': ['China'],
+            'BE': ['CN'],
+            'NL': ['China'],
+            'SE': ['Kina'],
+            'PL': ['Chiny'],
+            'TR': [],
+            'JP': ['中国'],
+            'AU': ['China'],
+            'SG': ['China'],
+            'AE': ['China'],
+            'SA': ['China'],
+        },
+        // New
+        condition_type: {
+            'US': ['New'],
+            'CA': ['New'],
+            'MX': ['Nuevo'],
+            'BR': [],
+            'UK': ['New'],
+            'FR': ['Neuf'],
+            'DE': ['Neu'],
+            'IT': ['Nuovo'],
+            'ES': ['Nuevo'],
+            'BE': ['new, new'],
+            'NL': ['Nieuw'],
+            'SE': ['Ny'],
+            'PL': ['Nowe'],
+            'TR': [],
+            'JP': ['新品'],
+            'AU': ['New'],
+            'SG': ['New'],
+            'AE': ['new, new'],
+            'SA': ['new, new'],
+        },
+    }
     function executeData2Excel() {
         // 1.读取源excel数据
         let selectEle = document.getElementById('sourceSheet')
@@ -538,6 +968,37 @@
                             value = siteKey + value.substring(2)
                         }
                     }
+                    // TODO 各站点固定选项自动转换不同语言：Yes/No、Month/Year、Update/UpdateParts/Delete、LB/OZ、IN、China、New
+
+                    // 是有预设的部分直接，获取新值进行覆盖
+                    if (targetKeyWord in attrWords) {
+                        // 遍历获取匹配的选项，取索引
+                        let index = -1;
+                        const words = attrWords[targetKeyWord]
+                        for (let wordsKey in words) {
+                            const wordArr = words[wordsKey]
+                            if (wordArr) {
+                                for (let k = 0; k < wordArr.length; k++) {
+                                    // 满足条件结束内层循环
+                                    if (wordArr[k] === value) {
+                                        index = k
+                                        break
+                                    }
+                                }
+                                // 满足条件结束外层循环
+                                if (index !== -1) {
+                                    break
+                                }
+                            }
+                        }
+                        // 获取对应站点属性值
+                        const siteAttr = attrWords[targetKeyWord][siteKey]
+                        if(siteAttr && siteAttr[index]) {
+                            value = siteAttr[index]
+                        }
+                    }
+                    // TODO 各站点部分不常填写内容自动补充
+
                     // 若有加载价格表格则刷新
                     if (priceWorkBook) {
                         if (['standard_price', 'list_price', 'list_price_with_tax'].includes(targetKeyWord)) {
@@ -654,7 +1115,7 @@
         return originalStr.replace(new RegExp('^' + prefixToRemove), newPrefix);
     }
 
-    // 列数转字母
+    // 列数转字母，从列1开始
     function convertToLetter(num) {
         if (num <= 0) {
             return '';
@@ -776,6 +1237,83 @@
     draggable.addEventListener('touchstart', dragStart, { passive: false });
     draggable.addEventListener('touchmove', drag);
     draggable.addEventListener('touchend', dragEnd);
+
+
+    // 从源站点表格中提取文案放到定价文案模板文件中
+    function textExtraction() {
+        if (!sourceWorkBook) {
+            console.log('请选择源站点表格文件')
+            return
+        }
+        if (!priceWorkBook) {
+            console.log('请选择定价文案表格文件')
+            return
+        }
+        // 1.读取源excel数据
+        let selectEle = document.getElementById('sourceSheet')
+        const sourceSheetSelected = selectEle.options[selectEle.selectedIndex].value;
+        const sourceSheet = sourceWorkBook.Sheets[sourceSheetSelected]
+        // 读取源数据表的模板页所有列数据，按数据列
+        // 使用SheetJS的工具函数获取有值的行数和列数
+        let range = XLSX.utils.decode_range(sourceSheet['!ref']);
+        let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+        let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+        // 输出行数和列数
+        console.log(`源表格有值行数: ${maxRowCount}, 列数: ${maxColCount}`);
+        // 先取每列第三行值，再取每列值为value
+        const dataMap = {}
+        let cellKey
+        const textKeyArr = ['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords']
+        for (let colCount = 1; colCount <= maxColCount; colCount++) {
+            // 取列第三行值
+            let cell = sourceSheet[convertToLetter(colCount) + '3']
+            if(!cell) continue
+            cellKey = cell.v
+            if (textKeyArr.includes(cellKey)) {
+                const arr = []
+                for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
+                    cell = sourceSheet[convertToLetter(colCount) + rowNum]
+                    arr.push(cell ? cell.v : null)
+                }
+                dataMap[cellKey] = arr
+            }
+        }
+        console.log('dataMap')
+        console.log(dataMap)
+        // 2.将获取到的数据转为sheet支持的json格式，使用XLSX.utils.json_to_sheet转为sheet对象
+        const sheetDataArr = []
+        const keys = Object.keys(dataMap)
+        for (let i = 0; i < keys.length; i++) {
+            // 遍历得到一列的所有数据
+            const keyStr = keys[i]
+            const colDataArr = dataMap[keyStr]
+            for (let j = 0; j < colDataArr.length; j++) {
+                // 将一列数据放入对象数组的对象属性中
+                if (i === 0) {
+                    // 如果是第一列，创建元素对象
+                    sheetDataArr[j] = {}
+                }
+                sheetDataArr[j][keyStr] = colDataArr[j]
+            }
+        }
+        console.log('sheetDataArr')
+        console.log(sheetDataArr)
+
+        priceWorkBook.Sheets['英语'] = XLSX.utils.json_to_sheet(sheetDataArr)
+        // 导出
+        exportExcel(priceWorkBook)
+        // // 将JSON转换回工作表
+        // const newSheet = XLSX.utils.json_to_sheet(sheetDataArr);
+        //
+        // // 创建新的工作簿
+        // const newWorkbook = XLSX.utils.book_new();
+        //
+        // // 添加新的sheet到工作簿
+        // XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'NewSheet');
+        //
+        // // 写入文件
+        // XLSX.writeFile(newWorkbook, 'new_example.xlsx');
+    }
 </script>
 </body>
 </html>
