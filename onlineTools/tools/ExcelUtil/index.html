@@ -68,7 +68,7 @@
             width: 40px;
         }
 
-        #templateExcel {
+        .linkCss {
             font-size: 12px;
         }
 
@@ -107,7 +107,7 @@
 <body>
 <div class="container">
     <div id="borderDiv" class="div-3d-border">
-        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.6</label><br/>
+        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.8</label><br/>
         <div id="bodyDiv">
             <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(1)">功能说明</a>
             <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(2)">使用步骤</a>
@@ -127,8 +127,9 @@
                 <!--        <label for="targetSKUText">&ndash;&gt;</label><input type="text" id="targetSKUText"/><br/><br/>-->
                 <label for="checkboxSku">SKU开头两位替换为对应站点缩写：</label><input type="checkbox"
                                                                                       id="checkboxSku"/><br/><br/>
-                <label>定价/文案表格：</label><input type="file" id="priceExcel"/>
-                <a id="templateExcel" href="file/TemplateExcel.xlsx">下载定价文案模板</a><br/><br/>
+                <label>定价/文案表格：</label><input type="file" id="priceExcel" style="width: 200px"/>
+                <a class="linkCss" href="file/TemplateExcel.xlsx">下载定价文案模板</a>
+                <a href="javascript:void(0);" class="linkCss" onclick="textExtraction()">提取源站点表格文案</a><br/><br/>
 
                 <button id="read-excel" class="custom-button">执行数据处理</button>
             </div>
@@ -395,7 +396,10 @@
                             <label>&nbsp;&nbsp;1. 补充操作逻辑验证及文件校验</label><br/>
                             <label>&nbsp;&nbsp;2. 界面优化调整</label><br/>
                             <label>&nbsp;&nbsp;3. 添加窗体拖动</label><br/><br/>
-                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/>`
+                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/><br/>
+                            <label>12.14 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 固定选项的属性自动转换为对应站点，如：Yes/No、Months/Years等</label><br/>
+                            <label>&nbsp;&nbsp;2. 添加提取源站点表格文案功能</label><br/>`
                 }
             }
             div.style.display = 'block'
@@ -1180,7 +1184,80 @@
         const selectEle = document.getElementById(id)
         return selectEle ? selectEle.options[selectEle.selectedIndex].value : ''
     }
-    // 拖动div
+    // 从源站点表格中提取文案放到定价文案模板文件中
+    function textExtraction() {
+        if (!sourceWorkBook) {
+            console.log('请选择源站点表格文件')
+            alert('请选择源站点表格文件')
+            return
+        }
+        // 1.读取源excel数据
+        let selectEle = document.getElementById('sourceSheet')
+        const sourceSheetSelected = selectEle.options[selectEle.selectedIndex].value;
+        const sourceSheet = sourceWorkBook.Sheets[sourceSheetSelected]
+        // 读取源数据表的模板页所有列数据，按数据列
+        // 使用SheetJS的工具函数获取有值的行数和列数
+        let range = XLSX.utils.decode_range(sourceSheet['!ref']);
+        let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+        let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+        // 输出行数和列数
+        console.log(`源表格有值行数: ${maxRowCount}, 列数: ${maxColCount}`);
+        // 先取每列第三行值，再取每列值为value
+        const dataMap = {}
+        let cellKey
+        const textKeyArr = ['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords']
+        for (let colCount = 1; colCount <= maxColCount; colCount++) {
+            // 取列第三行值
+            let cell = sourceSheet[convertToLetter(colCount) + '3']
+            if(!cell) continue
+            cellKey = cell.v
+            if (textKeyArr.includes(cellKey)) {
+                const arr = []
+                for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
+                    cell = sourceSheet[convertToLetter(colCount) + rowNum]
+                    arr.push(cell ? cell.v : null)
+                }
+                dataMap[cellKey] = arr
+            }
+        }
+        console.log('dataMap')
+        console.log(dataMap)
+        // 2.将获取到的数据转为sheet支持的json格式，使用XLSX.utils.json_to_sheet转为sheet对象
+        const sheetDataArr = []
+        const keys = Object.keys(dataMap)
+        for (let i = 0; i < keys.length; i++) {
+            // 遍历得到一列的所有数据
+            const keyStr = keys[i]
+            const colDataArr = dataMap[keyStr]
+            for (let j = 0; j < colDataArr.length; j++) {
+                // 将一列数据放入对象数组的对象属性中
+                if (i === 0) {
+                    // 如果是第一列，创建元素对象
+                    sheetDataArr[j] = {}
+                }
+                sheetDataArr[j][keyStr] = colDataArr[j]
+            }
+        }
+        console.log('sheetDataArr')
+        console.log(sheetDataArr)
+        const newWorkbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(newWorkbook, XLSX.utils.json_to_sheet(sheetDataArr), '英语');
+        // priceWorkBook.Sheets['英语'] = XLSX.utils.json_to_sheet(sheetDataArr)
+        // 导出
+        exportExcel(newWorkbook)
+        // // 将JSON转换回工作表
+        // const newSheet = XLSX.utils.json_to_sheet(sheetDataArr);
+        //
+        // // 创建新的工作簿
+        // const newWorkbook = XLSX.utils.book_new();
+        //
+        // // 添加新的sheet到工作簿
+        // XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'NewSheet');
+        //
+        // // 写入文件
+        // XLSX.writeFile(newWorkbook, 'new_example.xlsx');
+    }
+    /******拖动div******/
     const draggable = document.getElementById('borderDiv');
     let active = false;
     let currentX;
@@ -1242,6 +1319,7 @@
     draggable.addEventListener('touchstart', dragStart, { passive: false });
     draggable.addEventListener('touchmove', drag);
     draggable.addEventListener('touchend', dragEnd);
+    /******拖动div******/
 </script>
 </body>
 </html>
