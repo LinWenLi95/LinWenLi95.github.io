@@ -97,7 +97,8 @@
                 icon: '',
                 disabled: false
             },
-            progress: 0
+            progress: 0,
+            jsonData: []
         },
         mounted() {
         },
@@ -124,13 +125,69 @@
                 reader.onload = (e) => {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
+                    const firstSheetName = workbook.SheetNames[6];
                     const worksheet = workbook.Sheets[firstSheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    const jsonData = this.getSourceSheetJSON(worksheet)
                     console.log(jsonData);
                     // 处理jsonData，例如：更新组件的数据等
+                    if (jsonData && jsonData.length > 2) {
+                        this.$message('数据不能超过2条');
+                        return
+                    }
+                    this.jsonData = jsonData
                 };
                 reader.readAsArrayBuffer(file.raw);
+            },
+            getSourceSheetJSON(sourceSheet) {
+                // 1.读取源excel数据
+                // 读取源数据表的模板页所有列数据，按数据列
+                // 使用SheetJS的工具函数获取有值的行数和列数
+                let range = XLSX.utils.decode_range(sourceSheet['!ref']);
+                let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+                let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+                // 输出行数和列数
+                console.log(`源表格有值行数: ${maxRowCount}, 列数: ${maxColCount}`);
+                // 先取每列第三行值，再取每列值为value
+                const dataMap = {}
+                let cellKey
+                const textKeyArr = ['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords']
+                for (let colCount = 1; colCount <= maxColCount; colCount++) {
+                    // 取列第三行值
+                    let cell = sourceSheet[convertToLetter(colCount) + '3']
+                    if(!cell) continue
+                    cellKey = cell.v
+                    if (textKeyArr.includes(cellKey)) {
+                        const arr = []
+                        for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
+                            cell = sourceSheet[convertToLetter(colCount) + rowNum]
+                            arr.push(cell ? cell.v : null)
+                        }
+                        dataMap[cellKey] = arr
+                    }
+                }
+                console.log('dataMap')
+                console.log(dataMap)
+                // 2.将获取到的数据转为sheet支持的json格式，使用XLSX.utils.json_to_sheet转为sheet对象
+                const sheetDataArr = []
+                const keys = Object.keys(dataMap)
+                for (let i = 0; i < keys.length; i++) {
+                    // 遍历得到一列的所有数据
+                    const keyStr = keys[i]
+                    const colDataArr = dataMap[keyStr]
+                    for (let j = 0; j < colDataArr.length; j++) {
+                        // 将一列数据放入对象数组的对象属性中
+                        if (i === 0) {
+                            // 如果是第一列，创建元素对象
+                            sheetDataArr[j] = {}
+                        }
+                        sheetDataArr[j][keyStr] = colDataArr[j]
+                    }
+                }
+                console.log('sheetDataArr')
+                console.log(sheetDataArr)
+                return sheetDataArr
+                // const newWorkbook = XLSX.utils.book_new();
+                // XLSX.utils.book_append_sheet(newWorkbook, XLSX.utils.json_to_sheet(sheetDataArr), '英语');
             },
             btnLoading() {
                 this.btn.icon = 'el-icon-loading'
@@ -151,6 +208,9 @@
                 setInterval(() => {
                     this.progress+=10
                 }, 1000);
+                const result = this.translate(this.jsonData[0]['item_name'], 'en', 'jp')
+                console.log('翻译结果：')
+                console.log(result)
             },
             translateHandler() {
                 const q = this.text
@@ -168,7 +228,7 @@
         // 尊享版：完成企业认证可可升级使用尊享版服务，提供基础文本翻译服务，支持自定义术语翻译功能。
         //               每月200万字符免费， QPS 为 100，单次最长请求6000字符。
             },
-            translate(q, from, to) {
+            async translate(q, from, to) {
                 const appid = '20200914000565844'
                 const secretKey = 'okF8YhFY_VFTvCc1KT9t'
                 const siteCode = ['zh','en','fra','de','it','spa','swe','nl','pl','jp','tr']
@@ -194,19 +254,25 @@
                 //         }
                 //     ]
                 // }
-                // fetch(url, {
-                //     method: 'post',
-                //     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                //     body: JSON.stringify(param)
-                // })
-                //     .then(response => response.json())
-                //     .then(data => {
-                //         console.log('data:')
-                //         console.log(data)
-                //         data['trans_result']
-                //
-                //     })
-                //     .catch(error => console.error('Error:', error));
+                await fetch(url, {
+                    method: 'post',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: JSON.stringify(param)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('data:')
+                        console.log(data)
+                        if (data) {
+                            const result = data['trans_result']
+                            return result['dst']
+                        }
+                        return ''
+                    })
+                    .catch(error => {
+                        console.error('Error:', error)
+                        return ''
+                    });
             },
             generateRandom() {
                 return Math.random().toString(16).slice(2);
