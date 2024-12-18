@@ -127,9 +127,14 @@
                 <!--        <label for="targetSKUText">&ndash;&gt;</label><input type="text" id="targetSKUText"/><br/><br/>-->
                 <label for="checkboxSku">SKU开头两位替换为对应站点缩写：</label><input type="checkbox"
                                                                                       id="checkboxSku"/><br/><br/>
-                <label>定价/文案表格：</label><input type="file" id="priceExcel" style="width: 200px"/>
-                <a class="linkCss" href="file/TemplateExcel.xlsx">下载定价文案模板</a>
-                <a href="javascript:void(0);" class="linkCss" onclick="textExtraction()">提取源站点表格文案</a><br/><br/>
+                <label style="color: grey">文案提取合并：</label><input type="file" id="textExcelFile" multiple  style="width: 200px"/>
+                <a class="linkCss" href="javascript:void(0);" onclick="excelMergeAndDownload()">文案合并</a>
+                <a href="javascript:void(0);" class="linkCss" onclick="textExtraction()">提取源站点表格文案</a>
+                <div id="translateFileDiv"></div><br/>
+
+                <label>售价/文案配置：</label><input type="file" id="priceExcel" style="width: 180px"/>
+                <a class="linkCss" href="file/TemplateExcel.xlsx">下载配置表格(空)</a>
+                <a href="javascript:void(0);" class="linkCss" onclick="excelMerge2TemplateExcel()">下载配置表格(含文案)</a><br/><br/>
 
                 <button id="read-excel" class="custom-button">执行数据处理</button>
             </div>
@@ -143,6 +148,8 @@
     let sourceWorkBook
     let targetWorkBookMap
     let priceWorkBook
+    let translateWorkBookMap
+    const textKeyArr = ['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords']
     const siteMap = {
         "US": "美国",
         "CA": "加拿大",
@@ -230,7 +237,12 @@
         }
         loadExcel('priceExcel', e.target.files)
     });
-
+    // 读取文案翻译Excel
+    document.getElementById('textExcelFile').addEventListener('change', function (e) {
+        translateWorkBookMap = {}
+        document.getElementById('translateFileDiv').innerText = null
+        loadExcel('translate', e.target.files)
+    });
     // 加载一个或多个Excel，匹配为不同文件
     function loadExcel(name, files) {
         for (let file of files) {
@@ -314,6 +326,19 @@
                             return
                         }
                         priceWorkBook = workBook
+                        break
+                    case 'translate':
+                        translateWorkBookMap[file.name] = workBook
+                        // 显示文件名
+                        const translateDiv = document.getElementById('translateFileDiv')
+                        // 文件名
+                        const div0 = document.createElement('div');
+                        let style0 = div0.style
+                        style0.display = 'inline-block'
+                        style0.width = '140px'
+                        div0.innerHTML = `<label style="font-size: 12px;">${shortenStr(file.name)}</label>`
+                        translateDiv.appendChild(div0)
+                        translateDiv.appendChild(document.createElement('br'))
                         break
                     default:
                         alert('excel匹配错误')
@@ -1019,7 +1044,7 @@
                                 value = priceArr[i] ? Number(priceArr[i]) + listPricePlus[siteKey] : value
                             }
                         }
-                        if (['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords'].includes(targetKeyWord)) {
+                        if (textKeyArr.includes(targetKeyWord)) {
                             // 把翻译放进去
                             const colArr = translateData[targetKeyWord]
                             const val = colArr && colArr.length > 0 ? colArr[i] : ''
@@ -1205,7 +1230,6 @@
         // 先取每列第三行值，再取每列值为value
         const dataMap = {}
         let cellKey
-        const textKeyArr = ['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords']
         for (let colCount = 1; colCount <= maxColCount; colCount++) {
             // 取列第三行值
             let cell = sourceSheet[convertToLetter(colCount) + '3']
@@ -1256,6 +1280,77 @@
         //
         // // 写入文件
         // XLSX.writeFile(newWorkbook, 'new_example.xlsx');
+    }
+    // excel合并
+    function excelMergeAndDownload() {
+        if (!translateWorkBookMap) {
+            alert('请选择文案表格')
+            return
+        }
+        const sheets = getExcelSheets(translateWorkBookMap)
+        if (sheets.length === 0) {
+            alert('未获取到页数据，请检查后重试')
+            return
+        }
+        // 建WorkBook 加入页 导出
+        // 创建新的工作簿
+        const newWorkbook = XLSX.utils.book_new();
+
+        // 添加新的sheet到工作簿
+        const sheetKeys = Object.keys(sheets)
+        for (let key of sheetKeys) {
+            XLSX.utils.book_append_sheet(newWorkbook, sheets[key], key)
+        }
+        // 写入文件
+        XLSX.writeFile(newWorkbook, '翻译文案合并'+new Date().getTime()+'.xlsx');
+    }
+    // 获取所有Excel文件的sheet，返回以Excel文件名为key，sheet对象为value的Object
+    // 入参为以Excel文件名为key，WorkBook对象为value的Object
+    function getExcelSheets(workBookMap) {
+        if (!workBookMap) return {}
+        const keys = Object.keys(workBookMap)
+        const sheets = {}
+        for (let key of keys) {
+            const workBook = workBookMap[key]
+            const sheetNames = workBook.SheetNames
+            if (sheetNames && sheetNames.length === 1) {
+                const sheet = workBook.Sheets[sheetNames[0]]
+                for (let i = 0; i < textKeyArr.length; i++) {
+                    let cell = sheet[convertToLetter(i+1) + '1']
+                    if(!cell) continue
+                    cell.v = textKeyArr[i]
+                }
+                sheets[key.replaceAll('.xlsx','')] = sheet
+            }
+        }
+        return sheets
+    }
+    // 将文案整合到配置表格中
+    function excelMerge2TemplateExcel() {
+        //
+        if (!priceWorkBook) {
+            alert('由于规则限制，请先选择配置表格')
+            return
+        }
+        // 从文案文件处取页数据
+        const sheets = getExcelSheets(translateWorkBookMap)
+        if (sheets.length === 0) {
+            alert('未获取到页数据，请检查后重试')
+            return
+        }
+        // 在priceWorkBook中 加入页 导出
+        // 替换sheet到工作簿
+        const sheetKeys = Object.keys(sheets)
+        for (let key of sheetKeys) {
+            const sheetNames = priceWorkBook.SheetNames
+            if (sheetNames.includes(key)) {
+                priceWorkBook.Sheets[key] = sheets[key]
+            } else {
+                XLSX.utils.book_append_sheet(priceWorkBook, sheets[key], key)
+            }
+        }
+        // 写入文件
+        XLSX.writeFile(priceWorkBook, '配置表格含文案'+new Date().getTime()+'.xlsx');
     }
     /******拖动div******/
     const draggable = document.getElementById('borderDiv');
