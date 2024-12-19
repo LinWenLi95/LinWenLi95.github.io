@@ -1002,8 +1002,7 @@
                             value = siteKey + value.substring(2)
                         }
                     }
-                    // TODO 各站点固定选项自动转换不同语言：Yes/No、Month/Year、Update/UpdateParts/Delete、LB/OZ、IN、China、New
-
+                    // 各站点固定选项自动转换不同语言：Yes/No、Month/Year、Update/UpdateParts/Delete、LB/OZ、IN、China、New
                     // 是有预设的部分直接，获取新值进行覆盖
                     if (targetKeyWord in attrWords) {
                         // 遍历获取匹配的选项，取索引
@@ -1061,8 +1060,66 @@
         console.log('dataArrayMap:')
         console.log(dataArrayMap)
 
-        // 数组添加到表格输出下载
-        downloadExcel(dataArrayMap)
+        // 数组转到表格
+        const workbook = data2WorkBook(dataArrayMap)
+        // 输出下载
+        exportExcel(workbook)
+        // 标题长度检测
+        validateLength(workbook)
+    }
+    // 标题长度检测
+    function validateLength(workbook) {
+        // 获取标题长度，如果长度过长，在最后进行弹窗提示
+        let msgMap = {}
+        const sheetNames = workbook.SheetNames
+
+        // 对每页进行循环
+        for (let sheetName of sheetNames) {
+            const sheet = workbook.Sheets[sheetName]
+            // 有效行列数
+            let range = XLSX.utils.decode_range(sheet['!ref']);
+            let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
+            let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
+            msgMap[sheetName] = []
+            // 循环列，找到标题列
+            for (let i = 1; i <= maxColCount; i++) {
+                const colLetter = convertToLetter(i)
+                const titleCell = sheet[colLetter+'1']
+                if (titleCell && titleCell.v === 'item_name') {
+                    // 循环行，取单元格值，判断是否符合条件
+                    for (let j = 2; j < maxRowCount + 2; j++) {
+                        // 指定列的行
+                        let cell = sheet[colLetter + j]
+                        let value
+                        if (cell) {
+                            value = cell.v
+                            if (value && value.length > 200) {
+                                msgMap[sheetName].push(colLetter + j)
+                            }
+                        }
+                    }
+                    break
+                }
+            }
+        }
+        // 提示字符超长
+        const keys = Object.keys(msgMap)
+        let result = ''
+        for (const key of keys) {
+            const arr = msgMap[key]
+            if (arr && arr.length > 0) {
+                let msg = '\nSheetName：' + key
+                for (let value of arr) {
+                    msg += '\n' + value
+                }
+                result += msg
+            }
+        }
+        if (result.length > 0) {
+            setTimeout(function () {
+                alert('标题长度超过200字符的行：' + result)
+            }, 500)
+        }
     }
 
     // 获取页数据
@@ -1159,14 +1216,14 @@
     }
 
     // 下载表格
-    function downloadExcel(dataArrMap) {
+    function data2WorkBook(dataArrMap) {
         const workbook = XLSX.utils.book_new();
         for (const key in dataArrMap) {
             const worksheet = XLSX.utils.aoa_to_sheet(dataArrMap[key]);
             // 将工作表添加到工作簿
             XLSX.utils.book_append_sheet(workbook, worksheet, key);
         }
-        exportExcel(workbook)
+        return workbook
     }
 
     function exportExcel(workbook, fileName) {
@@ -1303,6 +1360,8 @@
         }
         // 写入文件
         XLSX.writeFile(newWorkbook, '翻译文案合并'+new Date().getTime()+'.xlsx');
+        // 验证标题长度
+        validateLength(newWorkbook)
     }
     // 获取所有Excel文件的sheet，返回以Excel文件名为key，sheet对象为value的Object
     // 入参为以Excel文件名为key，WorkBook对象为value的Object
