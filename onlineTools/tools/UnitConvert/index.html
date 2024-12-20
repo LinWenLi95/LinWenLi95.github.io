@@ -968,14 +968,14 @@
                 commissionCNY: 0,// 佣金 人民币
                 deliverFee: 0,// 配送费 指定币种
                 deliverFeeCNY: 0,// 配送费 人民币
-                adRate: 30,// 广告费比例
+                adRate: 0,// 广告费比例
                 adCost: 0,// 广告费 指定币种
                 adCostCNY: 0,// 广告费 人民币
                 purchasingCost: 0,// 采购成本 指定币种
                 purchasingCostCNY: 0,// 采购成本 人民币
                 grossProfit: 0,// 毛利润 指定币种
                 grossProfitCNY: 0,// 毛利润 人民币
-                currency: 'CNY',//所选外币币种
+                currency: 'USD',//所选外币币种
                 currencyRate: 1, // 币种汇率
                 currencyOptions: [
                     {label: '美元(USD)', value: 'USD'},
@@ -1003,15 +1003,15 @@
                 commissionCNY: 0,// 佣金 人民币
                 deliverFee: 0,// 配送费 指定币种
                 deliverFeeCNY: 0,// 配送费 人民币
-                adRate: 30,// 广告费比例
+                adRate: 0,// 广告费比例
                 adCost: 0,// 广告费 指定币种
                 adCostCNY: 0,// 广告费 人民币
                 purchasingCost: 0,// 采购成本 指定币种
                 purchasingCostCNY: 0,// 采购成本 人民币
-                grossProfitRate: 300,// 毛利润率
+                grossProfitRate: 0,// 毛利润率
                 grossProfit: 0,// 毛利润 指定币种
                 grossProfitCNY: 0,// 毛利润 人民币
-                currency: 'CNY',//所选外币币种
+                currency: 'USD',//所选外币币种
                 currencyRate: 1, // 币种汇率
                 currencyOptions: [
                     {label: '美元(USD)', value: 'USD'},
@@ -1040,6 +1040,8 @@
         mounted() {
             // 获取在线实时汇率
             this.getRateUnits()
+            this.priceCalculationHandle('currency')
+            this.profitCalculationHandle('currency')
         },
         methods: {
             showOnlineExcelEditor() {// 在线Excel编辑器跳转
@@ -1097,6 +1099,9 @@
                         break
                     case 'currency':
                         priceCalculation.currencyRate = this.convertRate(1, priceCalculation.currency, 'CNY')
+                        // 佣金比例
+                        const euCurrencyArr = ['GBP', 'EUR', 'SEK', 'PLN', 'TRY', ]
+                        priceCalculation.commissionRate = euCurrencyArr.includes(priceCalculation.currency)? 35 : 15
                         // 配送费
                         priceCalculation.deliverFeeCNY = priceCalculation.deliverFee * priceCalculation.currencyRate
                         // 采购成本
@@ -1207,6 +1212,9 @@
                         break
                     case 'currency':
                         profitCalculation.currencyRate = this.convertRate(1, profitCalculation.currency, 'CNY')
+                        // 佣金比例
+                        const euCurrencyArr = ['GBP', 'EUR', 'SEK', 'PLN', 'TRY', ]
+                        profitCalculation.commissionRate = euCurrencyArr.includes(profitCalculation.currency)? 35 : 15
                         // 价格
                         profitCalculation.priceCNY = profitCalculation.price * profitCalculation.currencyRate
                         // 佣金
