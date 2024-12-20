@@ -90,7 +90,7 @@
             border-radius: 10px;
             /*border: 1px solid #f2f2f2;*/
             padding: 0 20px;
-            margin-top: 10px;
+            margin-top: 30px;
         }
         .instructionHref {
             color: #3a3636;
@@ -107,7 +107,7 @@
 <body>
 <div class="container">
     <div id="borderDiv" class="div-3d-border">
-        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.8</label><br/>
+        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.9</label><br/>
         <div id="bodyDiv">
             <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(1)">功能说明</a>
             <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(2)">使用步骤</a>
@@ -374,28 +374,55 @@
             switch (code) {
                 case 1:{
                     html = `<label>作用：将源表格的列数据按新站点表格表头排序后导出</label><br/><br/>
-                            <label>解决痛点：</label><br/>
-                            <label>1. 解决不同表格列顺序不同，无法直接复制旧表格的已填数据填充新表的问题</label><br/>
-                            <label>2. 通过粘贴的值直观看出列的含义，不用盯着表头一格格去找要填的列，费神</label><br/>
-                            <label>3. 解决价格和文案仍需手动填写的问题,最大限度地减少上架表格填写工作量</label><br/><br/>
-                            <label>功能说明：</label><br/>
-                            <label>定价/文案表格:输入定价和各站点文案后，可替换到数据中，减少工作量，提升效率</label><br/>
-                            <label>Price+：以定价/文案表格中对应站点的定价加上Price+的值作为list_price的价格</label><br/>
-                            <label>SKU开头两位替换为对应站点缩写：勾选后，SKU开头两位会被替换为新表格文件的前两位</label><br/>`
+                            <label>解决痛点：</label><br/><br/>
+                            <label>1. 解决不同表格列顺序不同，无法直接复制旧表格的已填数据填充新表的问题</label><br/><br/>
+                            <label>2. 通过粘贴的值直观看出列的含义，不用盯着表头一格格去找要填的列，费神</label><br/><br/>
+                            <label>3. 解决价格和文案仍需手动填写的问题,最大限度地减少上架表格填写工作量</label><br/><br/><br/>
+                            <label>功能说明：</label><br/><br/>
+                            <label>1. 定价/文案表格:输入定价和各站点文案后，可替换到数据中，减少工作量，提升效率</label><br/><br/>
+                            <label>2. Price+：以定价/文案表格中对应站点的定价加上Price+的值作为list_price的价格</label><br/><br/>
+                            <label>3. SKU开头两位替换为对应站点缩写：勾选后，SKU开头两位会被替换为新表格文件的前两位</label><br/><br/>
+                            <label>4. 文案提取合并：将文件名以语言命名，例如：英语、法语、日语，合并时会自动检测item_name超过200字符的行</label><br/>`
                     break
                 }
                 case 2:{
                     html = `<label>使用步骤：</label><br/>
-                            <label>1.选择源站点表格文件并选择template页</label><br/>
-                            <label>2.选择一个或多个目标站点表格文件并选择template页</label><br/>
-                            <label>3.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/>
-                            <label>4.点击按钮，自动生成处理好顺序的数据表格</label><br/>
-                            <label>5.复制生成的数据以仅粘贴值的方式粘贴到目标表格后，进行手动调整</label><br/><br/>
+                            <label>1.选择源站点表格文件并选择template页</label><br/><br/>
+                            <label>2.选择一个或多个目标站点表格文件并选择template页</label><br/><br/>
+                            <label>3.勾选SKU开头两位替换为对应站点缩写（可选操作）</label><br/><br/>
+                            <label>4.选择多站点文案表格（可选操作）</label><br/><br/>
+                            <label>5.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/><br/>
+                            <label>6.点击按钮，自动生成处理好数据列顺序的数据表格</label><br/><br/>
+                            <label>7.复制生成的数据以仅粘贴值的方式粘贴到目标表格后，进行手动调整</label><br/><br/>
                             <label style="font-size: 12px;">注意：选择多个目标站点表格时，文件名前两位或末尾两位必须是站点英文缩写</label><br/>`
                     break
                 }
                 case 3:{
-                    html = `<label>07.03 更新:</label><br/><br/>
+                    html = `<label>2024.12.17 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 固定选项的属性自动转换为对应站点，如：Yes/No、Months/Years等</label><br/>
+                            <label>&nbsp;&nbsp;2. 添加提取源站点表格文案功能</label><br/><br/>
+                            <label>2024.12.14 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 固定选项的属性自动转换为对应站点，如：Yes/No、Months/Years等</label><br/>
+                            <label>&nbsp;&nbsp;2. 添加提取源站点表格文案功能</label><br/><br/>
+                            <label>2024.07.19 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 补充操作逻辑验证及文件校验</label><br/>
+                            <label>&nbsp;&nbsp;2. 界面优化调整</label><br/>
+                            <label>&nbsp;&nbsp;3. 添加窗体拖动</label><br/><br/>
+                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/><br/>
+                            <label>2024.07.18 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 界面优化调整</label><br/>
+                            <label>&nbsp;&nbsp;2. SKU开头替换功能调整</label><br/>
+                            <label>&nbsp;&nbsp;3. 选择目标站点表格更新为可选择多个站点文件</label><br/>
+                            <label>&nbsp;&nbsp;4. 重新调整定价文案表格</label><br/><br/>
+                            <label>2024.07.17 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;1. 新增定价及翻译自动替换功能，可指定站点</label><br/>
+                            <label>&nbsp;&nbsp;2. 新增定价文案模板下载</label><br/>
+                            <label>&nbsp;&nbsp;3. 界面优化调整</label><br/><br/>
+                            <label>2024.07.13 更新：</label><br/><br/>
+                            <label>&nbsp;&nbsp;添加SKU开头替换功能</label><br/><br/>
+                            <label>2024.07.04 更新:</label><br/><br/>
+                            <label>&nbsp;&nbsp;初步实现选择两个Excel，根据表头调整数据的功能</label><br/><br/>
+                            <label>2024.07.03 更新:</label><br/><br/>
                             <label>表格上架很繁琐，有没有能够把产品快速上架全站点的方法或工具？</label><br/>
                             <label style="font-size: 12px">以下是找到的能把一个站点的Listing上架到其他站点的方法：</label><br/>
                             <label style="font-size: 12px">1. 亚马逊卖家后台-模板表格批量上架功能，挨个下载不同站点的上架表格，挨个填写数据后上传，表格填写工作量大，但上传稳定</label><br/>
@@ -404,27 +431,7 @@
                             <label style="font-size: 12px">4. 第三方ERP系统的商品信息采集功能，采集到商品信息后可上架到其他站点，单次只能上架单站点单个商品，效率极低，仅适合上新</label><br/><br/>
                             <label>很遗憾，上面找到的上架方法各有缺点，无法做到把产品快速准确地上架全站点，反而是表格上架更靠谱点</label><br/>
                             <label>因此我打算写一个工具来减少填写多站点上架表格时的重复性工作量</label><br/><br/>
-                            <label>07.04 更新:</label><br/><br/>
-                            <label>&nbsp;&nbsp;初步实现选择两个Excel，根据表头调整数据的功能</label><br/><br/>
-                            <label>07.13 更新：</label><br/><br/>
-                            <label>&nbsp;&nbsp;添加SKU开头替换功能</label><br/><br/>
-                            <label>07.17 更新：</label><br/><br/>
-                            <label>&nbsp;&nbsp;1. 新增定价及翻译自动替换功能，可指定站点</label><br/>
-                            <label>&nbsp;&nbsp;2. 新增定价文案模板下载</label><br/>
-                            <label>&nbsp;&nbsp;3. 界面优化调整</label><br/><br/>
-                            <label>07.18 更新：</label><br/><br/>
-                            <label>&nbsp;&nbsp;1. 界面优化调整</label><br/>
-                            <label>&nbsp;&nbsp;2. SKU开头替换功能调整</label><br/>
-                            <label>&nbsp;&nbsp;3. 选择目标站点表格更新为可选择多个站点文件</label><br/>
-                            <label>&nbsp;&nbsp;4. 重新调整定价文案表格</label><br/><br/>
-                            <label>07.19 更新：</label><br/><br/>
-                            <label>&nbsp;&nbsp;1. 补充操作逻辑验证及文件校验</label><br/>
-                            <label>&nbsp;&nbsp;2. 界面优化调整</label><br/>
-                            <label>&nbsp;&nbsp;3. 添加窗体拖动</label><br/><br/>
-                            <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/><br/>
-                            <label>12.14 更新：</label><br/><br/>
-                            <label>&nbsp;&nbsp;1. 固定选项的属性自动转换为对应站点，如：Yes/No、Months/Years等</label><br/>
-                            <label>&nbsp;&nbsp;2. 添加提取源站点表格文案功能</label><br/>`
+                                                                                                         `
                 }
             }
             div.style.display = 'block'
