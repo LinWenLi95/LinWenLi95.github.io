@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大转盘抽奖</title>
+  <link rel="stylesheet" href="./rotateLottery.css">
+  <style>
+    #inputButtonDiv {
+      position: absolute;
+      top: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="inputButtonDiv">
+<!--    <label>抽奖结果：</label><br/>-->
+<!--    <div id="resultDiv"></div>-->
+<!--    <br/>-->
+    <input id="countText" type="number" />
+    <button onclick="getMoreResult()">抽多次</button>
+  </div>
+  <div class="lottery-box">
+    <ul class="lottery-list"></ul>
+    <div class="start-lottery">
+      开始
+      <span class="triangle"></span>
+    </div>
+  </div>
+
+  <script>
+    let prizeList = [
+      {
+        id: 1,
+        prizeName: '小星星',
+        color: 'bisque',
+        probability: 23.5, // 概率[23.5, , , , , 2, 1.8, 1.1, 0.1]
+        economicValue: 15 // 经济价值
+      },
+      {
+        id: 2,
+        prizeName: '胜利号角',
+        color: 'pink',
+        probability: 19, // 概率
+        economicValue: 33 // 经济价值
+      },
+      {
+        id: 3,
+        prizeName: '招财进宝香',
+        color: 'blue',
+        probability: 28.5, // 概率
+        economicValue: 70 // 经济价值
+      },
+      {
+        id: 4,
+        prizeName: '芋泥啵啵',
+        color: 'yellow',
+        probability: 17, // 概率
+        economicValue: 88 // 经济价值
+      },
+      {
+        id: 5,
+        prizeName: '上头了',
+        color: 'green',
+        probability: 7, // 概率
+        economicValue: 99 // 经济价值
+      },
+      {
+        id: 6,
+        prizeName: '莓你不行',
+        color: 'blueviolet',
+        probability: 2, // 概率
+        economicValue: 130 // 经济价值
+      },
+      {
+        id: 7,
+        prizeName: '麻辣小龙虾',
+        color: 'blanchedalmond',
+        probability: 1.8, // 概率
+        economicValue: 200 // 经济价值
+      },
+      {
+        id: 8,
+        prizeName: '爱情记忆',
+        color: 'yellowgreen',
+        probability: 1.1, // 概率
+        economicValue: 520 // 经济价值
+      },
+      {
+        id: 9,
+        prizeName: '做我的公主',
+        color: 'blanchedalmond',
+        probability: 0.1, // 概率
+        economicValue: 2288 // 经济价值
+      }
+    ]
+    let lotteryBox = document.querySelector('.lottery-list')
+
+    function drawBox() { // 画出抽奖盒子
+      let html = '';
+      prizeList.forEach((ele, i) => {
+        html +=
+                `<li data-id=${ele.id} style='transform:rotate(${i*360/prizeList.length}deg) skewY(${360/prizeList.length-90}deg);
+        background-color: ${ele.color};'>
+        <span id="span1" style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>${ele.prizeName}</span>
+        <span id="span2"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>概率：${ele.probability}%</span>
+        <span id="span3"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>价值：${ele.economicValue}钻</span>
+          </li>`
+      })
+      lotteryBox.innerHTML = html
+    }
+    drawBox();
+
+    let startDom = document.querySelector('.start-lottery')
+    let rotateAngle = 0; // 起始旋转的角度
+    let rotateStatus = true; // 旋转的状态
+    startDom.onclick = function () {
+      if (rotateStatus) {
+        rotateStatus = false;
+        let prizeIdRandom = getResult()//Math.ceil(Math.random() * 7); // 随机的中奖id
+        let prizeAngleRandom = Math.ceil(Math.random() * (360 / prizeList.length - 1)); // 随机指针停留的位置
+        console.log('中奖id', prizeIdRandom, '中奖随机角度', prizeAngleRandom);
+        rotateLottery(rotateAngle, prizeIdRandom, prizeAngleRandom)
+      }
+    }
+
+    // prizeId 中奖ID ang 指针的起始位置的角度 prizeAngleRandom中奖指针停留在随机角度
+    function rotateLottery(ang, prizeId, prizeAngleRandom) {
+      prizeList.forEach((ele, i) => {
+        if (ele.id === prizeId) {
+          // 6*360表示最少需要转6圈 按需配置  奖励盘顺时针旋转 要减掉中奖id的角度
+          let rotateAng = ang + 6 * 360 - i * 360 / prizeList.length - prizeAngleRandom
+          rotateAngle = ang + 6 * 360
+          lotteryBox.style.transform = 'rotate(' + rotateAng + 'deg)'
+          setTimeout(() => { // 旋转结束后的操作
+            alert(ele.prizeName)
+            rotateStatus = true
+          }, 3000)
+        }
+      })
+    }
+    const segments = ["小星星", "胜利号角", "招财进宝香", "芋泥啵啵", "上头了", "莓你不行", "麻辣小龙虾", "爱情记忆", "做我的公主"]
+    const probability = [23.5, 19, 28.5, 17, 7, 2, 1.8, 1.1, 0.1]
+    const probabilityArr = []
+    init()
+    function init() {
+      for (let i = 0; i < probability.length; i++) {
+        if (i === 0) {
+          probabilityArr[i] = probability[i] * 10
+        } else {
+          probabilityArr[i] = probabilityArr[i - 1] + probability[i] * 10
+        }
+      }
+    }
+    // 计算中奖结果，在减速瞬间设置进去显示
+    function getResult() {
+      // 根据概率获取概率区间
+      console.log(probabilityArr)
+      // 获取结果值，找到结果
+      const result = Math.random() * 1000
+      console.log('result: ' + result)
+      for (let i = 0; i < probabilityArr.length; i++) {
+        if (probabilityArr[i] >= result) {
+          return i + 1
+        }
+      }
+      return -1
+    }
+    // 千次结果
+    function getMoreResult() {
+      const count = document.getElementById('countText').value
+      const resultDiv = document.getElementById('resultDiv')
+      if (!count || count <= 0) {
+        resultDiv.innerText = '请输入抽签次数'
+        return
+      }
+      const countArr = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+      const economicValueArr = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+      let index
+      for (let i = 0; i < count; i++) {
+        index = getResult() - 1
+        countArr[index] = countArr[index] + 1
+      }
+      console.log('countArr: ' + countArr)
+      let msg = '抽签结果：\n'
+      let total = 0
+      for (let i = 0; i < countArr.length; i++) {
+        const prize = prizeList[i]
+        const countNum = countArr[i]
+        const price = prize.economicValue * countNum
+        economicValueArr[i] = price
+        total += price
+        msg += prize.prizeName + '共' + countNum + '个，价值：' + price + '；\n'
+      }
+
+      console.log('economicValueArr: ' + economicValueArr)
+      console.log('总花费: 66000钻，得到' + total + '钻')
+      msg += '总花费: 66000钻，得到' + total + '钻，'
+      if (total > 66000) {
+        console.log('赚了' + (total - 66000) + '钻')
+        msg += '赚了' + (total - 66000) + '钻'
+      } else {
+        console.log('亏了' + (66000 - total) + '钻')
+        msg += '亏了' + (66000 - total) + '钻'
+      }
+      alert(msg)
+    }
+  </script>
+</body>
+</html>
