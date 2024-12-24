@@ -136,7 +136,19 @@
           rotateAngle = ang + 6 * 360
           lotteryBox.style.transform = 'rotate(' + rotateAng + 'deg)'
           setTimeout(() => { // 旋转结束后的操作
-            alert(ele.prizeName)
+            const prize = prizeList[prizeId - 1]
+            let msg = '抽签结果：' + prize.prizeName + '，价值：' + prize.economicValue + '\n'
+            console.log('总花费: 66钻，得到' + prize.economicValue + '钻')
+            msg += '总花费: 66钻，得到' + prize.economicValue + '钻，'
+            if (prize.economicValue > 66) {
+              console.log('赚了' + (prize.economicValue - 66) + '钻')
+              msg += '赚了' + (prize.economicValue - 66) + '钻'
+            } else {
+              console.log('亏了' + (66 - prize.economicValue) + '钻')
+              msg += '亏了' + (66 - prize.economicValue) + '钻'
+            }
+            alert(msg)
+            // alert(ele.prizeName)
             rotateStatus = true
           }, 3000)
         }
@@ -193,18 +205,18 @@
         const price = prize.economicValue * countNum
         economicValueArr[i] = price
         total += price
-        msg += prize.prizeName + '共' + countNum + '个，价值：' + price + '；\n'
+        msg += prize.prizeName + '共' + countNum + '个，价值：' + price + '钻；\n'
       }
-
+      const totalFee = 66 * count
       console.log('economicValueArr: ' + economicValueArr)
-      console.log('总花费: 66000钻，得到' + total + '钻')
-      msg += '总花费: 66000钻，得到' + total + '钻，'
-      if (total > 66000) {
-        console.log('赚了' + (total - 66000) + '钻')
-        msg += '赚了' + (total - 66000) + '钻'
+      console.log('总花费: ' + totalFee + '钻，得到' + total + '钻')
+      msg += '总花费: ' + totalFee + '钻，得到' + total + '钻，'
+      if (total > totalFee) {
+        console.log('赚了' + (total - totalFee) + '钻')
+        msg += '赚了' + (total - totalFee) + '钻'
       } else {
-        console.log('亏了' + (66000 - total) + '钻')
-        msg += '亏了' + (66000 - total) + '钻'
+        console.log('亏了' + (totalFee - total) + '钻')
+        msg += '亏了' + (totalFee - total) + '钻'
       }
       alert(msg)
     }
