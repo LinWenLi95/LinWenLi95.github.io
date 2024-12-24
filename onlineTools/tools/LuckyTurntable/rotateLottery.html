@@ -17,16 +17,13 @@
 
 <body>
   <div id="inputButtonDiv">
-<!--    <label>抽奖结果：</label><br/>-->
-<!--    <div id="resultDiv"></div>-->
-<!--    <br/>-->
-    <input id="countText" type="number" />
-    <button onclick="getMoreResult()">抽多次</button>
+    <input id="countText" type="text" style="height: 40px" />
+    <button onclick="getMoreResult()" style="height: 40px;width: 60px">抽多次</button>
   </div>
   <div class="lottery-box">
     <ul class="lottery-list"></ul>
     <div class="start-lottery">
-      开始
+      抽单次
       <span class="triangle"></span>
     </div>
   </div>
@@ -106,8 +103,8 @@
                 `<li data-id=${ele.id} style='transform:rotate(${i*360/prizeList.length}deg) skewY(${360/prizeList.length-90}deg);
         background-color: ${ele.color};'>
         <span id="span1" style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>${ele.prizeName}</span>
-        <span id="span2"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>概率：${ele.probability}%</span>
-        <span id="span3"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>价值：${ele.economicValue}钻</span>
+        <span id="span2"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>概率:${ele.probability}%</span>
+        <span id="span3"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>价值:${ele.economicValue}钻</span>
           </li>`
       })
       lotteryBox.innerHTML = html

@@ -23,8 +23,8 @@ body {
 .lottery-list {
   position: relative;
   list-style: none;
-  width: 600px;
-  height: 600px;
+  width: 450px;
+  height: 450px;
   overflow: hidden;
   border-radius: 50%;
   transition: all 3s cubic-bezier(0.13, 0.525, 0.565, 0.97);
@@ -44,7 +44,7 @@ li {
 
 li span {
   position: absolute;
-  font-size: 20px;
+  font-size: 16px;
 }
 li #span1 {
   top: 40%;
