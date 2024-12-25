@@ -448,6 +448,12 @@
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
                     </el-input>
                 </el-form-item>
+                <el-form-item label-width="92px" label="毛利率">
+                    <el-input style="width: 200px;display: inline-block" type="number"
+                              v-model="profitCalculation.grossMargin">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                    </el-input>
+                </el-form-item>
             </div>
             <!--成本计算售价-->
             <div class="divItem divItem2">
@@ -505,27 +511,6 @@
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
                     </el-input>
                 </el-form-item>
-                <el-form-item label-width="92px" label="毛利润">
-                    <el-tooltip content="与采购成本的百分比" effect="light" placement="top">
-                        <el-input @input="priceCalculationHandle('grossProfitRate')"
-                                  style="width: 80px;display: inline-block"
-                                  type="number"
-                                  v-model="priceCalculation.grossProfitRate">
-                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
-                        </el-input>
-                    </el-tooltip>
-                    <el-input @input="priceCalculationHandle('grossProfit')" style="width: 160px;display: inline-block"
-                              type="number" v-model="priceCalculation.grossProfit">
-                        <i slot='suffix'
-                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
-                    </el-input>
-                    <el-input @input="priceCalculationHandle('grossProfitCNY')"
-                              style="width: 160px;display: inline-block"
-                              type="number"
-                              v-model="priceCalculation.grossProfitCNY">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                    </el-input>
-                </el-form-item>
                 <el-form-item label-width="92px" label="佣金&税">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
                         <el-input @input="priceCalculationHandle('commissionRate')"
@@ -563,6 +548,27 @@
                     </el-input>
                     <el-input @input="priceCalculationHandle('adCostCNY')" style="width: 160px;display: inline-block"
                               type="number" v-model="priceCalculation.adCostCNY">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label-width="92px" label="毛利润">
+                    <el-tooltip content="毛利率=(销售收入-销售成本)/销售收入×100%" effect="light" placement="top">
+                        <el-input @input="priceCalculationHandle('grossProfitRate')"
+                                  style="width: 80px;display: inline-block"
+                                  type="number"
+                                  v-model="priceCalculation.grossProfitRate">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input @input="priceCalculationHandle('grossProfit')" style="width: 160px;display: inline-block"
+                              type="number" v-model="priceCalculation.grossProfit">
+                        <i slot='suffix'
+                           style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
+                    </el-input>
+                    <el-input @input="priceCalculationHandle('grossProfitCNY')"
+                              style="width: 160px;display: inline-block"
+                              type="number"
+                              v-model="priceCalculation.grossProfitCNY">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
                     </el-input>
                 </el-form-item>
@@ -975,6 +981,7 @@
                 purchasingCostCNY: 0,// 采购成本 人民币
                 grossProfit: 0,// 毛利润 指定币种
                 grossProfitCNY: 0,// 毛利润 人民币
+                grossMargin: 0,// 毛利率
                 currency: 'USD',//所选外币币种
                 currencyRate: 1, // 币种汇率
                 currencyOptions: [
@@ -1011,6 +1018,7 @@
                 grossProfitRate: 0,// 毛利润率
                 grossProfit: 0,// 毛利润 指定币种
                 grossProfitCNY: 0,// 毛利润 人民币
+                grossMargin: 0,// 毛利率
                 currency: 'USD',//所选外币币种
                 currencyRate: 1, // 币种汇率
                 currencyOptions: [
@@ -1040,8 +1048,12 @@
         mounted() {
             // 获取在线实时汇率
             this.getRateUnits()
-            this.priceCalculationHandle('currency')
-            this.profitCalculationHandle('currency')
+            const self = this
+            setTimeout(()=>{
+                // 延迟刷新币种
+                self.priceCalculationHandle('currency')
+                self.profitCalculationHandle('currency')
+            }, 1000)
         },
         methods: {
             showOnlineExcelEditor() {// 在线Excel编辑器跳转
@@ -1071,13 +1083,9 @@
                 switch (value) {
                     case 'purchasingCost':// 采购费
                         priceCalculation.purchasingCostCNY = priceCalculation.purchasingCost * priceCalculation.currencyRate
-                        priceCalculation.grossProfit = priceCalculation.purchasingCost * priceCalculation.grossProfitRate / 100
-                        priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
                         break
                     case 'purchasingCostCNY':
                         priceCalculation.purchasingCost = priceCalculation.purchasingCostCNY / priceCalculation.currencyRate
-                        priceCalculation.grossProfit = priceCalculation.purchasingCost * priceCalculation.grossProfitRate / 100
-                        priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
                         break
                     case 'deliverFee':// 配送费
                         priceCalculation.deliverFeeCNY = priceCalculation.deliverFee * priceCalculation.currencyRate
@@ -1085,56 +1093,72 @@
                     case 'deliverFeeCNY':
                         priceCalculation.deliverFee = priceCalculation.deliverFeeCNY / priceCalculation.currencyRate || 0
                         break
-                    case 'grossProfitRate':// 毛利
-                        priceCalculation.grossProfit = priceCalculation.purchasingCost * priceCalculation.grossProfitRate / 100
-                        priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
-                        break
-                    case 'grossProfit':
-                        priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
-                        priceCalculation.grossProfitRate = priceCalculation.grossProfit / priceCalculation.purchasingCost * 100 || 0
-                        break
-                    case 'grossProfitCNY':
-                        priceCalculation.grossProfit = priceCalculation.grossProfitCNY / priceCalculation.currencyRate
-                        priceCalculation.grossProfitRate = priceCalculation.grossProfit / priceCalculation.purchasingCost * 100 || 0
-                        break
                     case 'currency':
+                        // 汇率变化
                         priceCalculation.currencyRate = this.convertRate(1, priceCalculation.currency, 'CNY')
                         // 佣金比例
-                        const euCurrencyArr = ['GBP', 'EUR', 'SEK', 'PLN', 'TRY', ]
+                        const euCurrencyArr = ['GBP', 'EUR', 'SEK', 'PLN', 'TRY']
                         priceCalculation.commissionRate = euCurrencyArr.includes(priceCalculation.currency)? 35 : 15
                         // 配送费
                         priceCalculation.deliverFeeCNY = priceCalculation.deliverFee * priceCalculation.currencyRate
                         // 采购成本
                         priceCalculation.purchasingCostCNY = priceCalculation.purchasingCost * priceCalculation.currencyRate
-                        // 毛利润
-                        priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
                         break
                 }
-                // 计算售价
-                priceCalculation.price = (priceCalculation.grossProfit + priceCalculation.deliverFee + priceCalculation.purchasingCost) / ((100 - priceCalculation.commissionRate - priceCalculation.adRate) / 100)
 
-                // 广告费计算
+                // 改变的是毛利润的值时，拿值计算售价，反填毛利率
+                if (['grossProfit', 'grossProfitCNY'].includes(value)) {
+                    switch (value) {
+                        case 'grossProfit':
+                            priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
+                            break
+                        case 'grossProfitCNY':
+                            priceCalculation.grossProfit = priceCalculation.grossProfitCNY / priceCalculation.currencyRate
+                            break
+                    }
+                    // 毛利润计算售价
+                    priceCalculation.price = (priceCalculation.grossProfit + priceCalculation.deliverFee + priceCalculation.purchasingCost) / ((100 - priceCalculation.commissionRate - priceCalculation.adRate) / 100)
+                    // 毛利率计算
+                    priceCalculation.grossProfitRate = priceCalculation.grossProfit / priceCalculation.price * 100
+                } else if (['adCost', 'adCostCNY'].includes(value)) {
+                    // 改变的是广告费时，拿值计算售价，反填广告费比例
+                    switch (value) {
+                        case 'adCost':
+                            priceCalculation.adCostCNY = priceCalculation.adCost * priceCalculation.currencyRate
+                            break
+                        case 'adCostCNY':
+                            priceCalculation.adCost = priceCalculation.adCostCNY / priceCalculation.currencyRate
+                            break
+                    }
+                    // 广告费计算售价
+                    priceCalculation.price = (priceCalculation.deliverFee + priceCalculation.purchasingCost + priceCalculation.adCost) / ((100 - priceCalculation.commissionRate - priceCalculation.grossProfitRate) / 100)
+                    // 广告费比例计算
+                    priceCalculation.adRate = priceCalculation.adCost / priceCalculation.price * 100 || 0
+                } else {
+                    // 计算售价
+                    priceCalculation.price = (priceCalculation.deliverFee + priceCalculation.purchasingCost) / ((100 - priceCalculation.commissionRate - priceCalculation.adRate - priceCalculation.grossProfitRate) / 100)
+                    // 其他值变动时，根据比例重新计算广告费和毛利润
+                    priceCalculation.adCost = priceCalculation.price * priceCalculation.adRate / 100
+                    priceCalculation.adCostCNY = priceCalculation.adCost * priceCalculation.currencyRate
+
+                    priceCalculation.grossProfit = priceCalculation.price * priceCalculation.grossProfitRate
+                    priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
+                }
+
+                // 改变的是比例时，计算出售价后，反填
                 switch (value) {
+                    // 毛利率算毛利润
+                    case 'grossProfitRate':
+                        priceCalculation.grossProfit = priceCalculation.price * priceCalculation.grossProfitRate / 100
+                        priceCalculation.grossProfitCNY = priceCalculation.grossProfit * priceCalculation.currencyRate
+                        break
+                    // 广告比例算广告费
                     case 'adRate':
                         priceCalculation.adCost = priceCalculation.price * priceCalculation.adRate / 100
                         priceCalculation.adCostCNY = priceCalculation.adCost * priceCalculation.currencyRate
                         break
-                    case 'adCost':
-                        priceCalculation.adCostCNY = priceCalculation.adCost * priceCalculation.currencyRate
-                        priceCalculation.price = (priceCalculation.grossProfit + priceCalculation.deliverFee + priceCalculation.purchasingCost + priceCalculation.adCost) / ((100 - priceCalculation.commissionRate) / 100)
-                        priceCalculation.adRate = priceCalculation.adCost / priceCalculation.price * 100 || 0
-                        break
-                    case 'adCostCNY':
-                        priceCalculation.adCost = priceCalculation.adCostCNY / priceCalculation.currencyRate
-                        priceCalculation.price = (priceCalculation.grossProfit + priceCalculation.deliverFee + priceCalculation.purchasingCost + priceCalculation.adCost) / ((100 - priceCalculation.commissionRate) / 100)
-                        priceCalculation.adRate = priceCalculation.adCost / priceCalculation.price * 100 || 0
-                        break
                 }
-                // 广告费计算
-                if (!['adCost', 'adCostCNY'].includes(value)) {
-                    priceCalculation.adCost = priceCalculation.price * priceCalculation.adRate / 100
-                    priceCalculation.adCostCNY = priceCalculation.adCost * priceCalculation.currencyRate
-                }
+
 
                 priceCalculation.priceCNY = priceCalculation.price * priceCalculation.currencyRate
                 // 计算佣金值
@@ -1154,7 +1178,7 @@
             profitCalculationHandle(value) {
                 const profitCalculation = {...this.profitCalculation}
                 // 转数字
-                const priceAttrList = ['price', 'priceCNY', 'commission', 'commissionCNY', 'deliverFee', 'deliverFeeCNY', 'adCost', 'adCostCNY', 'purchasingCost', 'purchasingCostCNY', 'grossProfit', 'grossProfitCNY']
+                const priceAttrList = ['price', 'priceCNY', 'commission', 'commissionCNY', 'deliverFee', 'deliverFeeCNY', 'adCost', 'adCostCNY', 'purchasingCost', 'purchasingCostCNY', 'grossProfit', 'grossProfitCNY', 'grossMargin']
                 for (let string of priceAttrList) {
                     profitCalculation[string] = this.removeBeginningZero(profitCalculation[string])
                     if (string === value) {
@@ -1232,6 +1256,8 @@
                 // 计算毛利润
                 profitCalculation.grossProfit = profitCalculation.price - profitCalculation.commission - profitCalculation.deliverFee - profitCalculation.adCost - profitCalculation.purchasingCost
                 profitCalculation.grossProfitCNY = profitCalculation.grossProfit * profitCalculation.currencyRate
+                // 毛利率
+                profitCalculation.grossMargin = profitCalculation.grossProfitCNY / profitCalculation.priceCNY * 100 // 毛利率：毛利润/售价
                 // 保留4位小数
                 this.toFixedObjAttr(profitCalculation, 4, priceAttrList)
                 this.profitCalculation = {...profitCalculation}
