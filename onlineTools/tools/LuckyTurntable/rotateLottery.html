@@ -16,14 +16,14 @@
 </head>
 
 <body>
-  <div id="inputButtonDiv">
-    <input id="countText" type="text" style="height: 40px" />
-    <button onclick="getMoreResult()" style="height: 40px;width: 60px">抽多次</button>
-  </div>
+<!--  <div id="inputButtonDiv">-->
+<!--    <input id="countText" type="text" style="height: 40px" />-->
+<!--    <button onclick="getMoreResult()" style="height: 40px;width: 60px">抽多次</button>-->
+<!--  </div>-->
   <div class="lottery-box">
     <ul class="lottery-list"></ul>
     <div class="start-lottery">
-      抽单次
+      开奖
       <span class="triangle"></span>
     </div>
   </div>
@@ -31,69 +31,134 @@
   <script>
     let prizeList = [
       {
-        id: 1,
-        prizeName: '小星星',
-        color: 'bisque',
-        probability: 23.5, // 概率[23.5, , , , , 2, 1.8, 1.1, 0.1]
-        economicValue: 15 // 经济价值
+          id: 1,
+          prizeName: '火元素',
+          color: '#f25319',
+          probability: 24.55, // 概率[]
+          economicValue: 4 // 经济价值
       },
       {
         id: 2,
-        prizeName: '胜利号角',
-        color: 'pink',
-        probability: 19, // 概率
-        economicValue: 33 // 经济价值
+        prizeName: '水元素',
+        color: '#4ec6f5',
+        probability: 24.55, // 概率[]
+        economicValue: 4 // 经济价值
       },
       {
         id: 3,
-        prizeName: '招财进宝香',
-        color: 'blue',
-        probability: 28.5, // 概率
-        economicValue: 70 // 经济价值
+        prizeName: '风之灵',
+        color: 'rgba(227,240,207,0.33)',
+        probability: 16.37, // 概率[]
+        economicValue: 6 // 经济价值
       },
       {
         id: 4,
-        prizeName: '芋泥啵啵',
-        color: 'yellow',
-        probability: 17, // 概率
-        economicValue: 88 // 经济价值
+        prizeName: '木之灵',
+        color: 'rgba(103,74,62,0.53)',
+        probability: 12.55, // 概率[]
+        economicValue: 8 // 经济价值
       },
       {
         id: 5,
-        prizeName: '上头了',
-        color: 'green',
-        probability: 7, // 概率
-        economicValue: 99 // 经济价值
+        prizeName: '土精灵',
+        color: 'rgba(0,0,0,0.5)',
+        probability: 9.77, // 概率[]
+        economicValue: 10 // 经济价值
       },
       {
         id: 6,
-        prizeName: '莓你不行',
-        color: 'blueviolet',
-        probability: 2, // 概率
-        economicValue: 130 // 经济价值
+        prizeName: '雷轰轰',
+        color: '#bc87f7',
+        probability: 4.85, // 概率[]
+        economicValue: 20 // 经济价值
       },
       {
         id: 7,
-        prizeName: '麻辣小龙虾',
-        color: 'blanchedalmond',
-        probability: 1.8, // 概率
-        economicValue: 200 // 经济价值
+        prizeName: '雪融融',
+        color: '#ffffff',
+        probability: 3.25, // 概率[]
+        economicValue: 30 // 经济价值
       },
       {
         id: 8,
-        prizeName: '爱情记忆',
-        color: 'yellowgreen',
-        probability: 1.1, // 概率
-        economicValue: 520 // 经济价值
+        prizeName: '暗夜魔王',
+        color: 'rgba(0,0,0,0.22)',
+        probability: 2.44, // 概率[]
+        economicValue: 40 // 经济价值
       },
       {
         id: 9,
-        prizeName: '做我的公主',
-        color: 'blanchedalmond',
-        probability: 0.1, // 概率
-        economicValue: 2288 // 经济价值
+        prizeName: '光明天使',
+        color: 'rgba(255,105,180,0.47)',
+        probability: 1.97, // 概率[]
+        economicValue: 50 // 经济价值
       }
     ]
+    //         [
+    //   {
+    //     id: 1,
+    //     prizeName: '小星星',
+    //     color: 'bisque',
+    //     probability: 23.5, // 概率[23.5, , , , , 2, 1.8, 1.1, 0.1]
+    //     economicValue: 15 // 经济价值
+    //   },
+    //   {
+    //     id: 2,
+    //     prizeName: '胜利号角',
+    //     color: 'pink',
+    //     probability: 19, // 概率
+    //     economicValue: 33 // 经济价值
+    //   },
+    //   {
+    //     id: 3,
+    //     prizeName: '招财进宝香',
+    //     color: 'blue',
+    //     probability: 28.5, // 概率
+    //     economicValue: 70 // 经济价值
+    //   },
+    //   {
+    //     id: 4,
+    //     prizeName: '芋泥啵啵',
+    //     color: 'yellow',
+    //     probability: 17, // 概率
+    //     economicValue: 88 // 经济价值
+    //   },
+    //   {
+    //     id: 5,
+    //     prizeName: '上头了',
+    //     color: 'green',
+    //     probability: 7, // 概率
+    //     economicValue: 99 // 经济价值
+    //   },
+    //   {
+    //     id: 6,
+    //     prizeName: '莓你不行',
+    //     color: 'blueviolet',
+    //     probability: 2, // 概率
+    //     economicValue: 130 // 经济价值
+    //   },
+    //   {
+    //     id: 7,
+    //     prizeName: '麻辣小龙虾',
+    //     color: 'blanchedalmond',
+    //     probability: 1.8, // 概率
+    //     economicValue: 200 // 经济价值
+    //   },
+    //   {
+    //     id: 8,
+    //     prizeName: '爱情记忆',
+    //     color: 'yellowgreen',
+    //     probability: 1.1, // 概率
+    //     economicValue: 520 // 经济价值
+    //   },
+    //   {
+    //     id: 9,
+    //     prizeName: '做我的公主',
+    //     color: 'blanchedalmond',
+    //     probability: 0.1, // 概率
+    //     economicValue: 2288 // 经济价值
+    //   }
+    // ]
     let lotteryBox = document.querySelector('.lottery-list')
 
     function drawBox() { // 画出抽奖盒子
@@ -104,7 +169,7 @@
         background-color: ${ele.color};'>
         <span id="span1" style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>${ele.prizeName}</span>
         <span id="span2"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>概率:${ele.probability}%</span>
-        <span id="span3"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>价值:${ele.economicValue}钻</span>
+        <span id="span3"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>倍数:${ele.economicValue}</span>
           </li>`
       })
       lotteryBox.innerHTML = html
@@ -134,16 +199,16 @@
           lotteryBox.style.transform = 'rotate(' + rotateAng + 'deg)'
           setTimeout(() => { // 旋转结束后的操作
             const prize = prizeList[prizeId - 1]
-            let msg = '抽签结果：' + prize.prizeName + '，价值：' + prize.economicValue + '\n'
-            console.log('总花费: 66钻，得到' + prize.economicValue + '钻')
-            msg += '总花费: 66钻，得到' + prize.economicValue + '钻，'
-            if (prize.economicValue > 66) {
-              console.log('赚了' + (prize.economicValue - 66) + '钻')
-              msg += '赚了' + (prize.economicValue - 66) + '钻'
-            } else {
-              console.log('亏了' + (66 - prize.economicValue) + '钻')
-              msg += '亏了' + (66 - prize.economicValue) + '钻'
-            }
+            let msg = '开奖结果：' + prize.prizeName + '，倍数：' + prize.economicValue + '\n'
+            // console.log('总花费: 66钻，得到' + prize.economicValue + '钻')
+            // msg += '总花费: 66钻，得到' + prize.economicValue + '钻，'
+            // if (prize.economicValue > 66) {
+            //   console.log('赚了' + (prize.economicValue - 66) + '钻')
+            //   msg += '赚了' + (prize.economicValue - 66) + '钻'
+            // } else {
+            //   console.log('亏了' + (66 - prize.economicValue) + '钻')
+            //   msg += '亏了' + (66 - prize.economicValue) + '钻'
+            // }
             alert(msg)
             // alert(ele.prizeName)
             rotateStatus = true
@@ -151,16 +216,16 @@
         }
       })
     }
-    const segments = ["小星星", "胜利号角", "招财进宝香", "芋泥啵啵", "上头了", "莓你不行", "麻辣小龙虾", "爱情记忆", "做我的公主"]
-    const probability = [23.5, 19, 28.5, 17, 7, 2, 1.8, 1.1, 0.1]
+    // const segments = ["小星星", "胜利号角", "招财进宝香", "芋泥啵啵", "上头了", "莓你不行", "麻辣小龙虾", "爱情记忆", "做我的公主"]
+    const probability = [24.55, 24.55, 16.37, 12.55, 9.77, 4.85, 3.25, 2.44, 1.97]
     const probabilityArr = []
     init()
     function init() {
       for (let i = 0; i < probability.length; i++) {
         if (i === 0) {
-          probabilityArr[i] = probability[i] * 10
+          probabilityArr[i] = probability[i] * 100
         } else {
-          probabilityArr[i] = probabilityArr[i - 1] + probability[i] * 10
+          probabilityArr[i] = probabilityArr[i - 1] + probability[i] * 100
         }
       }
     }
@@ -169,7 +234,7 @@
       // 根据概率获取概率区间
       console.log(probabilityArr)
       // 获取结果值，找到结果
-      const result = Math.random() * 1000
+      const result = Math.random() * 10000
       console.log('result: ' + result)
       for (let i = 0; i < probabilityArr.length; i++) {
         if (probabilityArr[i] >= result) {
@@ -215,7 +280,7 @@
         console.log('亏了' + (totalFee - total) + '钻')
         msg += '亏了' + (totalFee - total) + '钻'
       }
-      alert(msg)
+      // alert(msg)
     }
   </script>
 </body>
