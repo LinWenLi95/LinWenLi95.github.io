@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon工具导航页</title>
+    <title>工具设置</title>
     <link href="css/element-ui.css" rel="stylesheet">
     <style>
         body, html {
@@ -43,8 +43,11 @@
         <label>{{winners}}</label><br/><br/>
         <el-input type="text" v-show="!isLock" v-model="winnerText" style="width: 60px"></el-input>
         <el-button type="primary" v-show="!isLock" @click="pushWinnerHandler" style="width: 135px">添加已中奖号码</el-button><br v-show="!isLock" /><br v-show="!isLock"/>
-<!--        <el-button type="primary" @click="getWinners">获取已中奖列表</el-button><br/><br/>-->
         <el-button type="primary" :disabled="isLock" @click="cleanWinners">清空已中奖列表</el-button><br/><br/>
+        <label v-show="!isLock">即将中奖：{{letWinCookie}}</label><br/><br/>
+        <el-input type="text" v-show="!isLock" v-model="letWin" style="width: 60px"></el-input>
+        <el-button type="primary" v-show="!isLock" @click="letWinHandler" style="width: 135px">添加中奖号码</el-button><br v-show="!isLock" /><br v-show="!isLock"/>
+<!--        <el-button type="primary" @click="getWinners">获取已中奖列表</el-button><br/><br/>-->
         <el-button type="primary" @click="lockHandler">{{isLock?'打开设置':'锁定设置'}}</el-button>
     </div>
 </div>
@@ -64,7 +67,9 @@
                 currentStage: '',
                 currentStageCookie: '',
                 winnerSetNum: '', // 奖池列表设置
-                winnerSetNumCookie: '' // 奖池列表设置
+                winnerSetNumCookie: '', // 奖池列表设置
+                letWin: '',// 让谁中
+                letWinCookie: []
             }
         },
         mounted() {
@@ -72,9 +77,37 @@
             setInterval(() => {
                 self.getWinners()
                 self.getCurrentStage()
+                self.letWinCookie =  self.getCookieArray('letWin')
             }, 3000)
         },
         methods: {
+            letWinHandler() {
+                if (!this.letWin || this.letWin.trim() === '') {
+                    this.$message({message: '请输入号码',type: 'success'})
+                    return
+                }
+                const winner = this.addZero(this.letWin.trim())
+                if (this.winners.includes(winner)) {
+                    this.$message({message: '此号码已中过奖，请重新输入',type: 'success'})
+                    this.letWin = ''
+                    return
+                }
+                this.setCookieArray('letWin', [winner])
+                this.$message({message: '操作成功',type: 'success'})
+                this.letWin = ''
+                this.letWinCookie =  this.getCookieArray('letWin')
+            },
+            addZero(num = '000') {
+                num = String(num)
+                if (num.length < 3) {
+                    let zeroStr = ''
+                    for (let i = 0; i < 3 - num.length; i++) {
+                        zeroStr += '0'
+                    }
+                    num = zeroStr + num
+                }
+                return num
+            },
             lockHandler() {
                 this.isLock = !this.isLock
             },

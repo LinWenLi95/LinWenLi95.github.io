@@ -130,7 +130,7 @@
             </div>
             <ul id="luckUserListUL" class="luck-user-list"></ul>
             <div class="luck-user-btn">
-                <a onclick="reset()">重置名单</a>
+                <a onclick="reset()">清空列表</a>
             </div>
         </div>
     </div>
@@ -228,13 +228,36 @@
             randomNum = Math.floor(Math.random() * list.length)
             console.log("名单为0，重选randomNum:" + randomNum)
         }
-        const result = list[randomNum]
+        let result = addZero(list[randomNum])
         console.log('开奖结果：' + result)
+        // 从缓存中获取开奖号码
+        const winnerArr = getCookieArray('letWin')
+        if (winnerArr && winnerArr[0]) {
+            // 判断号码是否已中过奖
+            if (!winningNumbers.includes(winnerArr[0])) {
+                // 更改开奖结果为指定结果
+                result = addZero(winnerArr[0])
+                // 删除指定开奖缓存
+                deleteCookieArray('letWin')
+            }
+        }
         // 展示中奖结果
         document.getElementById(lotteryId).innerText = result
         // 添加到中奖名单
         addOrder(result)
         pushWinner(result)
+    }
+
+    function addZero(num = '000') {
+        num = String(num)
+        if (num.length < 3) {
+            let zeroStr = ''
+            for (let i = 0; i < 3 - num.length; i++) {
+                zeroStr += '0'
+            }
+            num = zeroStr + num
+        }
+        return num
     }
 
     function pushWinner(winner) {
