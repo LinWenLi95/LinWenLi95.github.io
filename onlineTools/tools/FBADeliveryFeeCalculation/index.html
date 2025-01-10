@@ -173,6 +173,7 @@
                     <img v-if="siteName==='AU'" src="img/AU-1.png" style="width: 600px;height:1000px">
                     <img v-if="siteName==='AU'" src="img/AU-2.png" style="width: 600px;height:1000px">
                     <img v-if="siteName==='JP'" src="img/JP-1.png">
+                    <img v-if="siteName==='CA'" src="img/CA-1.png">
                     <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
                 </el-popover>
                 <el-popover
@@ -294,7 +295,7 @@
                 in: 16.387037,
                 ft: 28316.8
             },
-            sites: ['US', 'AU', 'JP'],
+            sites: ['US', 'AU', 'JP', 'CA'],
             siteCurrencys: {
                 US: 'USD',
                 CA: 'CAD',
@@ -808,6 +809,133 @@
                     '超大尺寸2': {name: '超大尺寸2', side: {longestSide: 220, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 3507,standardDeliveryFee: 3573}}},
                     '超大尺寸3': {name: '超大尺寸3', side: {longestSide: 240, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 4430,standardDeliveryFee: 4496}}},
                     '超大尺寸4': {name: '超大尺寸4', side: {longestSide: 260, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 5559,standardDeliveryFee: 5625}}}
+                },
+                CA: {
+                    '信封尺寸': {
+                        name: '信封尺寸',
+                        side: {//边长标准
+                            longestSide: 38,// 最长边
+                            secondSide: 27,// 次长边
+                            shortestSide: 2,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To100: {start: 0, end: 100, unit: 'g', lowPriceDeliveryFee: 4.73, standardDeliveryFee: 3.66 },
+                            from100To200: {start: 100, end: 200, unit: 'g', lowPriceDeliveryFee: 4.99, standardDeliveryFee: 3.91 },
+                            from200To300: {start: 200, end: 300, unit: 'g', lowPriceDeliveryFee: 5.31, standardDeliveryFee: 4.21 },
+                            from300To400: {start: 300, end: 400, unit: 'g', lowPriceDeliveryFee: 5.6, standardDeliveryFee: 4.48 },
+                            from400To500: {start: 400, end: 500, unit: 'g', lowPriceDeliveryFee: 5.95, standardDeliveryFee: 4.82 }
+                        }
+                    },
+                    '标准尺寸': {
+                        name: '标准尺寸',
+                        side: {//边长标准
+                            longestSide: 45,// 最长边
+                            secondSide: 35,// 次长边
+                            shortestSide: 20,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To100: {start: 0, end: 100, unit: 'g', lowPriceDeliveryFee: 6.28, standardDeliveryFee: 5.12 },
+                            from100To200: {start: 100, end: 200, unit: 'g', lowPriceDeliveryFee: 6.49, standardDeliveryFee: 5.32 },
+                            from200To300: {start: 200, end: 300, unit: 'g', lowPriceDeliveryFee: 6.74, standardDeliveryFee: 5.56 },
+                            from300To400: {start: 300, end: 400, unit: 'g', lowPriceDeliveryFee: 7.13, standardDeliveryFee: 5.93 },
+                            from400To500: {start: 400, end: 500, unit: 'g', lowPriceDeliveryFee: 7.67, standardDeliveryFee: 6.43 },
+                            from500To600: {start: 500, end: 600, unit: 'g', lowPriceDeliveryFee: 7.84, standardDeliveryFee: 6.6 },
+                            from600To700: {start: 600, end: 700, unit: 'g', lowPriceDeliveryFee: 8.17, standardDeliveryFee: 6.91 },
+                            from700To800: {start: 700, end: 800, unit: 'g', lowPriceDeliveryFee: 8.43, standardDeliveryFee: 7.15 },
+                            from800To900: {start: 800, end: 900, unit: 'g', lowPriceDeliveryFee: 8.74, standardDeliveryFee: 7.45 },
+                            from900To1000: {start: 900, end: 1000, unit: 'g', lowPriceDeliveryFee: 8.99, standardDeliveryFee: 7.69 },
+                            from1000To1100: {start: 1000, end: 1100, unit: 'g', lowPriceDeliveryFee: 9.1, standardDeliveryFee: 7.78 },
+                            from1100To1200: {start: 1100, end: 1200, unit: 'g', lowPriceDeliveryFee: 9.37, standardDeliveryFee: 8.04 },
+                            from1200To1300: {start: 1200, end: 1300, unit: 'g', lowPriceDeliveryFee: 9.58, standardDeliveryFee: 8.24 },
+                            from1300To1400: {start: 1300, end: 1400, unit: 'g', lowPriceDeliveryFee: 9.85, standardDeliveryFee: 8.49 },
+                            from1400To1500: {start: 1400, end: 1500, unit: 'g', lowPriceDeliveryFee: 10.17, standardDeliveryFee: 8.8 },
+                            from1500To9000: {start: 1500, end: 9000, unit: 'g', lowPriceDeliveryFee: 11, standardDeliveryFee: 9.52,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 100, // 首重1500g，超重部分收附加费
+                                    surcharge: 0.09// 超重部分附加费 0.09加元/100g
+                                }
+                            }
+                        }
+                    },
+                    '小号大件': {
+                        name: '小号大件',
+                        side: {//边长标准
+                            longestSide: 152,// 最长边
+                            secondSide: 76,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 16.77, standardDeliveryFee: 14.63 },
+                            from500To32000: {start: 500, end: 32000, unit: 'g', lowPriceDeliveryFee: 16.77, standardDeliveryFee: 14.63,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.46
+                                }
+                            }
+                        }
+                    },
+                    '中号大件': {
+                        name: '中号大件',
+                        side: {//边长标准
+                            longestSide: 270,// 最长边
+                            secondSide: 0,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 41.64, standardDeliveryFee: 36.98 },
+                            from500To68000: {start: 500, end: 68000, unit: 'g', lowPriceDeliveryFee: 41.64, standardDeliveryFee: 36.98,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.52
+                                }
+                            }
+                        }
+                    },
+                    '大号大件': {
+                        name: '大号大件',
+                        side: {//边长标准
+                            longestSide: 270,// 最长边
+                            secondSide: 0,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 89.59, standardDeliveryFee: 81.4 },
+                            from500To68000: {start: 500, end: 68000, unit: 'g', lowPriceDeliveryFee: 89.59, standardDeliveryFee: 81.4,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.58
+                                }
+                            }
+                        }
+                    },
+                    '特殊大件': {
+                        name: '特殊大件',
+                        side: {//边长标准
+                            longestSide: 0,// 最长边
+                            secondSide: 0,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 166.85, standardDeliveryFee: 149.98 },
+                            from500To99999: {start: 500, end: 99999, unit: 'g', lowPriceDeliveryFee: 166.85, standardDeliveryFee: 149.98,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.58
+                                }
+                            }
+                        }
+                    }
                 }
             },
             sizeType: {},
@@ -1092,7 +1220,10 @@
             // 尺寸是否符合条件
             matchConditions(side, arr) {
                 arr.sort((a, b) => a - b);
-                return side.shortestSide >= arr[0] && side.secondSide >= arr[1] && side.longestSide >= arr[2]
+                const shortestSideMatch = side.shortestSide === 0 ? true : side.shortestSide >= arr[0]
+                const secondSideMatch = side.secondSide === 0 ? true : side.secondSide >= arr[1]
+                const longestSideMatch = side.longestSide === 0 ? true : side.longestSide >= arr[2]
+                return shortestSideMatch && secondSideMatch && longestSideMatch
             },
             // 去掉整数开头多余的0 防止输入时输入小数点后的0时，0被删除
             removeBeginningZero(num = '0') {
