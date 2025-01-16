@@ -53,8 +53,10 @@
             top: 0;
             left:40px;
             right: 0;
-            color: white;
+            color: #0099FF;
             font-size: 32px;
+            z-index: 999;
+            opacity: 50%;
         }
         .luck-user-title{position: absolute; width: 90%; display: block; text-align: center; line-height: 40px; left: 5%; color: #f5b43a; font-weight: bold;
         }
@@ -110,6 +112,7 @@
             <label id="fileTipLabel">请加载抽奖人员名单：</label>
             <input type="file" onchange="importFile(this)" />
             <a href="config.xlsx">下载config.xlsx</a>
+            <a href="javascript:openSettingTab();">打开设置</a>
         </div>
 <!--        <div id="settingDiv">-->
 <!--            <label id="tip1">请选择抽奖轮数：-->
@@ -156,7 +159,7 @@
     document.getElementById("winnerNameListDiv").hidden = true
     // document.getElementById("settingDiv").hidden = true
     document.getElementById("nameLabelDiv").hidden = true
-    window.open('https://linwenli95.github.io/onlineTools/tools/Lottery/config.html')
+    // window.open('https://linwenli95.github.io/onlineTools/tools/Lottery/config.html')
     initResultEl()
 
 
@@ -285,6 +288,10 @@
         return numbers;
     }
 
+    function openSettingTab() {
+        window.open("https://linwenli95.github.io/onlineTools/tools/Lottery/config.html")
+    }
+
     // 获取可抽奖人员名单，排除已中奖人员，若全部已中奖则在所有人里抽奖
     function getLotteryList() {
         // 抽奖名单
@@ -397,6 +404,22 @@
         document.cookie = name + '=; max-age=0; path=/'
     }
 
+    // 打印出按下的按键
+    document.addEventListener('keydown', function(event) {
+        const key = event.key; // 获取按下的键名
+        const code = event.keyCode; // 获取按键的键码
+        const modifiers = [];
+
+        if (event.shiftKey) modifiers.push('shift');
+        if (event.ctrlKey) modifiers.push('ctrl');
+        if (event.altKey) modifiers.push('alt');
+        if (event.metaKey) modifiers.push('meta');
+        if (key === 'AudioVolumeUp') {
+            console.log('按下了抽奖')
+            start()
+        }
+        console.log(`Pressed key: ${key} (${code})${modifiers.length ? ` with ${modifiers}` : ''}`);
+    });
 </script>
 </body>
 </html>
