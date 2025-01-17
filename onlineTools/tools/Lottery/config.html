@@ -39,14 +39,17 @@
             <el-radio v-for="item in sheetNamesCookie" :key="item" :label="item">{{item}}</el-radio>
         </el-radio-group><br/><br/>
         <el-button type="primary" :disabled="isLock" @click="cleanStageSet">重置奖池设置</el-button><br/><br/>
-        <label>已中奖列表：</label><br/><br/>
-        <label>{{winners}}</label><br/><br/>
+        <label @click="showWinners = !showWinners">已中奖列表：</label><br/><br/>
+        <label v-show="showWinners || !isLock">{{winners}}</label><br/><br/>
+        <el-button type="primary" :disabled="isLock" @click="cleanWinners">清空已中奖列表</el-button><br/><br/>
         <el-input type="text" v-show="!isLock" v-model="winnerText" style="width: 60px"></el-input>
         <el-button type="primary" v-show="!isLock" @click="pushWinnerHandler" style="width: 135px">添加已中奖号码</el-button><br v-show="!isLock" /><br v-show="!isLock"/>
-        <el-button type="primary" :disabled="isLock" @click="cleanWinners">清空已中奖列表</el-button><br/><br/>
+        <el-input type="text" v-show="!isLock" v-model="removeWinnerText" style="width: 60px"></el-input>
+        <el-button type="primary" v-show="!isLock" @click="removeWinnerHandler" style="width: 135px">移除已中奖号码</el-button><br v-show="!isLock" /><br v-show="!isLock"/>
         <label v-show="!isLock">即将中奖：{{letWinCookie}}</label><br/><br/>
         <el-input type="text" v-show="!isLock" v-model="letWin" style="width: 60px"></el-input>
         <el-button type="primary" v-show="!isLock" @click="letWinHandler" style="width: 135px">添加中奖号码</el-button><br v-show="!isLock" /><br v-show="!isLock"/>
+        <el-button type="primary" v-show="!isLock" @click="removeLetWinHandler">撤销中奖号码</el-button><br v-show="!isLock" /><br v-show="!isLock"/>
 <!--        <el-button type="primary" @click="getWinners">获取已中奖列表</el-button><br/><br/>-->
         <el-button type="primary" @click="lockHandler">{{isLock?'打开设置':'锁定设置'}}</el-button>
     </div>
@@ -60,7 +63,9 @@
         el: '#app',
         data() {
             return {
+                showWinners: true,
                 winnerText: '',
+                removeWinnerText: '',
                 winners: [],
                 isLock: true,
                 sheetNamesCookie: [],
@@ -93,6 +98,12 @@
                     return
                 }
                 this.setCookieArray('letWin', [winner])
+                this.$message({message: '操作成功',type: 'success'})
+                this.letWin = ''
+                this.letWinCookie =  this.getCookieArray('letWin')
+            },
+            removeLetWinHandler() {
+                this.setCookieArray('letWin', [])
                 this.$message({message: '操作成功',type: 'success'})
                 this.letWin = ''
                 this.letWinCookie =  this.getCookieArray('letWin')
@@ -131,12 +142,33 @@
                 this.pushWinner(this.winnerText)
                 this.winnerText = ''
             },
+            removeWinnerHandler() {
+                this.removeWinner(this.removeWinnerText)
+                this.removeWinnerText = ''
+            },
+            removeWinner(winner) {
+                if (!winner || winner.trim() === '') {
+                    this.$message({message: '请输入号码',type: 'success'})
+                    return
+                }
+                let winners = this.getCookieArray('winners')
+                winner = this.addZero(winner.trim())
+                if (!winners.includes(winner)) {
+                    this.$message({message: '该号码尚未中奖',type: 'success'})
+                    return
+                }
+                winners = winners.filter(item => item !== winner);
+                this.setCookieArray('winners', winners)
+                this.getWinners()
+                this.$message({message: '操作成功',type: 'success'})
+            },
             pushWinner(winner) {
                 if (!winner || winner.trim() === '') {
                     this.$message({message: '请输入号码',type: 'success'})
                     return
                 }
                 let winners = this.getCookieArray('winners')
+                winner = this.addZero(winner.trim())
                 if (winners.includes(winner)) {
                     this.$message({message: '已存在该中奖号码',type: 'success'})
                     return
