@@ -100,7 +100,7 @@
                 <label>英国商标信息查询网站</label><br/>
                 <label>网址：https://trademarks.ipo.gov.uk/ipo-tmtext</label>
             </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('ukipo')">英标信息查询🔍️</el-button>
+            <el-button type="primary" style="width: 200px" @click="handeOpenUKIPO">英标信息查询🔍️</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip8" placement="top-start" effect="light">
             <div slot="content">
@@ -192,6 +192,9 @@
             },
             handleOpenPDFWeb() {
                 window.open(this.toolsSrc.pdfWeb);
+            },
+            handeOpenUKIPO() {
+                window.open(this.toolsSrc.ukipo);
             },
             handleBack() {
                 this.iframe.show = !this.iframe.show
