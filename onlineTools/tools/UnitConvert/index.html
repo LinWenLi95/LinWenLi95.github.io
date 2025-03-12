@@ -520,6 +520,7 @@
             <!--常用汇率-->
             <div class="divItem">
                 <label class="label-title">常用汇率：</label>
+                <a @click="refreshRateUnites()" href="javascript:;" style="color: grey">刷新汇率</a>
                 <el-form-item label="人民币">
                     <el-input @input="handleRatesInput($event, 'CNY')" type="number" v-model="rates.CNY">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY
@@ -1867,6 +1868,9 @@
                     return
                 }
                 if (Object.keys(this.rateUnits).length !== 0) return
+                this.refreshRateUnites()
+            },
+            refreshRateUnites() {
                 const self = this
                 fetch("https://api.exchangerate-api.com/v4/latest/CNY", {method: 'GET'})
                     .then(response => response.json())
@@ -1877,9 +1881,13 @@
                                 self.rateUnits[rateKey] = 1 / rates[rateKey]
                             }
                         }
-                        self.setCookie('rateUnits', JSON.stringify(self.rateUnits), 10)
+                        self.setCookie('rateUnits', JSON.stringify(self.rateUnits), 5)
+                        self.$message({message: '刷新完成',type: 'success'});
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        console.error('Error:', error)
+                        self.$message({message: '刷新失败',type: 'success'});
+                    });
             },
             // 设置cookie
             setCookie(name, value, minuteToLive) {
