@@ -423,6 +423,8 @@
                     </el-input>
                 </el-form-item>
             </div>
+        </el-form>
+        <el-form label-width="auto" v-model="size">
             <!--FBA费用计算-->
             <div class="divItem">
                 <label class="label-title">FBA费用计算：</label>
@@ -577,6 +579,8 @@
                     </el-input>
                 </el-form-item>
             </div>
+        </el-form>
+        <el-form label-width="auto" v-model="size">
             <!--不常用汇率-->
             <div class="divItem">
                 <label class="label-title">不常用汇率：</label>
@@ -670,7 +674,7 @@
                 <el-form-item label-width="92px" label="佣金&税">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
                         <el-input @input="profitCalculationHandle('commissionRate')"
-                                  style="width: 80px;display: inline-block"
+                                  style="width: 76px;display: inline-block"
                                   type="number"
                                   v-model="profitCalculation.commissionRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
@@ -690,7 +694,7 @@
                 </el-form-item>
                 <el-form-item label-width="92px" label="广告费">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                        <el-input @input="profitCalculationHandle('adRate')" style="width: 80px;display: inline-block"
+                        <el-input @input="profitCalculationHandle('adRate')" style="width: 76px;display: inline-block"
                                   type="number"
                                   v-model="profitCalculation.adRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
@@ -735,20 +739,21 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label-width="92px" label="毛利润">
-                    <el-input style="width: 200px;display: inline-block" type="number"
+                    <el-tooltip content="毛利率=(售价-销售总成本)/售价×100%" effect="light" placement="top">
+                        <el-input style="width: 76px;display: inline-block"
+                                  type="number"
+                                  v-model="profitCalculation.grossMargin">
+                            <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
+                        </el-input>
+                    </el-tooltip>
+                    <el-input style="width: 160px;display: inline-block" type="number"
                               v-model="profitCalculation.grossProfit">
                         <i slot='suffix'
                            style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
                     </el-input>
-                    <el-input style="width: 200px;display: inline-block" type="number"
+                    <el-input style="width: 160px;display: inline-block" type="number"
                               v-model="profitCalculation.grossProfitCNY">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label-width="92px" label="毛利率">
-                    <el-input style="width: 200px;display: inline-block" type="number"
-                              v-model="profitCalculation.grossMargin">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                     </el-input>
                 </el-form-item>
             </div>
@@ -811,7 +816,7 @@
                 <el-form-item label-width="92px" label="佣金&税">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
                         <el-input @input="priceCalculationHandle('commissionRate')"
-                                  style="width: 80px;display: inline-block"
+                                  style="width: 76px;display: inline-block"
                                   type="number"
                                   v-model="priceCalculation.commissionRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
@@ -831,7 +836,7 @@
                 </el-form-item>
                 <el-form-item label-width="92px" label="广告费">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                        <el-input @input="priceCalculationHandle('adRate')" style="width: 80px;display: inline-block"
+                        <el-input @input="priceCalculationHandle('adRate')" style="width: 76px;display: inline-block"
                                   type="number"
                                   v-model="priceCalculation.adRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
@@ -849,9 +854,9 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label-width="92px" label="毛利润">
-                    <el-tooltip content="毛利率=(销售收入-销售成本)/销售收入×100%" effect="light" placement="top">
+                    <el-tooltip content="毛利率=(售价-销售总成本)/售价×100%" effect="light" placement="top">
                         <el-input @input="priceCalculationHandle('grossProfitRate')"
-                                  style="width: 80px;display: inline-block"
+                                  style="width: 76px;display: inline-block"
                                   type="number"
                                   v-model="priceCalculation.grossProfitRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
