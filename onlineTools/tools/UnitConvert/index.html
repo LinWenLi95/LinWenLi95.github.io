@@ -51,6 +51,7 @@
             float: left;
             max-width: 420px;
             min-width: 220px;
+            margin-left: 10px;
         }
         /*售价计算的最大宽度增加*/
         .divItem2 {
@@ -530,15 +531,6 @@
                         </i>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="加拿大元">
-                    <el-input @input="handleRatesInput($event, 'CAD')" type="number" v-model="rates.CAD">
-                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$CAD
-                            <svg style="position: relative;width:30px;height: 20px;top:3px">
-                                <use href="#can" width="30" height="20"></use>
-                            </svg>
-                        </i>
-                    </el-input>
-                </el-form-item>
                 <el-form-item label="欧元">
                     <el-input @input="handleRatesInput($event, 'EUR')" type="number" v-model="rates.EUR">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$EUR
@@ -571,6 +563,15 @@
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AUD
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#aus" width="30" height="20"></use>
+                            </svg>
+                        </i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="加元">
+                    <el-input @input="handleRatesInput($event, 'CAD')" type="number" v-model="rates.CAD">
+                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$CAD
+                            <svg style="position: relative;width:30px;height: 20px;top:3px">
+                                <use href="#can" width="30" height="20"></use>
                             </svg>
                         </i>
                     </el-input>
