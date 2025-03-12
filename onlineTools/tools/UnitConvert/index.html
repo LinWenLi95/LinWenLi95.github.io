@@ -63,6 +63,11 @@
             display: flex;
             align-items: flex-start; /* 这会使得左侧容器的顶部对齐 */
         }
+        .el-select .el-input__inner{
+            font-size: 15px;
+            position: relative;
+            top: -2px;
+        }
     </style>
 </head>
 <body>
@@ -664,11 +669,10 @@
             <div class="divItem divItem2">
                 <label class="label-title">售价计算毛利润：</label>
                 <el-form-item label-width="92px" label="售价">
-                    <el-input @input="profitCalculationHandle('price')" style="width: 200px;display: inline-block"
+                    <el-input @input="profitCalculationHandle('price')" style="width: 220px;display: inline-block"
                               type="number"
                               v-model="profitCalculation.price">
-                        <!--                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>-->
-                        <el-select @change="profitCalculationHandle('currency')" slot='suffix' style="width: 100px"
+                        <el-select @change="profitCalculationHandle('currency')" slot='suffix' style="width: 120px"
                                    v-model="profitCalculation.currency">
                             <el-option
                                     :key="item.value"
@@ -678,7 +682,7 @@
                             </el-option>
                         </el-select>
                     </el-input>
-                    <el-input @input="profitCalculationHandle('priceCNY')" style="width: 200px;display: inline-block"
+                    <el-input @input="profitCalculationHandle('priceCNY')" style="width: 180px;display: inline-block"
                               type="number" v-model="profitCalculation.priceCNY">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
                     </el-input>
@@ -790,11 +794,11 @@
                 </el-popover>
                 <el-form-item label-width="92px" label="采购成本">
                     <el-input @input="priceCalculationHandle('purchasingCost')" ref="inputRef"
-                              style="width: 200px;display: inline-block"
+                              style="width: 220px;display: inline-block"
                               type="number"
                               v-model="priceCalculation.purchasingCost">
                         <template slot="suffix">
-                            <el-select @change="priceCalculationHandle('currency')" slot='suffix' style="width: 100px;"
+                            <el-select @change="priceCalculationHandle('currency')" slot='suffix' style="width: 120px;"
                                        v-model="priceCalculation.currency">
                                 <el-option
                                         :key="item.value"
@@ -806,7 +810,7 @@
                         </template>
                     </el-input>
                     <el-input @input="priceCalculationHandle('purchasingCostCNY')"
-                              style="width: 200px;display: inline-block"
+                              style="width: 180px;display: inline-block"
                               type="number"
                               v-model="priceCalculation.purchasingCostCNY">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY</i>
