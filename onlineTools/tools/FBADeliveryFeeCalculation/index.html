@@ -38,6 +38,9 @@
             display: flex;
             align-items: flex-start; /* 这会使得左侧容器的顶部对齐 */
         }
+        .el-select .el-input__inner{
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -161,8 +164,8 @@
         <el-form label-width="auto" v-model="size">
             <!--FBA费用计算-->
             <div class="divItem">
-                <label class="label-title">FBA费用计算：</label>
-                <el-select v-model="siteName" style="width: 100px" @change="changeSiteHandler">
+                <label class="label-title">FBA费用：</label>
+                <el-select v-model="siteName" size="mini" style="width: 70px;" @change="changeSiteHandler">
                     <el-option :key="item"
                             :label="item"
                             :value="item"
@@ -184,6 +187,12 @@
                     <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
                     <img src="img/fba外箱要求.png">
                     <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
+                </el-popover>
+                <el-popover
+                        placement="bottom"
+                        trigger="hover">
+                    <label style="font-size: 12px;">售价毛利计算、汇率换算</label><br/>
+                    <a href="https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html" slot="reference" style="color: grey">毛利计算器</a>
                 </el-popover>
                 <el-form-item label="标准尺寸">
                     <el-input class="min-width-col" v-model="classification"></el-input>
