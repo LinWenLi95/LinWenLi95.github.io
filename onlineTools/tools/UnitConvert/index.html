@@ -432,7 +432,12 @@
                         placement="bottom"
                         trigger="hover">
                     <img src="img/standard.png">
-                    <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
+                    <a href="javascript:;" slot="reference" style="color: grey">
+                        <svg style="position: relative;width:30px;height: 20px;top:3px">
+                            <use href="#usa" width="30" height="20"></use>
+                        </svg>
+                        费用标准
+                    </a>
                 </el-popover>
                 <el-popover
                         placement="bottom"
@@ -887,7 +892,7 @@
             </div>
         </el-form>
         <el-form label-width="auto" >
-            <!--成本计算售价-->
+            <!--bid计算-->
             <div>
                 <label class="label-title">bid计算：</label>
                 <el-popover
