@@ -1877,15 +1877,15 @@
                                 self.rateUnits[rateKey] = 1 / rates[rateKey]
                             }
                         }
-                        self.setCookie('rateUnits', JSON.stringify(self.rateUnits), 1)
+                        self.setCookie('rateUnits', JSON.stringify(self.rateUnits), 10)
                     })
                     .catch(error => console.error('Error:', error));
             },
             // 设置cookie
-            setCookie(name, value, hourToLive) {
+            setCookie(name, value, minuteToLive) {
                 let cookie = name + "=" + encodeURIComponent(value)
-                if (typeof hourToLive === "number") {
-                    cookie += "; max-age=" + (hourToLive*60*60) // max-age单位是秒
+                if (typeof minuteToLive === "number") {
+                    cookie += "; max-age=" + (minuteToLive*60) // max-age单位是秒
                 }
                 document.cookie = cookie
             },
