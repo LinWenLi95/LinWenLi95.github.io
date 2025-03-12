@@ -446,6 +446,12 @@
                     <img src="img/fba外箱要求.png">
                     <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
                 </el-popover>
+                <el-popover
+                        placement="bottom"
+                        trigger="hover">
+                    <label style="font-size: 12px;">美、加、澳、日，FBA物流配送费用计算</label><br/>
+                    <a href="https://linwenli95.github.io/onlineTools/tools/FBADeliveryFeeCalculation/index.html" slot="reference" style="color: grey">其他站FBA</a>
+                </el-popover>
                 <el-form-item label="标准尺寸">
                     <el-input class="min-width-col" v-model="classification"></el-input>
                 </el-form-item>
@@ -1882,11 +1888,11 @@
                             }
                         }
                         self.setCookie('rateUnits', JSON.stringify(self.rateUnits), 5)
-                        self.$message({message: '刷新完成',type: 'success'});
+                        self.$message({message: '汇率刷新成功',type: 'success'});
                     })
                     .catch(error => {
                         console.error('Error:', error)
-                        self.$message({message: '刷新失败',type: 'success'});
+                        self.$message({message: '汇率刷新失败',type: 'success'});
                     });
             },
             // 设置cookie
