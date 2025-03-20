@@ -690,14 +690,14 @@
                 <el-form-item label-width="92px" label="佣金&税">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
                         <el-input @input="profitCalculationHandle('commissionRate')"
-                                  style="width: 76px;display: inline-block"
+                                  style="width: 90px;display: inline-block"
                                   type="number"
                                   v-model="profitCalculation.commissionRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                         </el-input>
                     </el-tooltip>
                     <el-input @input="profitCalculationHandle('commission')" disabled
-                              style="width: 160px;display: inline-block" type="number"
+                              style="width: 146px;display: inline-block" type="number"
                               v-model="profitCalculation.commission">
                         <i slot='suffix'
                            style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
@@ -710,13 +710,13 @@
                 </el-form-item>
                 <el-form-item label-width="92px" label="广告费">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                        <el-input @input="profitCalculationHandle('adRate')" style="width: 76px;display: inline-block"
+                        <el-input @input="profitCalculationHandle('adRate')" style="width: 90px;display: inline-block"
                                   type="number"
                                   v-model="profitCalculation.adRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                         </el-input>
                     </el-tooltip>
-                    <el-input @input="profitCalculationHandle('adCost')" style="width: 160px;display: inline-block"
+                    <el-input @input="profitCalculationHandle('adCost')" style="width: 146px;display: inline-block"
                               type="number" v-model="profitCalculation.adCost">
                         <i slot='suffix'
                            style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
@@ -756,13 +756,13 @@
                 </el-form-item>
                 <el-form-item label-width="92px" label="毛利润">
                     <el-tooltip content="毛利率=(售价-销售总成本)/售价×100%" effect="light" placement="top">
-                        <el-input style="width: 76px;display: inline-block"
+                        <el-input style="width: 90px;display: inline-block"
                                   type="number"
                                   v-model="profitCalculation.grossMargin">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                         </el-input>
                     </el-tooltip>
-                    <el-input style="width: 160px;display: inline-block" type="number"
+                    <el-input style="width: 146px;display: inline-block" type="number"
                               v-model="profitCalculation.grossProfit">
                         <i slot='suffix'
                            style="font-style: normal; margin-right: 10px; line-height: 36px">${{profitCalculation.currency}}</i>
@@ -832,14 +832,14 @@
                 <el-form-item label-width="92px" label="佣金&税">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
                         <el-input @input="priceCalculationHandle('commissionRate')"
-                                  style="width: 76px;display: inline-block"
+                                  style="width: 90px;display: inline-block"
                                   type="number"
                                   v-model="priceCalculation.commissionRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                         </el-input>
                     </el-tooltip>
                     <el-input @input="priceCalculationHandle('commission')" disabled
-                              style="width: 160px;display: inline-block" type="number"
+                              style="width: 146px;display: inline-block" type="number"
                               v-model="priceCalculation.commission">
                         <i slot='suffix'
                            style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
@@ -852,13 +852,13 @@
                 </el-form-item>
                 <el-form-item label-width="92px" label="广告费">
                     <el-tooltip content="与售价的百分比" effect="light" placement="top">
-                        <el-input @input="priceCalculationHandle('adRate')" style="width: 76px;display: inline-block"
+                        <el-input @input="priceCalculationHandle('adRate')" style="width: 90px;display: inline-block"
                                   type="number"
                                   v-model="priceCalculation.adRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                         </el-input>
                     </el-tooltip>
-                    <el-input @input="priceCalculationHandle('adCost')" style="width: 160px;display: inline-block"
+                    <el-input @input="priceCalculationHandle('adCost')" style="width: 146px;display: inline-block"
                               type="number"
                               v-model="priceCalculation.adCost">
                         <i slot='suffix'
@@ -872,13 +872,13 @@
                 <el-form-item label-width="92px" label="毛利润">
                     <el-tooltip content="毛利率=(售价-销售总成本)/售价×100%" effect="light" placement="top">
                         <el-input @input="priceCalculationHandle('grossProfitRate')"
-                                  style="width: 76px;display: inline-block"
+                                  style="width: 90px;display: inline-block"
                                   type="number"
                                   v-model="priceCalculation.grossProfitRate">
                             <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                         </el-input>
                     </el-tooltip>
-                    <el-input @input="priceCalculationHandle('grossProfit')" style="width: 160px;display: inline-block"
+                    <el-input @input="priceCalculationHandle('grossProfit')" style="width: 146px;display: inline-block"
                               type="number" v-model="priceCalculation.grossProfit">
                         <i slot='suffix'
                            style="font-style: normal; margin-right: 10px; line-height: 36px">${{priceCalculation.currency}}</i>
