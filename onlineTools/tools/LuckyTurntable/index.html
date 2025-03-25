@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大转盘抽奖</title>
+    <link rel="stylesheet" href="./rotateLottery.css">
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .lottery-box {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 600px;
+            height: 600px;
+            /*background-color: aquamarine;*/
+        }
+
+        .lottery-list {
+            position: relative;
+            list-style: none;
+            width: 380px;
+            height: 380px;
+            overflow: hidden;
+            border-radius: 50%;
+            transition: all 3s cubic-bezier(0.13, 0.525, 0.565, 0.97);
+            /* transform: rotate(300deg); */
+        }
+
+        li {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 50%;
+            text-align: center;
+            overflow: hidden;
+            transform-origin: 0% 100%;
+        }
+
+        li span {
+            position: absolute;
+            font-size: 16px;
+        }
+        li #span1 {
+            top: 30%;
+            left: 5%;
+        }
+        li #span2 {
+            top: 55%;
+            left: 5%;
+        }
+        li #span3 {
+            top: 65%;
+            left: 5%;
+        }
+
+        .start-lottery {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: #fff;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: red;
+            cursor: pointer;
+        }
+
+        .start-lottery .triangle {
+            position: absolute;
+            top: -30px;
+            width: 0;
+            height: 0;
+            border-bottom: 50px solid red;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+        }
+
+        @keyframes RotateCircle {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="lottery-box">
+    <ul class="lottery-list"></ul>
+    <div class="start-lottery">
+        开奖
+        <span class="triangle"></span>
+    </div>
+</div>
+
+<script>
+    let prizeList = [
+        {
+            id: 1,
+            prizeName: '火元素',
+            color: '#f25319',
+            probability: 24.55, // 概率[]
+            economicValue: 4 // 经济价值
+        },
+        {
+            id: 2,
+            prizeName: '水元素',
+            color: '#4ec6f5',
+            probability: 24.55, // 概率[]
+            economicValue: 4 // 经济价值
+        },
+        {
+            id: 3,
+            prizeName: '风之灵',
+            color: 'rgba(227,240,207,0.33)',
+            probability: 16.37, // 概率[]
+            economicValue: 6 // 经济价值
+        },
+        {
+            id: 4,
+            prizeName: '木之灵',
+            color: 'rgba(103,74,62,0.53)',
+            probability: 12.55, // 概率[]
+            economicValue: 8 // 经济价值
+        },
+        {
+            id: 5,
+            prizeName: '土精灵',
+            color: 'rgba(0,0,0,0.5)',
+            probability: 9.77, // 概率[]
+            economicValue: 10 // 经济价值
+        },
+        {
+            id: 6,
+            prizeName: '雷轰轰',
+            color: '#bc87f7',
+            probability: 4.85, // 概率[]
+            economicValue: 20 // 经济价值
+        },
+        {
+            id: 7,
+            prizeName: '雪融融',
+            color: '#ffffff',
+            probability: 3.25, // 概率[]
+            economicValue: 30 // 经济价值
+        },
+        {
+            id: 8,
+            prizeName: '暗夜魔王',
+            color: 'rgba(0,0,0,0.22)',
+            probability: 2.44, // 概率[]
+            economicValue: 40 // 经济价值
+        },
+        {
+            id: 9,
+            prizeName: '光明天使',
+            color: 'rgba(255,105,180,0.47)',
+            probability: 1.97, // 概率[]
+            economicValue: 50 // 经济价值
+        }
+    ]
+    let lotteryBox = document.querySelector('.lottery-list')
+
+    function drawBox() { // 画出抽奖盒子
+        let html = '';
+        prizeList.forEach((ele, i) => {
+            html +=
+                `<li data-id=${ele.id} style='transform:rotate(${i*360/prizeList.length}deg) skewY(${360/prizeList.length-90}deg);
+        background-color: ${ele.color};'>
+        <span id="span1" style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>${ele.prizeName}</span>
+        <span id="span2"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>概率:${ele.probability}%</span>
+        <span id="span3"  style='transform:rotate(${0}deg) skewY(${90 - 360/prizeList.length}deg);'>倍数:${ele.economicValue}</span>
+          </li>`
+        })
+        lotteryBox.innerHTML = html
+    }
+    drawBox();
+
+    let startDom = document.querySelector('.start-lottery')
+    let rotateAngle = 0; // 起始旋转的角度
+    let rotateStatus = true; // 旋转的状态
+    startDom.onclick = function () {
+        if (rotateStatus) {
+            rotateStatus = false;
+            let prizeIdRandom = getResult()//Math.ceil(Math.random() * 7); // 随机的中奖id
+            let prizeAngleRandom = Math.ceil(Math.random() * (360 / prizeList.length - 1)); // 随机指针停留的位置
+            console.log('中奖id', prizeIdRandom, '中奖随机角度', prizeAngleRandom);
+            rotateLottery(rotateAngle, prizeIdRandom, prizeAngleRandom)
+        }
+    }
+
+    // prizeId 中奖ID ang 指针的起始位置的角度 prizeAngleRandom中奖指针停留在随机角度
+    function rotateLottery(ang, prizeId, prizeAngleRandom) {
+        prizeList.forEach((ele, i) => {
+            if (ele.id === prizeId) {
+                // 6*360表示最少需要转6圈 按需配置  奖励盘顺时针旋转 要减掉中奖id的角度
+                let rotateAng = ang + 6 * 360 - i * 360 / prizeList.length - prizeAngleRandom
+                rotateAngle = ang + 6 * 360
+                lotteryBox.style.transform = 'rotate(' + rotateAng + 'deg)'
+                setTimeout(() => { // 旋转结束后的操作
+                    const prize = prizeList[prizeId - 1]
+                    let msg = '开奖结果：' + prize.prizeName + '，倍数：' + prize.economicValue + '\n'
+                    alert(msg)
+                    rotateStatus = true
+                }, 3000)
+            }
+        })
+    }
+    const probability = [24.55, 24.55, 16.37, 12.55, 9.77, 4.85, 3.25, 2.44, 1.97]
+    const probabilityArr = []
+    init()
+    function init() {
+        for (let i = 0; i < probability.length; i++) {
+            if (i === 0) {
+                probabilityArr[i] = probability[i] * 100
+            } else {
+                probabilityArr[i] = probabilityArr[i - 1] + probability[i] * 100
+            }
+        }
+    }
+    // 计算中奖结果，在减速瞬间设置进去显示
+    function getResult() {
+        // 根据概率获取概率区间
+        console.log(probabilityArr)
+        // 获取结果值，找到结果
+        const result = Math.random() * 10000
+        console.log('result: ' + result)
+        for (let i = 0; i < probabilityArr.length; i++) {
+            if (probabilityArr[i] >= result) {
+                return i + 1
+            }
+        }
+        return -1
+    }
+</script>
+</body>
+</html>
