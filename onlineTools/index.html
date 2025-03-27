@@ -100,14 +100,14 @@
                 <label>英国商标信息查询网站</label><br/>
                 <label>网址：https://trademarks.ipo.gov.uk/ipo-tmtext</label>
             </div>
-            <el-button type="primary" style="width: 200px" @click="handeOpenUKIPO">英标信息查询🔍️</el-button>
+            <el-button type="primary" style="width: 200px" @click="handleOpenUrl('ukipo')">英标信息查询🔍️</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip8" placement="top-start" effect="light">
             <div slot="content">
                 <label>外观专利查询网站</label><br/>
                 <label>网址：https://designdb.wipo.int/designdb/en/index.jsp</label>
             </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('patent')">外观专利查询🔍️</el-button>
+            <el-button type="primary" style="width: 200px" @click="handleOpenUrl('patent')">外观专利查询🔍️</el-button>
         </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip9" placement="top-start" effect="light">
             <div slot="content">
@@ -117,7 +117,7 @@
                 <label>快捷添加Made In China点这里：</label>
                 <el-tooltip placement="top" effect="dark">
                     <label slot="content">快捷给标签添加Made In China文字，网址：http://amztool.moyuren.cn</label>
-                    <a href="javascript:;" @click="handleOpenPDFWeb">PDF添加Made In China</a>
+                    <a href="javascript:;" @click="handleOpenUrl('pdfWeb')">PDF添加Made In China</a>
                 </el-tooltip>
             </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('pdfEditor')">PDF在线编辑器⌨️</el-button>
@@ -191,11 +191,8 @@
                     this.iframe.src = this.toolsSrc[value]
                 }
             },
-            handleOpenPDFWeb() {
-                window.open(this.toolsSrc.pdfWeb);
-            },
-            handeOpenUKIPO() {
-                window.open(this.toolsSrc.ukipo);
+            handleOpenUrl(keyStr) {
+                window.open(this.toolsSrc[keyStr]);
             },
             handleBack() {
                 this.iframe.show = !this.iframe.show
