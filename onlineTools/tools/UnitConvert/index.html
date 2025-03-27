@@ -939,7 +939,6 @@
     new Vue({
         el: '#app',
         data: {
-            loading: null,
             currencys: ['CNY', 'USD', 'CAD', 'MXN', 'BRL', 'GBP', 'EUR', 'SEK', 'PLN', 'TRY', 'JPY', 'SGD', 'AUD', 'AED', 'SAR', "RUB"],
             sizeAndWeightSpanNum: 4,
             costProfitSpanNum: 7,
@@ -1364,16 +1363,7 @@
                 bidRate: '0'
             }
         },
-        created() {
-            this.loading = this.$loading({
-                  lock: true,
-                  text: 'Loading',
-                  spinner: 'el-icon-loading',
-                  background: 'rgba(0, 0, 0, 0.7)'
-                });
-        },
         mounted() {
-            this.loading.close();
             // 获取在线实时汇率
             this.getRateUnits()
             const self = this

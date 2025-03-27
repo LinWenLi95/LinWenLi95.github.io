@@ -152,7 +152,6 @@
         el: '#app',
         data() {
             return {
-                loading: null,
                 sourceWorkBook: null,
                 targetWorkBookMap: null,
                 priceWorkBook: null,
@@ -637,16 +636,8 @@
                 }
             }
         },
-        created() {
-            this.loading = this.$loading({
-                  lock: true,
-                  text: 'Loading',
-                  spinner: 'el-icon-loading',
-                  background: 'rgba(0, 0, 0, 0.7)'
-                });
-        },
         mounted() {
-            this.loading.close();
+
         },
         methods: {
             // 读取源Excel
