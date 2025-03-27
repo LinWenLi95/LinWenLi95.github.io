@@ -174,11 +174,11 @@
                 <el-popover
                         placement="bottom"
                         trigger="hover">
-                    <img v-if="siteName==='US'" src="img/standard.png">
-                    <img v-if="siteName==='AU'" src="img/AU-1.png" style="width: 600px;height:1000px">
-                    <img v-if="siteName==='AU'" src="img/AU-2.png" style="width: 600px;height:1000px">
-                    <img v-if="siteName==='JP'" src="img/JP-1.png">
-                    <img v-if="siteName==='CA'" src="img/CA-1.png">
+                    <img v-if="siteName==='US'" v-lazy="'img/standard.png'">
+                    <img v-if="siteName==='AU'" v-lazy="'img/AU-1.png'" style="width: 600px;height:1000px">
+                    <img v-if="siteName==='AU'" v-lazy="'img/AU-2.png'" style="width: 600px;height:1000px">
+                    <img v-if="siteName==='JP'" v-lazy="'img/JP-1.png'">
+                    <img v-if="siteName==='CA'" v-lazy="'img/CA-1.png'">
                     <a href="javascript:;" slot="reference" style="color: grey">费用标准</a>
                 </el-popover>
                 <el-popover
@@ -248,9 +248,18 @@
 </div>
 <!-- 引入Vue.js -->
 <script src="js/vue.min.2.6.14.js"></script>
+<script src="js/vue-lazyload v1.3.3.js"></script>
 <!-- 引入Element UI的JavaScript库 -->
 <script src="js/element-ui.js"></script>
 <script>
+    Vue.use(VueLazyload, {
+      lazyComponent: true,
+      observer: true, // 启用 IntersectionObserver
+      observerOptions: {
+        rootMargin: '0px',
+        threshold: 0 // 完全进入视口时触发
+      }
+    })
     // 创建一个Vue实例
     new Vue({
         el: '#app',
