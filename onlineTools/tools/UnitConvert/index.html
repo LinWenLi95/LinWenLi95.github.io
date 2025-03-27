@@ -436,7 +436,7 @@
                 <el-popover
                         placement="bottom"
                         trigger="hover">
-                    <img src="img/standard.png">
+                    <img v-lazy="'img/standard.png'">
                     <a href="javascript:;" slot="reference" style="color: grey">
                         <svg style="position: relative;width:30px;height: 20px;top:3px">
                             <use href="#usa" width="30" height="20"></use>
@@ -448,7 +448,7 @@
                         placement="bottom"
                         trigger="hover">
                     <label style="font-size: 12px;color: red">外箱最长边不超过25英寸/63.5厘米，美国站单箱不能大于50磅/22.5公斤</label><br/>
-                    <img src="img/fba外箱要求.png">
+                    <img v-lazy="'img/fba外箱要求.png'">
                     <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
                 </el-popover>
                 <el-popover
@@ -932,9 +932,18 @@
 </div>
 <!-- 引入Vue.js -->
 <script src="js/vue.min.2.6.14.js"></script>
+<script src="js/vue-lazyload v1.3.3.js"></script>
 <!-- 引入Element UI的JavaScript库 -->
 <script src="js/element-ui.js"></script>
 <script>
+    Vue.use(VueLazyload, {
+      lazyComponent: true,
+      observer: true, // 启用 IntersectionObserver
+      observerOptions: {
+        rootMargin: '0px',
+        threshold: 0 // 完全进入视口时触发
+      }
+    })
     // 创建一个Vue实例
     new Vue({
         el: '#app',
