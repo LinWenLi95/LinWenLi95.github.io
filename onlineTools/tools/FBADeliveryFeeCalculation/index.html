@@ -255,6 +255,7 @@
     new Vue({
         el: '#app',
         data: {
+            loading: null,
             weight: {
                 g: 0.0,
                 kg: 0.0,
@@ -962,7 +963,16 @@
                 highStandard: 0.0// 高一档标准配送费
             }
         },
+        created() {
+            this.loading = this.$loading({
+                  lock: true,
+                  text: 'Loading',
+                  spinner: 'el-icon-loading',
+                  background: 'rgba(0, 0, 0, 0.7)'
+                });
+        },
         mounted() {
+            this.loading.close();
             this.sizeType = this.sizeTypes[this.siteName]
         },
         methods: {

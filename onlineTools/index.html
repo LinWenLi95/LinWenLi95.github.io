@@ -147,6 +147,7 @@
         el: '#app',
         data() {
             return {
+                loading: null,
                 showTip: {
                     tip0: false,
                     tip1: false,
@@ -181,8 +182,16 @@
                 }
             }
         },
+        created() {
+            this.loading = this.$loading({
+                  lock: true,
+                  text: 'Loading',
+                  spinner: 'el-icon-loading',
+                  background: 'rgba(0, 0, 0, 0.7)'
+                });
+        },
         mounted() {
-
+            this.loading.close();
         },
         methods: {
             handleTools(value) {
