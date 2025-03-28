@@ -27,9 +27,9 @@ const GRAVITY = 0.9;
 let simSpeed = 1;
 
 function getDefaultScaleFactor() {
-	if (IS_MOBILE) return 0.5;
+	if (IS_MOBILE) return 0.75;
 	if (IS_HEADER) return 0.75;
-	return 0.5;
+	return 0.75;
 }
 
 
