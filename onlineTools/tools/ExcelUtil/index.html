@@ -82,9 +82,12 @@
         #instructionsDiv {
             border-radius: 10px;
             background-color: #f2f2f2;
-            padding: 20px;
-            margin: 10px 0;
-            display: none;
+            width: 600px;
+            min-width: 600px;
+            max-width: 600px;
+            height: 0;
+            overflow-y: auto;
+            transition: width 0.5s ease, height 0.5s ease;
         }
         #domainDiv {
             border-radius: 10px;
@@ -107,11 +110,12 @@
 <body>
 <div id="app" class="container">
     <div id="borderDiv" class="div-3d-border">
-        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.9</label><br/>
+        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.9</label>
+        <label style="color: blue;position:absolute;top:20px;right:30px">{{status}}</label><br/>
         <div id="bodyDiv">
-            <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(1)">功能说明</a>
-            <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(2)">使用步骤</a>
-            <a class="instructionHref" href="javascript:void(0)" onclick="loadInstructions(3)">更新日志</a>
+            <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(1)">功能说明</a>
+            <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(2)">使用步骤</a>
+            <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(3)">更新日志</a>
             <div id="instructionsDiv"></div>
             <div id="domainDiv">
                 <label>源站点表格：</label><input type="file" id="input-source-excel" @change="sourceInputChangeHandler"/>
@@ -125,14 +129,14 @@
 
                 <!--        <label for="sourceSKUText">SKU固定开头后两位替换为对应站点缩写：</label><input type="text" id="sourceSKUText"/>-->
                 <!--        <label for="targetSKUText">&ndash;&gt;</label><input type="text" id="targetSKUText"/><br/><br/>-->
-                <label for="checkboxSku">SKU开头两位替换为对应站点缩写：</label><input type="checkbox"
+                <label for="checkboxSku" style="color: grey">SKU开头两位替换为对应站点缩写：</label><input type="checkbox"
                                                                                       id="checkboxSku"/><br/><br/>
                 <label style="color: grey">文案提取合并：</label><input type="file" id="textExcelFile" multiple  style="width: 200px" @change="textExcelFileChangeHandler"/>
                 <a class="linkCss" href="javascript:void(0);" @click="excelMergeAndDownload()">文案合并</a>
                 <a href="javascript:void(0);" class="linkCss" @click="textExtraction()">提取源站点表格文案</a>
                 <div id="translateFileDiv"></div><br/>
 
-                <label>售价/文案配置：</label><input type="file" id="priceExcel" style="width: 180px" @change="priceExcelChangeHandler"/>
+                <label style="color: grey">售价/文案配置：</label><input type="file" id="priceExcel" style="width: 180px" @change="priceExcelChangeHandler"/>
                 <a class="linkCss" href="file/TemplateExcel.xlsx">下载配置表格(空)</a>
                 <a href="javascript:void(0);" class="linkCss" @click="excelMerge2TemplateExcel()">下载配置表格(合并文案)</a><br/><br/>
 
@@ -152,6 +156,7 @@
         el: '#app',
         data() {
             return {
+                status: '资源加载中...',
                 sourceWorkBook: null,
                 targetWorkBookMap: null,
                 priceWorkBook: null,
@@ -637,7 +642,12 @@
             }
         },
         mounted() {
-
+            this.$message.success('加载完成')
+            this.status = '加载完成'
+            const self = this
+            setTimeout(function () {
+                self.status = ''
+            }, 3000)
         },
         methods: {
             // 读取源Excel
@@ -819,32 +829,35 @@
                     let html = ''
                     switch (code) {
                         case 1:{
-                            html = `<label>作用：将源表格的列数据按新站点表格表头排序后导出</label><br/><br/>
-                                    <label>解决痛点：</label><br/><br/>
+                            html = `<label>功能说明：</label><br/><br/>
+                                    <label>将源表格的列数据按新站点表格表头排序后导出</label><br/><br/>
                                     <label>1. 解决不同表格列顺序不同，无法直接复制旧表格的已填数据填充新表的问题</label><br/><br/>
                                     <label>2. 通过粘贴的值直观看出列的含义，不用盯着表头一格格去找要填的列，费神</label><br/><br/>
                                     <label>3. 解决价格和文案仍需手动填写的问题,最大限度地减少上架表格填写工作量</label><br/><br/><br/>
-                                    <label>功能说明：</label><br/><br/>
+                                    <label>进阶功能：</label><br/><br/>
                                     <label>1. 定价/文案表格:输入定价和各站点文案后，可替换到数据中，减少工作量，提升效率</label><br/><br/>
                                     <label>2. Price+：以定价/文案表格中对应站点的定价加上Price+的值作为list_price的价格</label><br/><br/>
                                     <label>3. SKU开头两位替换为对应站点缩写：勾选后，SKU开头两位会被替换为新表格文件的前两位</label><br/><br/>
-                                    <label>4. 文案提取合并：将文件名以语言命名，例如：英语、法语、日语，合并时会自动检测item_name超过200字符的行</label><br/>`
+                                    <label>4. 文案提取合并：将文件名以语言命名，例如：英语、法语、日语，合并时会自动检测item_name超过200字符的行</label><br/><br/>
+
+                                    `
                             break
                         }
                         case 2:{
-                            html = `<label>使用步骤：</label><br/>
+                            html = `<label>使用步骤：</label><br/><br/>
                                     <label>1.选择源站点表格文件并选择template页</label><br/><br/>
                                     <label>2.选择一个或多个目标站点表格文件并选择template页</label><br/><br/>
-                                    <label>3.勾选SKU开头两位替换为对应站点缩写（可选操作）</label><br/><br/>
-                                    <label>4.选择多站点文案表格（可选操作）</label><br/><br/>
-                                    <label>5.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/><br/>
+                                    <label style="color:gray;">3.勾选SKU开头两位替换为对应站点缩写（可选操作）</label><br/><br/>
+                                    <label style="color:gray;">4.选择多站点文案表格（可选操作）</label><br/><br/>
+                                    <label style="color:gray;">5.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/><br/>
                                     <label>6.点击按钮，自动生成处理好数据列顺序的数据表格</label><br/><br/>
                                     <label>7.复制生成的数据以仅粘贴值的方式粘贴到目标表格后，进行手动调整</label><br/><br/>
-                                    <label style="font-size: 12px;">注意：选择多个目标站点表格时，文件名前两位或末尾两位必须是站点英文缩写</label><br/>`
+                                    <label style="color:red;">注意：选择多个目标站点表格时，文件名前两位或末尾两位必须是站点英文缩写</label><br/>`
                             break
                         }
                         case 3:{
-                            html = `<label>2024.12.17 更新：</label><br/><br/>
+                            html = `<label>更新日志：</label><br/><br/>
+                                    <label>2024.12.17 更新：</label><br/><br/>
                                     <label>&nbsp;&nbsp;1. 添加多表格文案提取功能</label><br/>
                                     <label>&nbsp;&nbsp;2. 添加文案提取到配置表格功能</label><br/>
                                     <label>&nbsp;&nbsp;3. 增加item_name长度检测提示功能</label><br/><br/>
@@ -881,10 +894,15 @@
                                                                                                                  `
                         }
                     }
-                    div.style.display = 'block'
+                    div.style.height = '500px';
+                    div.style.padding = '20px';
+                    div.style.margin = '10px 0';
                     div.innerHTML = html
                 } else {
-                    div.style.display = 'none'
+                    div.style.height = 0;
+                    div.style.padding = 0;
+                    div.style.margin = 0;
+                    div.innerHTML = ''
                 }
             },
             // 向指定select添加选项
