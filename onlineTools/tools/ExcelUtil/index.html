@@ -111,7 +111,7 @@
 <div id="app" class="container">
     <div id="borderDiv" class="div-3d-border">
         <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.9</label>
-        <label style="color: blue;position:absolute;top:20px;right:30px">{{status}}</label><br/>
+        <label id="statusLabel" style="color: blue;position:absolute;top:20px;right:30px">资源加载中...</label><br/>
         <div id="bodyDiv">
             <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(1)">功能说明</a>
             <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(2)">使用步骤</a>
@@ -156,7 +156,6 @@
         el: '#app',
         data() {
             return {
-                status: '资源加载中...',
                 sourceWorkBook: null,
                 targetWorkBookMap: null,
                 priceWorkBook: null,
@@ -642,11 +641,10 @@
             }
         },
         mounted() {
-            this.$message.success('加载完成')
-            this.status = '加载完成'
-            const self = this
+            const status = document.getElementById('statusLabel')
+            status.innerText = '加载完成'
             setTimeout(function () {
-                self.status = ''
+                status.innerText = ''
             }, 3000)
         },
         methods: {
