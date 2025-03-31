@@ -442,13 +442,21 @@
                             <!--FBA费用计算-->
                             <div class="divItem">
                                 <label class="label-title">FBA配送费:</label>
+                                <el-select v-model="siteName" size="mini" style="width: 70px;" @change="changeSiteHandler">
+                                    <el-option :key="item"
+                                               :label="item"
+                                               :value="item"
+                                               v-for="item in sites"></el-option>
+                                </el-select>&nbsp;
                                 <el-popover
                                         placement="bottom"
                                         trigger="hover">
-                                    <img v-lazy="'img/standard.png'">
-                                    <a href="javascript:;" slot="reference" style="color: grey">
-                                        费用标准
-                                    </a>
+                                    <img v-if="siteName==='US'" v-lazy="'img/standard.png'">
+                                    <img v-if="siteName==='AU'" v-lazy="'img/AU-1.png'" style="width: 600px;height:1000px">
+                                    <img v-if="siteName==='AU'" v-lazy="'img/AU-2.png'" style="width: 600px;height:1000px">
+                                    <img v-if="siteName==='JP'" v-lazy="'img/JP-1.png'">
+                                    <img v-if="siteName==='CA'" v-lazy="'img/CA-1.png'">
+                                    <a href="javascript:;" slot="reference" style="color: grey">收费标准</a>
                                 </el-popover>
                                 <el-popover
                                         placement="bottom"
@@ -457,23 +465,17 @@
                                     <img v-lazy="'img/fba外箱要求.png'">
                                     <a href="javascript:;" slot="reference" style="color: grey">外箱要求</a>
                                 </el-popover>
-                                <el-popover
-                                        placement="bottom"
-                                        trigger="hover">
-                                    <label style="font-size: 12px;">美、加、澳、日，FBA物流配送费用计算</label><br/>
-                                    <a href="https://linwenli95.github.io/onlineTools/tools/FBADeliveryFeeCalculation/index.html" slot="reference" style="color: grey">其他站FBA</a>
-                                </el-popover>
                                 <el-form-item label="标准尺寸">
                                     <el-input class="min-width-col" v-model="classification"></el-input>
                                 </el-form-item>
                                 <el-form-item label="标准配送费">
                                     <el-input class="min-width-col" v-model="FBADeliveryFee.standard">
-                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="低价配送费">
                                     <el-input class="min-width-col" v-model="FBADeliveryFee.lowPrice">
-                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="高一档尺寸">
@@ -481,12 +483,12 @@
                                 </el-form-item>
                                 <el-form-item label="高一档标准">
                                     <el-input class="min-width-col" v-model="FBADeliveryFee.highStandard">
-                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
                                     </el-input>
                                 </el-form-item>
                                 <el-form-item label="高一档低价">
                                     <el-input class="min-width-col" v-model="FBADeliveryFee.highLowPrice">
-                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
+                                        <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">${{siteCurrencys[siteName]}}</i>
                                     </el-input>
                                 </el-form-item>
                             </div>
@@ -526,7 +528,7 @@
                                                    v-model="toFixedNum" v-show="showFixedTextInput"></input>
                                         </el-tooltip>
                                         <label class="label-tip" v-show="showFixedTextInput">位</label>
-                                        <el-button slot="reference">有效小数位设置</el-button>
+                                        <el-button slot="reference" class="min-width-col">有效小数位设置</el-button>
                                     </el-popover>
                                 </el-form-item>
                             </div><br/>
@@ -1060,267 +1062,651 @@
                 in: 16.387037,
                 ft: 28316.8
             },
-            rateUnits: {},
-            sizeType: {
-                Small: {// 小号标准尺寸
-                    name: '小号标准尺寸',
-                    side: {//边长标准
-                        longestSide: 15,// 最长边不超过15英寸
-                        secondSide: 12,// 次长边不超过12英寸
-                        shortestSide: 0.75,// 最短边不超过0.75英寸
-                        unit: 'in'
-                    },
-                    weight: {
-                        from0To2: {
-                            start: 0,
-                            end: 2,// 不超过2盎司
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.29,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 3.06// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from2To4: {
-                            start: 2,
-                            end: 4,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.38,
-                            standardDeliveryFee: 3.15
-                        },
-                        from4To6: {
-                            start: 4,
-                            end: 6,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.47,
-                            standardDeliveryFee: 3.24
-                        },
-                        from6To8: {
-                            start: 6,
-                            end: 8,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.56,
-                            standardDeliveryFee: 3.33
-                        },
-                        from8To10: {
-                            start: 8,
-                            end: 10,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.66,
-                            standardDeliveryFee: 3.43
-                        },
-                        from10To12: {
-                            start: 10,
-                            end: 12,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.76,
-                            standardDeliveryFee: 3.53
-                        },
-                        from12To14: {
-                            start: 12,
-                            end: 14,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.83,
-                            standardDeliveryFee: 3.60
-                        },
-                        from14To16: {
-                            start: 14,
-                            end: 16,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.88,
-                            standardDeliveryFee: 3.65
-                        }
-                    }
-                },
-                Large: {// 大号标准尺寸
-                    name: '大号标准尺寸',
-                    side: {//边长标准
-                        longestSide: 18,
-                        secondSide: 14,
-                        shortestSide: 8,
-                        unit: 'in'
-                    },
-                    weight: {
-                        from0To4: {
-                            start: 0,
-                            end: 4,// 不超过4盎司
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 2.91,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 3.68// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from4To8: {
-                            start: 4,
-                            end: 8,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 3.13,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 3.90// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from8To12: {
-                            start: 8,
-                            end: 12,
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 3.38,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 4.15// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from12To16: {
-                            start: 12,
-                            end: 16,// 不超过16盎司
-                            unit: 'oz',
-                            lowPriceDeliveryFee: 3.78,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 4.55// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from100To125: {
-                            start: 1,
-                            end: 1.25,// 不超过1.25磅
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 4.22,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 4.99// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from125To150: {
-                            start: 1.25,
-                            end: 1.5,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 4.60,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 5.37// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from150To175: {
-                            start: 1.5,
-                            end: 1.75,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 4.75,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 5.52// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from175To200: {
-                            start: 1.75,
-                            end: 2,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 5.00,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 5.77// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from200To225: {
-                            start: 2,
-                            end: 2.25,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 5.10,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 5.87// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from225To250: {
-                            start: 2.25,
-                            end: 2.5,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 5.28,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 6.05// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from250To275: {
-                            start: 2.5,
-                            end: 2.75,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 5.44,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 6.21// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from275To300: {
-                            start: 2.75,
-                            end: 3,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 5.85,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 6.62// 售价超过10刀的标准商品FBA配送费
-                        },
-                        from300To2000: {
-                            start: 3,
-                            end: 20,// 不超过20磅
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 6.15,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 6.92,// 售价超过10刀的标准商品FBA配送费
-                            excessWeight: {
-                                unit: 'oz',
-                                segmentation: 4, // 超出首重 3 磅的部分，每 4 盎司 $0.08
-                                surcharge: 0.08// 超重部分附加费
-                            }
-                        }
-                    }
-                },
-                LargeLarge: {// 大号大件
-                    name: '大号大件',
-                    side: {
-                        longestSide: 59,
-                        secondSide: 33,
-                        shortestSide: 33,
-                        unit: 'in'
-                        // 另外要求长度+围长不超过 130 英寸，此处不进行处理
-                    },
-                    weight: {
-                        from0To50: {
-                            start: 0,
-                            end: 50,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 8.84,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 9.61,// 售价超过10刀的标准商品FBA配送费
-                            excessWeight: {
-                                unit: 'lb',
-                                segmentation: 1, // 超出首磅的部分，每磅 $0.38
-                                surcharge: 0.38// 超重部分附加费
-                            }
-                        }
-                    }
-                },
-                Oversized: {// 超大件
-                    name: '超大件',
-                    side: {
-                        longestSide: 59,
-                        secondSide: 33,
-                        shortestSide: 33,
-                        unit: 'in'
-                        // 另外要求长度+围长不超过 130 英寸，此处不进行处理
-                    },
-                    weight: {
-                        from0To50: {
-                            start: 0,
-                            end: 50,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 25.56,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 26.33,// 售价超过10刀的标准商品FBA配送费
-                            excessWeight: {
-                                unit: 'lb',
-                                segmentation: 1, // 超出首磅的部分，每磅 $0.38
-                                surcharge: 0.38// 超重部分附加费
-                            }
-                        },
-                        from50To70: {
-                            start: 50,
-                            end: 70,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 39.35,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 40.12,// 售价超过10刀的标准商品FBA配送费
-                            excessWeight: {
-                                unit: 'lb',
-                                segmentation: 1, // 超出首重的部分，每磅 $0.38
-                                surcharge: 0.75// 超重部分附加费
-                            }
-                        },
-                        from70To150: {
-                            start: 70,
-                            end: 150,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 54.04,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 54.81,// 售价超过10刀的标准商品FBA配送费
-                            excessWeight: {
-                                unit: 'lb',
-                                segmentation: 1, // 超出首重的部分，每磅 $0.75
-                                surcharge: 0.75// 超重部分附加费
-                            }
-                        },
-                        from150To999: {
-                            start: 150,
-                            end: 999,
-                            unit: 'lb',
-                            lowPriceDeliveryFee: 194.18,// 售价不超过10刀的低价商品FBA配送费
-                            standardDeliveryFee: 194.95,// 售价超过10刀的标准商品FBA配送费
-                            excessWeight: {
-                                unit: 'lb',
-                                segmentation: 1, // 超出首重的部分，每磅 $0.38
-                                surcharge: 0.19// 超重部分附加费
-                            }
-                        }
-                    }
-                },
+            sites: ['US', 'AU', 'JP', 'CA'],
+            siteCurrencys: {
+                US: 'USD',
+                CA: 'CAD',
+                MX: 'MXN',
+                BR: 'BRL',
+                UK: 'GBP',
+                JP: 'JPY',
+                SG: 'SGD',
+                AU: 'AUD',
+                AE: 'AED',
+                SA: 'SAR'
             },
+            siteName: 'US',
+            sizeTypes: {
+                US: {
+                    Small: {// 小号标准尺寸
+                        name: '小号标准尺寸',
+                        side: {//边长标准
+                            longestSide: 15,// 最长边不超过15英寸
+                            secondSide: 12,// 次长边不超过12英寸
+                            shortestSide: 0.75,// 最短边不超过0.75英寸
+                            unit: 'in'
+                        },
+                        weight: {
+                            from0To2: {
+                                start: 0,
+                                end: 2,// 不超过2盎司
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.29,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 3.06// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from2To4: {
+                                start: 2,
+                                end: 4,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.38,
+                                standardDeliveryFee: 3.15
+                            },
+                            from4To6: {
+                                start: 4,
+                                end: 6,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.47,
+                                standardDeliveryFee: 3.24
+                            },
+                            from6To8: {
+                                start: 6,
+                                end: 8,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.56,
+                                standardDeliveryFee: 3.33
+                            },
+                            from8To10: {
+                                start: 8,
+                                end: 10,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.66,
+                                standardDeliveryFee: 3.43
+                            },
+                            from10To12: {
+                                start: 10,
+                                end: 12,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.76,
+                                standardDeliveryFee: 3.53
+                            },
+                            from12To14: {
+                                start: 12,
+                                end: 14,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.83,
+                                standardDeliveryFee: 3.60
+                            },
+                            from14To16: {
+                                start: 14,
+                                end: 16,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.88,
+                                standardDeliveryFee: 3.65
+                            }
+                        }
+                    },
+                    Large: {// 大号标准尺寸
+                        name: '大号标准尺寸',
+                        side: {//边长标准
+                            longestSide: 18,
+                            secondSide: 14,
+                            shortestSide: 8,
+                            unit: 'in'
+                        },
+                        weight: {
+                            from0To4: {
+                                start: 0,
+                                end: 4,// 不超过4盎司
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 2.91,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 3.68// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from4To8: {
+                                start: 4,
+                                end: 8,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.13,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 3.90// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from8To12: {
+                                start: 8,
+                                end: 12,
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.38,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 4.15// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from12To16: {
+                                start: 12,
+                                end: 16,// 不超过16盎司
+                                unit: 'oz',
+                                lowPriceDeliveryFee: 3.78,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 4.55// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from100To125: {
+                                start: 1,
+                                end: 1.25,// 不超过1.25磅
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 4.22,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 4.99// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from125To150: {
+                                start: 1.25,
+                                end: 1.5,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 4.60,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.37// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from150To175: {
+                                start: 1.5,
+                                end: 1.75,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 4.75,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.52// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from175To200: {
+                                start: 1.75,
+                                end: 2,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.00,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.77// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from200To225: {
+                                start: 2,
+                                end: 2.25,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.10,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 5.87// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from225To250: {
+                                start: 2.25,
+                                end: 2.5,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.28,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.05// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from250To275: {
+                                start: 2.5,
+                                end: 2.75,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.44,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.21// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from275To300: {
+                                start: 2.75,
+                                end: 3,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 5.85,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.62// 售价超过10刀的标准商品FBA配送费
+                            },
+                            from300To2000: {
+                                start: 3,
+                                end: 20,// 不超过20磅
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 6.15,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 6.92,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'oz',
+                                    segmentation: 4, // 超出首重 3 磅的部分，每 4 盎司 $0.08
+                                    surcharge: 0.08// 超重部分附加费
+                                }
+                            }
+                        }
+                    },
+                    LargeLarge: {// 大号大件
+                        name: '大号大件',
+                        side: {
+                            longestSide: 59,
+                            secondSide: 33,
+                            shortestSide: 33,
+                            unit: 'in'
+                            // 另外要求长度+围长不超过 130 英寸，此处不进行处理
+                        },
+                        weight: {
+                            from0To50: {
+                                start: 0,
+                                end: 50,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 8.84,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 9.61,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首磅的部分，每磅 $0.38
+                                    surcharge: 0.38// 超重部分附加费
+                                }
+                            }
+                        }
+                    },
+                    Oversized: {// 超大件
+                        name: '超大件',
+                        side: {
+                            longestSide: 59,
+                            secondSide: 33,
+                            shortestSide: 33,
+                            unit: 'in'
+                            // 另外要求长度+围长不超过 130 英寸，此处不进行处理
+                        },
+                        weight: {
+                            from0To50: {
+                                start: 0,
+                                end: 50,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 25.56,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 26.33,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首磅的部分，每磅 $0.38
+                                    surcharge: 0.38// 超重部分附加费
+                                }
+                            },
+                            from50To70: {
+                                start: 50,
+                                end: 70,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 39.35,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 40.12,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首重的部分，每磅 $0.38
+                                    surcharge: 0.75// 超重部分附加费
+                                }
+                            },
+                            from70To150: {
+                                start: 70,
+                                end: 150,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 54.04,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 54.81,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首重的部分，每磅 $0.75
+                                    surcharge: 0.75// 超重部分附加费
+                                }
+                            },
+                            from150To999: {
+                                start: 150,
+                                end: 999,
+                                unit: 'lb',
+                                lowPriceDeliveryFee: 194.18,// 售价不超过10刀的低价商品FBA配送费
+                                standardDeliveryFee: 194.95,// 售价超过10刀的标准商品FBA配送费
+                                excessWeight: {
+                                    unit: 'lb',
+                                    segmentation: 1, // 超出首重的部分，每磅 $0.38
+                                    surcharge: 0.19// 超重部分附加费
+                                }
+                            }
+                        }
+                    },
+                },
+                AU: {
+                    '小号信封': {
+                        name: '小号信封',
+                        side: {//边长标准
+                            longestSide: 20,// 最长边
+                            secondSide: 15,// 次长边
+                            shortestSide: 1,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To75: {
+                                start: 0,
+                                end: 75,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 3.36,// 售价不超过13澳元的低价商品FBA配送费
+                                standardDeliveryFee: 4.27// 售价超过13澳元的标准商品FBA配送费
+                            }
+                        }
+                    },
+                    '标准信封': {
+                        name: '标准信封',
+                        side: {//边长标准
+                            longestSide: 33,// 最长边
+                            secondSide: 23,// 次长边
+                            shortestSide: 2.5,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to75: {start: 0,end: 75, unit: 'g',lowPriceDeliveryFee: 3.36,standardDeliveryFee: 4.27},
+                            from76to225: {start: 75,end: 225, unit: 'g',lowPriceDeliveryFee: 3.9,standardDeliveryFee: 4.81},
+                            from226to475: {start: 225,end: 475, unit: 'g',lowPriceDeliveryFee: 4.45,standardDeliveryFee: 5.36}
+                        }
+                    },
+                    '大号信封': {
+                        name: '大号信封',
+                        side: {//边长标准
+                            longestSide: 33,// 最长边
+                            secondSide: 23,// 次长边
+                            shortestSide: 5,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to225: {start: 0,end: 225, unit: 'g',lowPriceDeliveryFee: 5.41,standardDeliveryFee: 6.32},
+                            from226to475: {start: 225,end: 475, unit: 'g',lowPriceDeliveryFee: 5.8,standardDeliveryFee: 6.71},
+                            from476to975: {start: 475,end: 975, unit: 'g',lowPriceDeliveryFee: 7.37,standardDeliveryFee: 8.28}
+                        }
+                    },
+                    '包裹': {
+                        name: '包裹',
+                        side: {//边长标准
+                            longestSide: 45,// 最长边
+                            secondSide: 34,// 次长边
+                            shortestSide: 20,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to250: {start: 0,end: 250, unit: 'g',lowPriceDeliveryFee: 5.89,standardDeliveryFee: 6.8},
+                            from251to500: {start: 250,end: 500, unit: 'g',lowPriceDeliveryFee: 6.39,standardDeliveryFee: 7.3},
+                            from501to1000: {start: 500,end: 1000, unit: 'g',lowPriceDeliveryFee: 7.98,standardDeliveryFee: 8.89},
+                            from1001to1500: {start: 1000,end: 1500, unit: 'g',lowPriceDeliveryFee: 8.36,standardDeliveryFee: 9.27},
+                            from1501to2000: {start: 1500,end: 2000, unit: 'g',lowPriceDeliveryFee: 8.8,standardDeliveryFee: 9.71},
+                            from2001to3000: {start: 2000,end: 3000, unit: 'g',lowPriceDeliveryFee: 9.26,standardDeliveryFee: 10.17},
+                            from3001to4000: {start: 3000,end: 4000, unit: 'g',lowPriceDeliveryFee: 10.04,standardDeliveryFee: 10.95},
+                            from4001to5000: {start: 4000,end: 5000, unit: 'g',lowPriceDeliveryFee: 10.05,standardDeliveryFee: 10.96},
+                            from5001to6000: {start: 5000,end: 6000, unit: 'g',lowPriceDeliveryFee: 10.08,standardDeliveryFee: 10.99},
+                            from6001to7000: {start: 6000,end: 7000, unit: 'g',lowPriceDeliveryFee: 10.14,standardDeliveryFee: 11.05},
+                            from7001to8000: {start: 7000,end: 8000, unit: 'g',lowPriceDeliveryFee: 10.18,standardDeliveryFee: 11.09},
+                            from8001to9000: {start: 8000,end: 9000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from9001to10000: {start: 9000,end: 10000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from10001to11000: {start: 10000,end: 11000, unit: 'g',lowPriceDeliveryFee: 11.52,standardDeliveryFee: 12.43},
+                            from11001to12000: {start: 11000,end: 12000, unit: 'g',lowPriceDeliveryFee: 11.75,standardDeliveryFee: 12.66}
+                        }
+                    },
+                    '小号大件': {
+                        name: '小号大件',
+                        side: {//边长标准
+                            longestSide: 61,// 最长边
+                            secondSide: 46,// 次长边
+                            shortestSide: 46,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to1000: {start: 0,end: 1000, unit: 'g',lowPriceDeliveryFee: 8.92,standardDeliveryFee: 9.83},
+                            from1001to1250: {start: 1000,end: 1250, unit: 'g',lowPriceDeliveryFee: 9.09,standardDeliveryFee: 10},
+                            from1251to1500: {start: 1250,end: 1500, unit: 'g',lowPriceDeliveryFee: 9.77,standardDeliveryFee: 10.68},
+                            from1501to1750: {start: 1500,end: 1750, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            from1751to2000: {start: 1750,end: 2000, unit: 'g',lowPriceDeliveryFee: 10.29,standardDeliveryFee: 11.2},
+                            // 重量超过 23 千克的商品，禁止使用亚马逊物流配送
+                            from2001to23000: {
+                                start: 2000,
+                                end: 23000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 10.59,
+                                standardDeliveryFee: 11.5,
+                                excessWeight: {
+                                    unit: 'kg',
+                                    segmentation: 1, // 首重2kg，超重部分收附加费
+                                    surcharge: 0.01// 超重部分附加费 0.01澳元/kg
+                                }
+                            }
+                        }
+                    },
+                    '标准大件': {
+                        name: '标准大件',
+                        side: {//边长标准
+                            longestSide: 105,// 最长边
+                            secondSide: 60,// 次长边
+                            shortestSide: 60,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to1000: {start: 0,end: 1000, unit: 'g',lowPriceDeliveryFee: 11.03,standardDeliveryFee: 11.94},
+                            from1001to2000: {start: 1000,end: 2000, unit: 'g',lowPriceDeliveryFee: 11.65,standardDeliveryFee: 12.56},
+                            from2001to3000: {start: 2000,end: 3000, unit: 'g',lowPriceDeliveryFee: 11.94,standardDeliveryFee: 12.85},
+                            from3001to4000: {start: 3000,end: 4000, unit: 'g',lowPriceDeliveryFee: 11.97,standardDeliveryFee: 12.88},
+                            from4001to5000: {start: 4000,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.42,standardDeliveryFee: 13.33},
+                            from5001to6000: {start: 5000,end: 6000, unit: 'g',lowPriceDeliveryFee: 12.72,standardDeliveryFee: 13.63},
+                            from6001to7000: {start: 6000,end: 7000, unit: 'g',lowPriceDeliveryFee: 12.73,standardDeliveryFee: 13.64},
+                            from7001to8000: {start: 7000,end: 8000, unit: 'g',lowPriceDeliveryFee: 12.75,standardDeliveryFee: 13.66},
+                            from8001to9000: {start: 8000,end: 9000, unit: 'g',lowPriceDeliveryFee: 13.01,standardDeliveryFee: 13.92},
+                            from9001to10000: {start: 9000,end: 10000, unit: 'g',lowPriceDeliveryFee: 13.21,standardDeliveryFee: 14.12},
+                            from10001to15000: {start: 10000,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.27,standardDeliveryFee: 15.18},
+                            from15001to20000: {start: 15000,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.4,standardDeliveryFee: 16.31},
+                            from20001to22000: {start: 20000,end: 22000, unit: 'g',lowPriceDeliveryFee: 15.74,standardDeliveryFee: 16.65},
+                            // 重量超过 23 千克的商品，禁止使用亚马逊物流配送
+                            from22000to23000: {
+                                start: 22000,
+                                end: 23000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 15.94,
+                                standardDeliveryFee: 16.85,
+                                excessWeight: {
+                                    unit: 'kg',
+                                    segmentation: 1, // 首重22kg，超重部分收附加费
+                                    surcharge: 0.01// 超重部分附加费 0.01澳元/kg
+                                }
+                            }
+                        }
+                    },
+                    '大号大件': {
+                        name: '大号大件',
+                        side: {//边长标准  对于尺寸超过 116 厘米 x 116 厘米 x 102 厘米或重量超过 23 千克的商品，禁止使用亚马逊物流配送
+                            longestSide: 116,// 最长边
+                            secondSide: 116,// 次长边
+                            shortestSide: 102,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to5000: {start: 0,end: 5000, unit: 'g',lowPriceDeliveryFee: 12.46,standardDeliveryFee: 13.37},
+                            from5001to10000: {start: 5000,end: 10000, unit: 'g',lowPriceDeliveryFee: 12.92,standardDeliveryFee: 13.83},
+                            from10001to15000: {start: 10000,end: 15000, unit: 'g',lowPriceDeliveryFee: 14.33,standardDeliveryFee: 15.24},
+                            from15001to20000: {start: 15000,end: 20000, unit: 'g',lowPriceDeliveryFee: 15.95,standardDeliveryFee: 16.86},
+                            from20001to25000: {start: 20000,end: 25000, unit: 'g',lowPriceDeliveryFee: 18.04,standardDeliveryFee: 18.95},
+                            from25001to30000: {start: 25000,end: 30000, unit: 'g',lowPriceDeliveryFee: 19.09,standardDeliveryFee: 20},
+                            from30001to35000: {start: 30000,end: 35000, unit: 'g',lowPriceDeliveryFee: 24.09,standardDeliveryFee: 25}
+                        }
+                    },
+                    '超大件': {
+                        name: '超大件',
+                        side: {//边长标准
+                            longestSide: 116,// 最长边
+                            secondSide: 116,// 次长边
+                            shortestSide: 102,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0to35000: {
+                                start: 0,
+                                end: 35000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 64.09,
+                                standardDeliveryFee: 65
+                            }
+                        }
+                    }
+                },
+                JP: {
+                    '小号': {
+                        name: '小号',
+                        side: {//边长标准
+                            longestSide: 25,// 最长边
+                            secondSide: 18,// 次长边
+                            shortestSide: 2,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To250: {
+                                start: 0,
+                                end: 250,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 222,// 售价不超过1000日元的低价商品FBA配送费
+                                standardDeliveryFee: 288// 售价超过1000日元的标准商品FBA配送费
+                            }
+                        }
+                    },
+                    '标准尺寸1': {
+                        name: '标准尺寸1',
+                        side: {//边长标准
+                            longestSide: 35,// 最长边
+                            secondSide: 30,// 次长边
+                            shortestSide: 3.3,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To250: {
+                                start: 0,
+                                end: 250,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 252,// 售价不超过1000日元的低价商品FBA配送费
+                                standardDeliveryFee: 318// 售价超过1000日元的标准商品FBA配送费
+                            },
+                            from250To1000: {
+                                start: 250,
+                                end: 1000,
+                                unit: 'g',
+                                lowPriceDeliveryFee: 252,// 售价不超过1000日元的低价商品FBA配送费
+                                standardDeliveryFee: 318// 售价超过1000日元的标准商品FBA配送费
+                            }
+                        }
+                    },
+                    '标准尺寸2': {name: '标准尺寸2', side: {longestSide: 20, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to2000: {start: 0, end: 2000, unit: 'g',lowPriceDeliveryFee: 347,standardDeliveryFee: 413}}},
+                    '标准尺寸3': {name: '标准尺寸3', side: {longestSide: 30, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to2000: {start: 0, end: 2000, unit: 'g',lowPriceDeliveryFee: 368,standardDeliveryFee: 434}}},
+                    '标准尺寸4': {name: '标准尺寸4', side: {longestSide: 40, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to2000: {start: 0, end: 2000, unit: 'g',lowPriceDeliveryFee: 389,standardDeliveryFee: 455}}},
+                    '标准尺寸5': {name: '标准尺寸5', side: {longestSide: 50, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to2000: {start: 0, end: 2000, unit: 'g',lowPriceDeliveryFee: 399,standardDeliveryFee: 465}}},
+                    '标准尺寸6': {name: '标准尺寸6', side: {longestSide: 60, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to2000: {start: 0, end: 2000, unit: 'g',lowPriceDeliveryFee: 419,standardDeliveryFee: 485}}},
+                    '标准尺寸7': {name: '标准尺寸7', side: {longestSide: 80, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to5000: {start: 0, end: 5000, unit: 'g',lowPriceDeliveryFee: 448,standardDeliveryFee: 514}}},
+                    '标准尺寸8': {name: '标准尺寸8', side: {longestSide: 100, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to9000: {start: 0, end: 9000, unit: 'g',lowPriceDeliveryFee: 537,standardDeliveryFee: 603}}},
+                    '大件商品1': {name: '大件商品1', side: {longestSide: 60, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to2000: {start: 0, end: 2000, unit: 'g',lowPriceDeliveryFee: 523,standardDeliveryFee: 589}}},
+                    '大件商品2': {name: '大件商品2', side: {longestSide: 80, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to5000: {start: 0, end: 5000, unit: 'g',lowPriceDeliveryFee: 646,standardDeliveryFee: 712}}},
+                    '大件商品3': {name: '大件商品3', side: {longestSide: 100, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to10000: {start: 0, end: 10000, unit: 'g',lowPriceDeliveryFee: 749,standardDeliveryFee: 815}}},
+                    '大件商品4': {name: '大件商品4', side: {longestSide: 120, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to15000: {start: 0, end: 15000, unit: 'g',lowPriceDeliveryFee: 909,standardDeliveryFee: 975}}},
+                    '大件商品5': {name: '大件商品5', side: {longestSide: 140, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to20000: {start: 0, end: 20000, unit: 'g',lowPriceDeliveryFee: 954,standardDeliveryFee: 1020}}},
+                    '大件商品6': {name: '大件商品6', side: {longestSide: 160, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to25000: {start: 0, end: 25000, unit: 'g',lowPriceDeliveryFee: 1034,standardDeliveryFee: 1100}}},
+                    '大件商品7': {name: '大件商品7', side: {longestSide: 180, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to30000: {start: 0, end: 30000, unit: 'g',lowPriceDeliveryFee: 1466,standardDeliveryFee: 1532}}},
+                    '大件商品8': {name: '大件商品8', side: {longestSide: 200, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to40000: {start: 0, end: 40000, unit: 'g',lowPriceDeliveryFee: 1690,standardDeliveryFee: 1756}}},
+                    '超大尺寸1': {name: '超大尺寸1', side: {longestSide: 200, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 2689,standardDeliveryFee: 2755}}},
+                    '超大尺寸2': {name: '超大尺寸2', side: {longestSide: 220, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 3507,standardDeliveryFee: 3573}}},
+                    '超大尺寸3': {name: '超大尺寸3', side: {longestSide: 240, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 4430,standardDeliveryFee: 4496}}},
+                    '超大尺寸4': {name: '超大尺寸4', side: {longestSide: 260, secondSide: 0, shortestSide: 0, unit: 'cm'}, weight: {from0to50000: {start: 0, end: 50000, unit: 'g',lowPriceDeliveryFee: 5559,standardDeliveryFee: 5625}}}
+                },
+                CA: {
+                    '信封尺寸': {
+                        name: '信封尺寸',
+                        side: {//边长标准
+                            longestSide: 38,// 最长边
+                            secondSide: 27,// 次长边
+                            shortestSide: 2,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To100: {start: 0, end: 100, unit: 'g', lowPriceDeliveryFee: 4.73, standardDeliveryFee: 3.66 },
+                            from100To200: {start: 100, end: 200, unit: 'g', lowPriceDeliveryFee: 4.99, standardDeliveryFee: 3.91 },
+                            from200To300: {start: 200, end: 300, unit: 'g', lowPriceDeliveryFee: 5.31, standardDeliveryFee: 4.21 },
+                            from300To400: {start: 300, end: 400, unit: 'g', lowPriceDeliveryFee: 5.6, standardDeliveryFee: 4.48 },
+                            from400To500: {start: 400, end: 500, unit: 'g', lowPriceDeliveryFee: 5.95, standardDeliveryFee: 4.82 }
+                        }
+                    },
+                    '标准尺寸': {
+                        name: '标准尺寸',
+                        side: {//边长标准
+                            longestSide: 45,// 最长边
+                            secondSide: 35,// 次长边
+                            shortestSide: 20,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To100: {start: 0, end: 100, unit: 'g', lowPriceDeliveryFee: 6.28, standardDeliveryFee: 5.12 },
+                            from100To200: {start: 100, end: 200, unit: 'g', lowPriceDeliveryFee: 6.49, standardDeliveryFee: 5.32 },
+                            from200To300: {start: 200, end: 300, unit: 'g', lowPriceDeliveryFee: 6.74, standardDeliveryFee: 5.56 },
+                            from300To400: {start: 300, end: 400, unit: 'g', lowPriceDeliveryFee: 7.13, standardDeliveryFee: 5.93 },
+                            from400To500: {start: 400, end: 500, unit: 'g', lowPriceDeliveryFee: 7.67, standardDeliveryFee: 6.43 },
+                            from500To600: {start: 500, end: 600, unit: 'g', lowPriceDeliveryFee: 7.84, standardDeliveryFee: 6.6 },
+                            from600To700: {start: 600, end: 700, unit: 'g', lowPriceDeliveryFee: 8.17, standardDeliveryFee: 6.91 },
+                            from700To800: {start: 700, end: 800, unit: 'g', lowPriceDeliveryFee: 8.43, standardDeliveryFee: 7.15 },
+                            from800To900: {start: 800, end: 900, unit: 'g', lowPriceDeliveryFee: 8.74, standardDeliveryFee: 7.45 },
+                            from900To1000: {start: 900, end: 1000, unit: 'g', lowPriceDeliveryFee: 8.99, standardDeliveryFee: 7.69 },
+                            from1000To1100: {start: 1000, end: 1100, unit: 'g', lowPriceDeliveryFee: 9.1, standardDeliveryFee: 7.78 },
+                            from1100To1200: {start: 1100, end: 1200, unit: 'g', lowPriceDeliveryFee: 9.37, standardDeliveryFee: 8.04 },
+                            from1200To1300: {start: 1200, end: 1300, unit: 'g', lowPriceDeliveryFee: 9.58, standardDeliveryFee: 8.24 },
+                            from1300To1400: {start: 1300, end: 1400, unit: 'g', lowPriceDeliveryFee: 9.85, standardDeliveryFee: 8.49 },
+                            from1400To1500: {start: 1400, end: 1500, unit: 'g', lowPriceDeliveryFee: 10.17, standardDeliveryFee: 8.8 },
+                            from1500To9000: {start: 1500, end: 9000, unit: 'g', lowPriceDeliveryFee: 11, standardDeliveryFee: 9.52,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 100, // 首重1500g，超重部分收附加费
+                                    surcharge: 0.09// 超重部分附加费 0.09加元/100g
+                                }
+                            }
+                        }
+                    },
+                    '小号大件': {
+                        name: '小号大件',
+                        side: {//边长标准
+                            longestSide: 152,// 最长边
+                            secondSide: 76,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 16.77, standardDeliveryFee: 14.63 },
+                            from500To32000: {start: 500, end: 32000, unit: 'g', lowPriceDeliveryFee: 16.77, standardDeliveryFee: 14.63,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.46
+                                }
+                            }
+                        }
+                    },
+                    '中号大件': {
+                        name: '中号大件',
+                        side: {//边长标准
+                            longestSide: 270,// 最长边
+                            secondSide: 0,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 41.64, standardDeliveryFee: 36.98 },
+                            from500To68000: {start: 500, end: 68000, unit: 'g', lowPriceDeliveryFee: 41.64, standardDeliveryFee: 36.98,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.52
+                                }
+                            }
+                        }
+                    },
+                    '大号大件': {
+                        name: '大号大件',
+                        side: {//边长标准
+                            longestSide: 270,// 最长边
+                            secondSide: 0,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 89.59, standardDeliveryFee: 81.4 },
+                            from500To68000: {start: 500, end: 68000, unit: 'g', lowPriceDeliveryFee: 89.59, standardDeliveryFee: 81.4,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.58
+                                }
+                            }
+                        }
+                    },
+                    '特殊大件': {
+                        name: '特殊大件',
+                        side: {//边长标准
+                            longestSide: 0,// 最长边
+                            secondSide: 0,// 次长边
+                            shortestSide: 0,// 最短边
+                            unit: 'cm'
+                        },
+                        weight: {
+                            from0To500: {start: 0, end: 500, unit: 'g', lowPriceDeliveryFee: 166.85, standardDeliveryFee: 149.98 },
+                            from500To99999: {start: 500, end: 99999, unit: 'g', lowPriceDeliveryFee: 166.85, standardDeliveryFee: 149.98,
+                                excessWeight: {
+                                    unit: 'g',
+                                    segmentation: 500,
+                                    surcharge: 0.58
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            sizeType: {},
+            rateUnits: {},
             classification: '',
             highClassification: '',
             lowPriceDeliveryFee: 0.0,// 售价不超过10刀的低价商品FBA配送费
@@ -1332,6 +1718,7 @@
                 highLowPrice: 0.0,// 高一档低价配送费
                 highStandard: 0.0// 高一档标准配送费
             },
+            <!--售价毛利润计算参数-->
             profitCalculation: {
                 price: 0,// 售价 指定币种
                 priceCNY: 0,// 售价 人民币
@@ -1412,6 +1799,7 @@
             }
         },
         mounted() {
+            this.sizeType = this.sizeTypes[this.siteName]
             // 获取在线实时汇率
             this.getRateUnits()
             const self = this
@@ -1630,7 +2018,16 @@
             },
             // 先根据重量再看尺寸进行配送费计算
             classificationHandler() {
-                // 取出四个尺寸中符合重量要求的重量区间
+                this.FBADeliveryFee = {...{// 标准配送费
+                        lowPrice: 0.0,// 售价不超过10刀的低价商品FBA配送费
+                        standard: 0.0,// 标准配送费
+                        highLowPrice: 0.0,// 高一档低价配送费
+                        highStandard: 0.0// 高一档标准配送费
+                    }}
+                this.classification = ''
+                this.highClassification = ''
+
+                // 取出尺寸中符合重量要求的重量区间
                 const weightRangeMap = {}
                 if (this.weight.lb > 0) {
                     for (let sizeTypeKey in this.sizeType) {
@@ -1641,10 +2038,18 @@
                 // 获取匹配的标准尺寸
                 let sizeTypeNameBySize = ''
                 if (this.size.length['in'] && this.size.width['in'] && this.size.height['in']) {
-                    const arr = [this.size.length['in'], this.size.width['in'], this.size.height['in']]
                     for (let sizeTypeKey in this.sizeType) {
                         const sizeTypeVal = this.sizeType[sizeTypeKey]
-                        if (this.matchConditions(sizeTypeVal.side, arr)) {
+                        const arr = [this.size.length[sizeTypeVal.side.unit], this.size.width[sizeTypeVal.side.unit], this.size.height[sizeTypeVal.side.unit]]
+                        // 日本专属尺寸标准，没有次长边则进入此处
+                        if (this.siteName === 'JP' && !sizeTypeVal.side.secondSide) {
+                            const unit = sizeTypeVal.side.unit
+                            // 长宽高和
+                            if (this.size.length[unit] + this.size.width[unit] + this.size.height[unit] <= sizeTypeVal.side.longestSide) {
+                                sizeTypeNameBySize = sizeTypeKey
+                                break
+                            }
+                        } else if (this.matchConditions(sizeTypeVal.side, arr)) {
                             sizeTypeNameBySize = sizeTypeKey
                             break
                         }
@@ -1677,7 +2082,7 @@
                                 if (i === 1) {
                                     range = range['next']
                                 }
-                                if (range !== null) {
+                                if (range !== null && range !== undefined) {
                                     // 有高一阶时直接输入
                                     highDeliveryFee = this.getDeliveryFee(range)
                                     this.highClassification = this.sizeType[keys[i]].name
@@ -1711,7 +2116,7 @@
                                         if (j === 1) {
                                             range = range['next']
                                         }
-                                        if (range !== null) {
+                                        if (range !== null && range !== undefined) {
                                             // 有高一阶时直接输入
                                             highDeliveryFee = this.getDeliveryFee(range)
                                             console.log('取下一尺寸取适配重量，获取next:'+highDeliveryFee.fee)
@@ -1762,7 +2167,7 @@
                                     if (j === 1) {
                                         range = range['next']
                                     }
-                                    if (range !== null) {
+                                    if (range !== null && range !== undefined) {
                                         // 有高一阶时直接输入
                                         highDeliveryFee = this.getDeliveryFee(range)
                                         this.highClassification = this.sizeType[keys[j]].name
@@ -1828,7 +2233,10 @@
             // 尺寸是否符合条件
             matchConditions(side, arr) {
                 arr.sort((a, b) => a - b);
-                return side.shortestSide >= arr[0] && side.secondSide >= arr[1] && side.longestSide >= arr[2]
+                const shortestSideMatch = side.shortestSide === 0 ? true : side.shortestSide >= arr[0]
+                const secondSideMatch = side.secondSide === 0 ? true : side.secondSide >= arr[1]
+                const longestSideMatch = side.longestSide === 0 ? true : side.longestSide >= arr[2]
+                return shortestSideMatch && secondSideMatch && longestSideMatch
             },
             // 保留指定小数位数
             handleDataToFixed() {
@@ -1979,6 +2387,11 @@
                 num = String(num)
                 const index = num.indexOf('.')
                 return index === -1 ? Number(num) : Number(num.substring(0, index)) + '.' + num.substring(index + 1, num.length)
+            },
+            // 切换站点时计算费用
+            changeSiteHandler() {
+                this.sizeType = this.sizeTypes[this.siteName]
+                this.classificationHandler()
             }
         }
     });
