@@ -70,6 +70,15 @@
             position: relative;
             top: -2px;
         }
+        .el-card {
+          display: inline-block; /* 关键：行内块元素 */
+          width: 1768px;
+        }
+        .el-col {
+            display: flex;
+            justify-content: center;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
@@ -315,8 +324,8 @@
     </symbol>
 </svg>
 <div id="app">
-    <el-row >
-        <el-col :span="18">
+    <el-row>
+        <el-col>
             <el-card shadow="hover" body-style="padding: 0">
                 <div slot="header" class="clearfix">
                     <span>单位换算/FBA配送费计算</span>
@@ -537,7 +546,7 @@
                 </el-collapse-transition>
             </el-card>
         </el-col>
-        <el-col :span="18">
+        <el-col>
             <el-card shadow="hover" body-style="padding: 0">
                 <div slot="header" class="clearfix">
                     <span>汇率换算/利润计算</span>
@@ -928,7 +937,7 @@
                 </el-collapse-transition>
             </el-card>
         </el-col>
-        <el-col :span="18">
+        <el-col>
             <el-card shadow="hover" body-style="padding: 0">
                 <div slot="header" class="clearfix">
                     <span>其他</span>
