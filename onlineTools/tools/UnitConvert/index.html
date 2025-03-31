@@ -7,6 +7,11 @@
     <!-- 引入Element UI的CSS样式 -->
     <link href="https://linwenli95.github.io/onlineTools/css/element-ui.css" rel="stylesheet">
     <style>
+        body {
+          display: flex;
+          justify-content: center; /* 水平居中 */
+        }
+
         /* 隐藏input type=number上下箭头 */
         input::-webkit-inner-spin-button,
         input::-webkit-outer-spin-button {
@@ -28,9 +33,12 @@
         /*}*/
         /* 最小宽度 */
         .min-width-col {
-            min-width: 140px;
+            max-width: 180px;
         }
-
+        .rateInputClass {
+            min-width: 210px;
+            max-width: 220px;
+        }
         .label-tip {
             /*font-size: 14px;*/
             /*color: rgba(0, 0, 0, 0.63);*/
@@ -432,15 +440,12 @@
         <el-form label-width="auto" v-model="size">
             <!--FBA费用计算-->
             <div class="divItem">
-                <label class="label-title">FBA费用计算：</label>
+                <label class="label-title">FBA配送费:</label>
                 <el-popover
                         placement="bottom"
                         trigger="hover">
                     <img v-lazy="'img/standard.png'">
                     <a href="javascript:;" slot="reference" style="color: grey">
-                        <svg style="position: relative;width:30px;height: 20px;top:3px">
-                            <use href="#usa" width="30" height="20"></use>
-                        </svg>
                         费用标准
                     </a>
                 </el-popover>
@@ -460,26 +465,26 @@
                 <el-form-item label="标准尺寸">
                     <el-input class="min-width-col" v-model="classification"></el-input>
                 </el-form-item>
-                <el-form-item class="min-width-col" label="标准配送费">
-                    <el-input v-model="FBADeliveryFee.standard">
+                <el-form-item label="标准配送费">
+                    <el-input class="min-width-col" v-model="FBADeliveryFee.standard">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
                 </el-form-item>
-                <el-form-item class="min-width-col" label="低价配送费">
-                    <el-input v-model="FBADeliveryFee.lowPrice">
+                <el-form-item label="低价配送费">
+                    <el-input class="min-width-col" v-model="FBADeliveryFee.lowPrice">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
                 </el-form-item>
                 <el-form-item label="高一档尺寸">
                     <el-input class="min-width-col" v-model="highClassification"></el-input>
                 </el-form-item>
-                <el-form-item class="min-width-col" label="高一档标准">
-                    <el-input v-model="FBADeliveryFee.highStandard">
+                <el-form-item label="高一档标准">
+                    <el-input class="min-width-col" v-model="FBADeliveryFee.highStandard">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
                 </el-form-item>
-                <el-form-item class="min-width-col" label="高一档低价">
-                    <el-input v-model="FBADeliveryFee.highLowPrice">
+                <el-form-item label="高一档低价">
+                    <el-input class="min-width-col" v-model="FBADeliveryFee.highLowPrice">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD</i>
                     </el-input>
                 </el-form-item>
@@ -533,7 +538,7 @@
                 <label class="label-title">常用汇率：</label>
                 <a @click="refreshRateUnites()" href="javascript:;" style="color: grey">刷新汇率</a>
                 <el-form-item label="人民币">
-                    <el-input @input="handleRatesInput($event, 'CNY')" type="number" v-model="rates.CNY">
+                    <el-input @input="handleRatesInput($event, 'CNY')" type="number" v-model="rates.CNY" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">￥CNY
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#chn" width="30" height="20"></use>
@@ -542,7 +547,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="美元">
-                    <el-input @input="handleRatesInput($event, 'USD')" type="number" v-model="rates.USD">
+                    <el-input @input="handleRatesInput($event, 'USD')" type="number" v-model="rates.USD" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$USD
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#usa" width="30" height="20"></use>
@@ -551,7 +556,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="欧元">
-                    <el-input @input="handleRatesInput($event, 'EUR')" type="number" v-model="rates.EUR">
+                    <el-input @input="handleRatesInput($event, 'EUR')" type="number" v-model="rates.EUR" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$EUR
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#eu" width="30" height="20"></use>
@@ -560,7 +565,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="英镑">
-                    <el-input @input="handleRatesInput($event, 'GBP')" type="number" v-model="rates.GBP">
+                    <el-input @input="handleRatesInput($event, 'GBP')" type="number" v-model="rates.GBP" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$GBP
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#gbr" width="30" height="20"></use>
@@ -569,7 +574,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="日元">
-                    <el-input @input="handleRatesInput($event, 'JPY')" type="number" v-model="rates.JPY">
+                    <el-input @input="handleRatesInput($event, 'JPY')" type="number" v-model="rates.JPY" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$JPY
                             <svg style="position: relative;width:30px;height: 20px;top:3px;outline: 1px solid #EDE9E9;">
                                 <use href="#jpn" width="30" height="20"></use>
@@ -578,7 +583,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="澳元">
-                    <el-input @input="handleRatesInput($event, 'AUD')" type="number" v-model="rates.AUD">
+                    <el-input @input="handleRatesInput($event, 'AUD')" type="number" v-model="rates.AUD" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AUD
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#aus" width="30" height="20"></use>
@@ -587,7 +592,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="加元">
-                    <el-input @input="handleRatesInput($event, 'CAD')" type="number" v-model="rates.CAD">
+                    <el-input @input="handleRatesInput($event, 'CAD')" type="number" v-model="rates.CAD" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$CAD
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#can" width="30" height="20"></use>
@@ -602,7 +607,7 @@
             <div class="divItem">
                 <label class="label-title">不常用汇率：</label>
                 <el-form-item label="新加坡元">
-                    <el-input @input="handleRatesInput($event, 'SGD')" type="number" v-model="rates.SGD">
+                    <el-input @input="handleRatesInput($event, 'SGD')" type="number" v-model="rates.SGD" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SGD
                             <svg style="position: relative;width:30px;height: 20px;top:3px;outline: 1px solid #EDE9E9;">
                                 <use href="#sgp" width="30" height="20"></use>
@@ -611,7 +616,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="墨西哥比索">
-                    <el-input @input="handleRatesInput($event, 'MXN')" type="number" v-model="rates.MXN">
+                    <el-input @input="handleRatesInput($event, 'MXN')" type="number" v-model="rates.MXN" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$MXN
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#mex" width="30" height="20"></use>
@@ -620,7 +625,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="瑞典朗克">
-                    <el-input @input="handleRatesInput($event, 'SEK')" type="number" v-model="rates.SEK">
+                    <el-input @input="handleRatesInput($event, 'SEK')" type="number" v-model="rates.SEK" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SEK
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#swe" width="30" height="20"></use>
@@ -629,7 +634,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="波兰兹罗提">
-                    <el-input @input="handleRatesInput($event, 'PLN')" type="number" v-model="rates.PLN">
+                    <el-input @input="handleRatesInput($event, 'PLN')" type="number" v-model="rates.PLN" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$PLN
                             <svg style="position: relative;width:30px;height: 20px;top:3px;outline: 1px solid #EDE9E9;">
                                 <use href="#pol" width="30" height="20"></use>
@@ -638,7 +643,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="土耳其里拉">
-                    <el-input @input="handleRatesInput($event, 'TRY')" type="number" v-model="rates.TRY">
+                    <el-input @input="handleRatesInput($event, 'TRY')" type="number" v-model="rates.TRY" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$TRY
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#tur" width="30" height="20"></use>
@@ -647,7 +652,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="沙特里亚尔">
-                    <el-input @input="handleRatesInput($event, 'SAR')" type="number" v-model="rates.SAR">
+                    <el-input @input="handleRatesInput($event, 'SAR')" type="number" v-model="rates.SAR" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$SAR
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#sau" width="30" height="20"></use>
@@ -656,7 +661,7 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item label="阿联酋迪拉姆">
-                    <el-input @input="handleRatesInput($event, 'AED')" type="number" v-model="rates.AED">
+                    <el-input @input="handleRatesInput($event, 'AED')" type="number" v-model="rates.AED" class="rateInputClass">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">$AED
                             <svg style="position: relative;width:30px;height: 20px;top:3px">
                                 <use href="#are" width="30" height="20"></use>
@@ -665,11 +670,13 @@
                     </el-input>
                 </el-form-item>
             </div>
+        </el-form>
+        <el-form label-width="auto" v-model="size">
             <!--售价计算毛利润-->
             <div class="divItem divItem2">
                 <label class="label-title">售价计算毛利润：</label>
                 <el-form-item label-width="92px" label="售价">
-                    <el-input @input="profitCalculationHandle('price')" style="width: 220px;display: inline-block"
+                    <el-input @input="profitCalculationHandle('price')" style="width: 220px;display: inline-block"  class="rateInputClass"
                               type="number"
                               v-model="profitCalculation.price">
                         <el-select @change="profitCalculationHandle('currency')" slot='suffix' style="width: 120px"
@@ -773,6 +780,8 @@
                     </el-input>
                 </el-form-item>
             </div>
+        </el-form>
+        <el-form label-width="auto" v-model="size">
             <!--成本计算售价-->
             <div class="divItem divItem2">
                 <label class="label-title">成本计算售价：</label>
@@ -902,9 +911,11 @@
                 </el-form-item>
             </div>
         </el-form>
-        <el-form label-width="auto" >
+    </div>
+    <div class="container">
+        <el-form label-width="auto">
             <!--bid计算-->
-            <div>
+            <div class="divItem">
                 <label class="label-title">bid计算：</label>
                 <el-popover
                         placement="top"
@@ -916,13 +927,13 @@
                     <i slot="reference" class="el-icon-warning-outline"></i>
                 </el-popover>
                 <el-form-item label="基础CPC">
-                    <el-input style="width: 200px;display: inline-block" type="number" v-model="ads.basePrice" @input="bidCalculationHandle"></el-input>
+                    <el-input style="width: 160px;display: inline-block" type="number" v-model="ads.basePrice" @input="bidCalculationHandle"></el-input>
                 </el-form-item>
                 <el-form-item label="广告位CPC">
-                    <el-input style="width: 200px;display: inline-block" type="number" v-model="ads.targetPrice" @input="bidCalculationHandle"></el-input>
+                    <el-input style="width: 160px;display: inline-block" type="number" v-model="ads.targetPrice" @input="bidCalculationHandle"></el-input>
                 </el-form-item>
                 <el-form-item label="BID+">
-                    <el-input style="width: 200px;display: inline-block" type="number" v-model="ads.bidRate">
+                    <el-input style="width: 160px;display: inline-block" type="number" v-model="ads.bidRate">
                         <i slot='suffix' style="font-style: normal; margin-right: 10px; line-height: 36px">%</i>
                     </el-input>
                 </el-form-item>
