@@ -23,29 +23,28 @@
             font-size: 20px; /* 这里的字体大小可以根据需求调整 */
         }
 
-        /*.el-form-item__label {*/
-        /*    white-space: nowrap;*/
-        /*}*/
-        /* 最小宽度 */
+        /* 单位换算的宽度 */
         .min-width-col {
             max-width: 180px;
         }
+        /* 汇率转换的输入框宽度 */
         .rateInputClass {
             min-width: 210px;
             max-width: 220px;
         }
+        /* 有效小数位设置 */
         .label-tip {
             /*font-size: 14px;*/
             /*color: rgba(0, 0, 0, 0.63);*/
         }
-
+        /* 功能顶部名称加粗 */
         .label-title {
             font-weight: bold;
         }
 
-        /* 如果需要，可以调整el-select的外边距来进一步调整位置 */
+        /* 调整el-select位置 */
         .el-select {
-            margin-right: -5px; /* 根据实际情况调整这个值 */
+            margin-right: -5px;
         }
         /*单位换算排版*/
         .divItem{
@@ -62,23 +61,34 @@
             min-width: 510px;
             height: 460px;
         }
+        /* 功能容器调边距 */
         .container {
             margin: 20px 0 0 20px;
         }
+        /* 下拉框调整字体及定位 */
         .el-select .el-input__inner{
             font-size: 15px;
             position: relative;
             top: -2px;
         }
+        /* 设置卡片宽度 */
         .el-card {
-          display: inline-block; /* 关键：行内块元素 */
-          width: 1768px;
-          min-width: 550px;
+            width: 1768px;
+            min-width: 520px;
         }
+        /*设置卡片垂直居中*/
         .el-col {
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
             padding: 5px;
+        }
+        /*将卡片头的内边距清零*/
+        .el-card__header {
+            padding: 0;
+        }
+        /*设置插槽卡片头div的外边距*/
+        .cardHeader {
+            margin: 18px 20px;
         }
     </style>
 </head>
@@ -328,9 +338,9 @@
     <el-row>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" class="clearfix">
+                <div slot="header" @click="show1 = !show1" class="cardHeader">
                     <span>单位换算/FBA配送费计算</span>
-                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text" @click="show1 = !show1">{{show1?'折叠':'展开'}}</el-button>
+                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text"><i :class="show1?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
                     <div v-show="show1" class="container">
@@ -549,9 +559,9 @@
         </el-col>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" class="clearfix">
+                <div slot="header" @click="show2 = !show2" class="cardHeader">
                     <span>汇率换算/利润计算</span>
-                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text" @click="show2 = !show2">{{show2?'折叠':'展开'}}</el-button>
+                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text"><i :class="show2?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
                     <div v-show="show2" class="container">
@@ -940,9 +950,9 @@
         </el-col>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" class="clearfix">
+                <div slot="header" @click="show3 = !show3" class="cardHeader">
                     <span>其他</span>
-                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text" @click="show3 = !show3">{{show3?'折叠':'展开'}}</el-button>
+                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text"><i :class="show3?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
                     <div v-show="show3" class="container">
