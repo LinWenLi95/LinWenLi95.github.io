@@ -6,6 +6,8 @@
     <title>尺寸重量换算工具</title>
     <!-- 引入Element UI的CSS样式 -->
     <link href="css/element-ui.css" rel="stylesheet">
+    <!-- 引入 Waves.js 的 CSS 文件 点击波纹 -->
+    <link href="css/waves.min.css" rel="stylesheet">
     <style>
         /* 隐藏input type=number上下箭头 */
         input::-webkit-inner-spin-button,
@@ -88,7 +90,34 @@
         }
         /*设置插槽卡片头div的外边距*/
         .cardHeader {
-            margin: 18px 20px;
+            width: 100%;
+            padding: 18px 20px;
+        }
+        .cardHeader:hover {
+            background-color: rgba(120, 190, 235, 0.1);
+        }
+        /*角标固定到右侧*/
+        .right-positioned {
+            position: relative;
+            float: right;
+            right: 40px;
+            padding: 3px 0;
+            font-size:16px
+        }
+        /* 自定义 div 的样式 */
+       .clickable-div {
+            background-color: white;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+         /* 覆盖 Waves.js 默认的波纹样式，设置为淡蓝色 */
+       .waves-ripple {
+            background-color: rgba(120, 190, 235, 0.6) !important;
+        }
+        /* 防止可能出现的其他默认黑色背景样式 */
+       .waves-effect.waves-light::before {
+            background-color: transparent !important;
         }
     </style>
 </head>
@@ -338,9 +367,9 @@
     <el-row>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" @click="show1 = !show1" class="cardHeader">
+                <div slot="header" @click="show1 = !show1" id="" class="cardHeader clickable-div waves-effect waves-light">
                     <span>单位换算/FBA配送费计算</span>
-                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text"><i :class="show1?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
+                    <el-button class="right-positioned" type="text"><i :class="show1?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
                     <div v-show="show1" class="container">
@@ -559,9 +588,9 @@
         </el-col>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" @click="show2 = !show2" class="cardHeader">
+                <div slot="header" @click="show2 = !show2" class="cardHeader clickable-div waves-effect waves-light">
                     <span>汇率换算/利润计算</span>
-                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text"><i :class="show2?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
+                    <el-button class="right-positioned" type="text"><i :class="show2?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
                     <div v-show="show2" class="container">
@@ -950,9 +979,9 @@
         </el-col>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" @click="show3 = !show3" class="cardHeader">
+                <div slot="header" @click="show3 = !show3" class="cardHeader clickable-div waves-effect waves-light">
                     <span>其他</span>
-                    <el-button style="float: right; padding: 3px 0;font-size:16px" type="text"><i :class="show3?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
+                    <el-button class="right-positioned" type="text"><i :class="show3?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
                     <div v-show="show3" class="container">
@@ -993,7 +1022,14 @@
 <script src="js/vue-lazyload v1.3.3.js"></script>
 <!-- 引入Element UI的JavaScript库 -->
 <script src="js/element-ui.js"></script>
+<!-- 引入v0.7.6 Waves.js 的 JavaScript 文件 -->
+<script src="js/waves.min.js"></script>
 <script>
+    // 初始化 Waves.js
+    Waves.init();
+    // 将波纹效果附加到指定的 div 元素上
+    Waves.attach('.clickable-div', ['waves-light']);
+
     Vue.use(VueLazyload, {
       lazyComponent: true,
       observer: true, // 启用 IntersectionObserver
