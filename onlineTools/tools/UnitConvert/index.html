@@ -92,9 +92,10 @@
         .cardHeader {
             width: 100%;
             padding: 18px 20px;
+            background-color: rgba(120, 190, 235, 0.2);
         }
         .cardHeader:hover {
-            background-color: rgba(120, 190, 235, 0.1);
+            background-color: rgba(120, 190, 235, 0.3);
         }
         /*角标固定到右侧*/
         .right-positioned {
@@ -106,18 +107,13 @@
         }
         /* 自定义 div 的样式 */
        .clickable-div {
-            background-color: white;
             position: relative;
             cursor: pointer;
             overflow: hidden;
         }
          /* 覆盖 Waves.js 默认的波纹样式，设置为淡蓝色 */
        .waves-ripple {
-            background-color: rgba(120, 190, 235, 0.6) !important;
-        }
-        /* 防止可能出现的其他默认黑色背景样式 */
-       .waves-effect.waves-light::before {
-            background-color: transparent !important;
+            background-color: rgba(120, 190, 235, 0.8) !important;
         }
     </style>
 </head>
