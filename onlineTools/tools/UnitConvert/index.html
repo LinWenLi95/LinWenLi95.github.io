@@ -9,12 +9,11 @@
     <!-- 引入 Waves.js 的 CSS 文件 点击波纹 -->
     <link href="css/waves.min.css" rel="stylesheet">
     <style>
-        /*金币*/
         body {
             overflow-x: hidden;
             overflow-y: auto;
         }
-
+        /*金币*/
         .coin {
             position: absolute;
             width: 30px;
@@ -1060,8 +1059,7 @@
             document.body.appendChild(coin);
 
             let t = 0;
-            const startTime = Date.now();
-            let isFading = false;
+            let isOnGround = false;
 
             let rotationAngle = 0;
             const randomAxisX = Math.random();
@@ -1070,32 +1068,25 @@
             const rotationIncrement = 5;
 
             const animate = () => {
-                t += 0.4;
-                const newX = startX + vx * t;
-                const newY = startY - (vy * t - 0.5 * gravity * t * t);
+                if (!isOnGround) {
+                    t += 0.4;
+                    const newX = startX + vx * t;
+                    const newY = startY - (vy * t - 0.5 * gravity * t * t);
 
-                coin.style.left = newX + 'px';
-                coin.style.top = newY + 'px';
-
-                const currentTime = Date.now();
-                if (currentTime - startTime >= 1000 &&!isFading) {
-                    isFading = true;
-                }
-                if (isFading) {
-                    const fadeFactor = (currentTime - (startTime + 1000)) / 500;
-                    coin.style.opacity = 1 - Math.min(1, fadeFactor);
-                    if (fadeFactor >= 1) {
-                        coin.remove();
+                    if (newY >= window.innerHeight - 30) {
+                        newY = window.innerHeight - 30;
+                        isOnGround = true;
                     }
+
+                    coin.style.left = newX + 'px';
+                    coin.style.top = newY + 'px';
                 }
 
                 rotationAngle += rotationIncrement;
                 coin.style.transform = `translate3d(0, 0, 0) rotate3d(${randomAxisX}, ${randomAxisY}, ${randomAxisZ}, ${rotationAngle}deg)`;
 
-                if (newY < window.innerHeight) {
+                if (!isOnGround) {
                     requestAnimationFrame(animate);
-                } else {
-                    coin.remove();
                 }
             };
 
