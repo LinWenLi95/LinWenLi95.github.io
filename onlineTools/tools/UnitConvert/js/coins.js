@@ -10,6 +10,17 @@ let startX, startY;
 let isEffectEnabled = true;
 const collectionBox = document.getElementById('collectionBox'); // 缓存收集箱元素
 
+// 创建一个固定在视口的容器来放置所有金币，确保金币的层级与页面分开
+const coinContainer = document.createElement('div');
+coinContainer.style.position = 'fixed';
+coinContainer.style.top = '0';
+coinContainer.style.left = '0';
+coinContainer.style.width = '100%';
+coinContainer.style.height = '100%';
+coinContainer.style.pointerEvents = 'none'; // 确保鼠标事件能穿透到下面的元素
+coinContainer.style.zIndex = '9999'; // 确保在页面最上层
+document.body.appendChild(coinContainer);
+
 // 开关按钮点击事件处理程序
 const toggleButton = document.getElementById('toggleButton');
 toggleButton.addEventListener('click', function () {
@@ -53,9 +64,12 @@ document.addEventListener('mousedown', function (event) {
         for (let i = 0; i < coinCount; i++) {
             const coin = document.createElement('div');
             coin.classList.add('coin');
+            // 为鼠标事件启用穿透
+            coin.style.pointerEvents = 'auto';
 
-            let startX = event.pageX - 15;
-            let startY = event.pageY - 15;
+            // 使用客户端坐标（相对于视口）而不是页面坐标
+            let startX = event.clientX - 15; // 使用 clientX 代替 pageX
+            let startY = event.clientY - 15; // 使用 clientY 代替 pageY
 
             const initialSpeed = Math.random() * 10 + 20;
             const angle = (Math.random() * (Math.PI / 3) + (Math.PI / 2 - Math.PI / 6));
@@ -95,20 +109,21 @@ document.addEventListener('mousedown', function (event) {
                     let newX = startX + vx * t;
                     let newY = startY - (vy * t - 0.5 * gravity * t * t);
 
-                    // 边界检测
+                    // 边界检测 - 使用视口宽度而不是页面宽度
                     if (newX <= 0 || newX >= window.innerWidth - 30) {
                         vx = -vx; // 反转水平速度
-                        vy = 0; // 反转水平速度
+                        vy = 0; // 垂直速度设为0
                         startX = newX; // 更新水平方向的起始位置
                         startY = newY; // 更新垂直方向的起始位置
                         t = 0; // 重置时间
                     }
 
+                    // 检查是否到达视口底部
                     if (newY >= window.innerHeight - 36) {
                         // 检查下方是否有金币
                         let foundBelow = false;
                         coins.forEach(otherCoin => {
-                            if (otherCoin!== coin) {
+                            if (otherCoin !== coin) {
                                 const otherRect = otherCoin.getBoundingClientRect();
                                 const coinRect = coin.getBoundingClientRect();
                                 if (Math.abs(coinRect.left - otherRect.left) < 30 && otherRect.top > coinRect.top) {
@@ -121,6 +136,8 @@ document.addEventListener('mousedown', function (event) {
                             newY = window.innerHeight - 36;
                         }
                         isOnGround = true;
+                        // 标记该金币已落地，以便在滚动时固定位置
+                        coin.dataset.grounded = "true";
                     }
 
                     coin.style.left = newX + 'px';
@@ -136,7 +153,7 @@ document.addEventListener('mousedown', function (event) {
 
             requestAnimationFrame(animate);
         }
-        document.body.appendChild(fragment);
+        coinContainer.appendChild(fragment); // 将金币添加到固定容器中而不是body
     }
 });
 
@@ -209,6 +226,7 @@ document.addEventListener('mouseup', function (event) {
                     let newX = startX; // 初速度为 0，水平位置不变
                     let newY = startY + 0.5 * gravity * t * t;
 
+                    // 检查是否到达视口底部
                     if (newY >= window.innerHeight - 36) {
                         // 检查下方是否有金币
                         let foundBelow = false;
@@ -226,6 +244,8 @@ document.addEventListener('mouseup', function (event) {
                             newY = window.innerHeight - 36;
                         }
                         isOnGround = true;
+                        // 标记该金币已落地
+                        draggedCoin.dataset.grounded = "true";
                     }
 
                     draggedCoin.style.left = newX + 'px';
