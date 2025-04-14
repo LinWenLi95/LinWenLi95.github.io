@@ -1,7 +1,7 @@
 let isDragging = false;
 let offsetX, offsetY;
 let draggedCoin;
-const coins = [];
+let coins = [];
 const collectionModule = document.getElementById('collectionModule');
 const coinCountElement = document.getElementById('coinCount');
 let coinCount = 0;
@@ -54,14 +54,14 @@ document.addEventListener('mousedown', function (event) {
             const coin = document.createElement('div');
             coin.classList.add('coin');
 
-            const startX = event.pageX - 15;
-            const startY = event.pageY - 15;
+            let startX = event.pageX - 15;
+            let startY = event.pageY - 15;
 
             const initialSpeed = Math.random() * 10 + 20;
             const angle = (Math.random() * (Math.PI / 3) + (Math.PI / 2 - Math.PI / 6));
 
-            const vx = initialSpeed * Math.cos(angle);
-            const vy = initialSpeed * Math.sin(angle);
+            let vx = initialSpeed * Math.cos(angle);
+            let vy = initialSpeed * Math.sin(angle);
 
             coin.style.left = startX + 'px';
             coin.style.top = startY + 'px';
@@ -94,6 +94,15 @@ document.addEventListener('mousedown', function (event) {
                     t += 0.4;
                     let newX = startX + vx * t;
                     let newY = startY - (vy * t - 0.5 * gravity * t * t);
+
+                    // 边界检测
+                    if (newX <= 0 || newX >= window.innerWidth - 30) {
+                        vx = -vx; // 反转水平速度
+                        vy = 0; // 反转水平速度
+                        startX = newX; // 更新水平方向的起始位置
+                        startY = newY; // 更新垂直方向的起始位置
+                        t = 0; // 重置时间
+                    }
 
                     if (newY >= window.innerHeight - 36) {
                         // 检查下方是否有金币
@@ -246,6 +255,8 @@ document.getElementById('collectButton').addEventListener('click', function () {
     const interval = 20; // 设置每个金币动画的间隔时间，单位为毫秒
     // 每次点击收集按钮时，获取收集箱的最新位置
     const boxRect = collectionBox.getBoundingClientRect();
+    // 调用函数打乱coins顺序
+    coins = shuffleArray(coins);
     // 遍历所有金币，为每个金币创建飞向收集箱的动画
     coins.forEach((coin, index) => {
         // 计算金币飞向收集箱的目标位置
@@ -336,3 +347,12 @@ document.getElementById('collectButton').addEventListener('click', function () {
         }, index * interval);
     });
 });
+
+// Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
