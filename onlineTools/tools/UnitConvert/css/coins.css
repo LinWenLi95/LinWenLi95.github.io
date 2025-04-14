@@ -1,0 +1,101 @@
+body {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* 金币样式 */
+.coin {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-image: url('../img/coin.png');
+    background-size: cover;
+    pointer-events: all;
+    transform-style: preserve-3d;
+    cursor: grab;
+    z-index: 999; /* 添加 z-index 属性 */
+}
+
+/* 收集模块整体样式 */
+#collectionModule {
+    position: absolute; /* 改为绝对定位 */
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: move;
+    transition: opacity 0.3s ease; /* 添加过渡效果 */
+    z-index: 998;
+    /* 确保宽度不会因内容变化而改变 */
+     width: 160px;
+}
+
+/* 金币数量显示样式 */
+#coinCount {
+    font-size: 24px; /* 原 36px 缩小三分之一 */
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 6.67px; /* 原 10px 缩小三分之一 */
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ffd700;
+    }
+    to {
+        text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700, 0 0 40px #ffd700;
+    }
+}
+
+/* 收集箱样式 */
+#collectionBox {
+    width: 133.33px; /* 原 200px 缩小三分之一 */
+    height: 133.33px; /* 原 200px 缩小三分之一 */
+    background-image: url('../img/goldmine.png');
+    background-size: 100% 100%;
+    border-radius: 6.67px; /* 原 10px 缩小三分之一 */
+    padding: 6.67px; /* 原 10px 缩小三分之一 */
+}
+
+/* 通用按钮样式 */
+.common-button {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 16.67px;
+    cursor: pointer;
+    font-size: 13.33px;
+    font-weight: bold;
+    box-shadow: 0 3.33px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    margin-top: 6.67px;
+}
+
+.common-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 收集按钮样式 */
+#collectButton {
+    background: linear-gradient(45deg, #ffd700, #ffb300);
+}
+
+#collectButton:hover {
+    background: linear-gradient(45deg, #ffb300, #ffd700);
+}
+
+/* 开关按钮样式 */
+#toggleButton {
+    background: linear-gradient(45deg, #007BFF, #0056b3);
+}
+
+#toggleButton:hover {
+    background: linear-gradient(45deg, #0056b3, #007BFF);
+}
+
+/* 半透明样式 */
+.transparent {
+    opacity: 0.3;
+}
