@@ -10,6 +10,20 @@ let startX, startY;
 let isEffectEnabled = true;
 const collectionBox = document.getElementById('collectionBox'); // 缓存收集箱元素
 
+// 创建金币消失闪光特效
+function createCoinFlash() {
+    const flash = document.createElement('div');
+    flash.classList.add('coin-flash');
+    collectionBox.appendChild(flash);
+    
+    // 闪光动画结束后自动移除元素
+    flash.addEventListener('animationend', () => {
+        if (flash.parentNode) {
+            flash.parentNode.removeChild(flash);
+        }
+    });
+}
+
 // 创建一个固定在视口的容器来放置所有金币，确保金币的层级与页面分开
 const coinContainer = document.createElement('div');
 coinContainer.style.position = 'fixed';
@@ -20,6 +34,14 @@ coinContainer.style.height = '100%';
 coinContainer.style.pointerEvents = 'none'; // 确保鼠标事件能穿透到下面的元素
 coinContainer.style.zIndex = '9999'; // 确保在页面最上层
 document.body.appendChild(coinContainer);
+
+// 添加点击收集箱触发收集金币的事件
+collectionBox.addEventListener('click', function() {
+    if (!isEffectEnabled) return;
+    
+    // 触发收集按钮的点击事件，复用已有的收集金币逻辑
+    document.getElementById('collectButton').click();
+});
 
 // 开关按钮点击事件处理程序
 const toggleButton = document.getElementById('toggleButton');
@@ -194,6 +216,9 @@ document.addEventListener('mouseup', function (event) {
             draggedCoin.parentNode.removeChild(draggedCoin);
             coinCount++;
             coinCountElement.textContent = coinCount;
+            
+            // 添加闪光特效
+            createCoinFlash();
         } else {
             // 金币不在收集箱内，让金币下落
             const gravity = 0.5 * 4;
@@ -349,6 +374,10 @@ document.getElementById('collectButton').addEventListener('click', function () {
                 coinCount++;
                 // 更新界面上显示的金币数量
                 coinCountElement.textContent = coinCount;
+                
+                // 添加闪光特效
+                createCoinFlash();
+                
                 // 从 coins 数组中移除该金币
                 const index = coins.indexOf(coin);
                 if (index > -1) {

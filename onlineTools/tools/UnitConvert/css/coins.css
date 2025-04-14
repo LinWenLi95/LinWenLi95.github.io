@@ -56,6 +56,7 @@ body {
     background-size: 100% 100%;
     border-radius: 6.67px; /* 原 10px 缩小三分之一 */
     padding: 6.67px; /* 原 10px 缩小三分之一 */
+    position: relative;
 }
 
 /* 通用按钮样式 */
@@ -98,4 +99,33 @@ body {
 /* 半透明样式 */
 .transparent {
     opacity: 0.3;
+}
+
+/* 金币闪光特效 */
+@keyframes coinCollectFlash {
+    0% {
+        transform: scale(0);
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+.coin-flash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    background: radial-gradient(circle, rgba(255,215,0,1) 0%, rgba(255,223,0,0.8) 25%, rgba(255,215,0,0) 70%);
+    border-radius: 50%;
+    z-index: 10000;
+    pointer-events: none;
+    animation: coinCollectFlash 0.5s ease-out forwards;
 }
