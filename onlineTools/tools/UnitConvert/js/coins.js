@@ -78,7 +78,16 @@ document.addEventListener('mousedown', function (event) {
         startY = event.clientY;
         offsetX = collectionModule.offsetLeft;
         offsetY = collectionModule.offsetTop;
-    } else if (event.target.id!== 'collectButton') {
+    } else if (event.target.id !== 'collectButton' && 
+              !event.target.classList.contains('cardHeader') && 
+              !event.target.closest('.cardHeader') &&
+              !event.target.closest('input') &&        // 排除文本框
+              !event.target.closest('textarea') &&     // 排除文本域
+              !event.target.closest('select') &&       // 排除下拉框
+              !event.target.closest('.el-select') &&   // 排除Element UI下拉框
+              !event.target.closest('.el-input') &&    // 排除Element UI输入框
+              !event.target.closest('.el-select-dropdown') && // 排除Element UI下拉选项
+              !event.target.closest('.el-popper')) {    // 排除Element UI弹出内容
         const coinCount = Math.floor(Math.random() * 11) + 10;
         const gravity = 0.5 * 4;
 
