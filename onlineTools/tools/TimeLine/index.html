@@ -1546,7 +1546,32 @@
 
             // Attempts to parse and format dates coming from Excel (numbers or strings)
             formatExcelDate(excelDate) {
-                // ... function definition remains the same ...
+                if (!excelDate) return '';
+
+                // 如果已经是字符串格式的日期，直接返回
+                if (typeof excelDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(excelDate)) {
+                    return excelDate;
+                }
+
+                // 处理 Excel 数字格式的日期
+                if (typeof excelDate === 'number') {
+                    // Excel 日期是从 1900-01-01 开始的天数
+                    // 需要减去 2 天来修正 Excel 的日期计算错误
+                    const date = new Date(1900, 0, excelDate - 2);
+                    return this.formatDate(date);
+                }
+
+                // 尝试解析其他格式的日期字符串
+                try {
+                    const date = new Date(excelDate);
+                    if (!isNaN(date)) {
+                        return this.formatDate(date);
+                    }
+                } catch (e) {
+                    console.warn('无法解析日期:', excelDate);
+                }
+
+                return '';
             },
 
             // Converts newline characters to <br> tags for HTML display
