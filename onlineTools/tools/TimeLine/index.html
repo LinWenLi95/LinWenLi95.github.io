@@ -989,30 +989,30 @@
                     if (!originalNode) continue;
 
                     let shouldBeCompleted;
-                    // --- REVERSED LOGIC ---
+                    // --- MODIFIED LOGIC ---
                     if (newState) {
-                        // Completing: Mark self and all SUBSEQUENT nodes as complete.
-                        // Nodes before remain incomplete.
-                        shouldBeCompleted = (i >= sortedIndex);
+                        // Completing: Mark self and all PRECEDING nodes as complete.
+                        // Nodes after remain incomplete.
+                        shouldBeCompleted = (i <= sortedIndex);
                     } else {
-                        // Un-completing: Mark self and all PRECEDING nodes as incomplete.
-                        // Nodes after remain complete.
-                        shouldBeCompleted = !(i <= sortedIndex);
+                        // Un-completing: Mark self and all SUBSEQUENT nodes as incomplete.
+                        // Nodes before remain complete.
+                        shouldBeCompleted = !(i >= sortedIndex);
                     }
-                    // --- END REVERSED LOGIC ---
+                    // --- END MODIFIED LOGIC ---
 
                     if (originalNode.completed !== shouldBeCompleted) {
                         this.$set(originalNode, 'completed', shouldBeCompleted);
-                        console.log(`[toggleCompletion Reversed] Setting original node ${originalNode.id} (sorted index ${i}) completed to ${shouldBeCompleted}`);
+                        console.log(`[toggleCompletion] Setting original node ${originalNode.id} (sorted index ${i}) completed to ${shouldBeCompleted}`);
                         changesMade = true;
                     }
                 }
 
                 if (changesMade) {
                     this.saveToStorage();
-                    console.log('[toggleCompletion Reversed] Changes saved.');
+                    console.log('[toggleCompletion] Changes saved.');
                 } else {
-                    console.log('[toggleCompletion Reversed] No state changes needed.');
+                    console.log('[toggleCompletion] No state changes needed.');
                 }
             },
 
