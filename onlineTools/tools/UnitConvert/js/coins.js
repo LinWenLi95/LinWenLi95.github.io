@@ -306,7 +306,7 @@ document.addEventListener('mouseup', function (event) {
 document.getElementById('collectButton').addEventListener('click', function () {
     if (!isEffectEnabled) return;
 
-    const interval = 20; // 设置每个金币动画的间隔时间，单位为毫秒
+    const interval = 40; // 设置每个金币动画的间隔时间，单位为毫秒
     // 每次点击收集按钮时，获取收集箱的最新位置
     const boxRect = collectionBox.getBoundingClientRect();
     // 调用函数打乱coins顺序
