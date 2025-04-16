@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间线任务管理</title>
+    <!-- 引入Element UI样式 (Replaced CDN) -->
+    <link href="https://linwenli95.github.io/onlineTools/css/element-ui.css" rel="stylesheet">
+    <!-- 引入Vue和Element UI的JS (Replaced CDN) -->
+    <script src="https://linwenli95.github.io/onlineTools/js/vue.min.2.6.14.js"></script>
+    <script src="https://linwenli95.github.io/onlineTools/js/element-ui.js"></script>
+    <!-- 引入xlsx库用于Excel导入导出 -->
+    <script src="js/xlsx.full.min.js"></script>
+    <!-- 引入html2canvas用于导出图片 -->
+    <script src="js/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .task-list {
+            width: 300px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+            padding: 15px;
+            position: relative;
+        }
+        .task-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ebeef5;
+            margin-bottom: 15px;
+        }
+        .task-list-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #303133;
+        }
+        .more-menu-btn {
+            color: #409EFF;
+        }
+        .more-menu-btn:hover,
+        .more-menu-btn:focus {
+            color: #409EFF;
+        }
+        .el-dropdown-link {
+            cursor: pointer;
+            color: #606266;
+            font-size: 20px;
+        }
+        .task-item {
+            padding: 12px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 8px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .task-item:hover {
+            background-color: #f5f7fa;
+        }
+        .task-item.active {
+            background-color: #ecf5ff;
+            color: #409EFF;
+        }
+        .task-content {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .task-name {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #303133;
+        }
+        .task-time {
+            font-size: 12px;
+            color: #909399;
+        }
+        .task-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .task-item-actions i {
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+        .task-item:hover .task-item-actions i {
+            opacity: 1;
+        }
+        .task-item-actions i:hover {
+            color: #409EFF;
+        }
+        .task-delete-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #F56C6C;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .task-item:hover .task-delete-btn {
+            opacity: 1;
+        }
+        .timeline-container {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+        .timeline-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ebeef5;
+            gap: 10px;
+        }
+        .timeline-title-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            flex-shrink: 0;
+            max-width: 300px;
+            border: 1px solid transparent;
+        }
+        .timeline-title-container:hover {
+            background-color: #f5f7fa;
+            border-color: #dcdfe6;
+        }
+        .timeline-title-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #303133;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .title-edit-icon {
+            margin-left: 8px;
+            color: #409EFF;
+            font-size: 16px;
+        }
+        .title-input.el-input {
+            width: auto;
+            max-width: 400px;
+            flex-grow: 0;
+            flex-shrink: 1;
+        }
+        .title-input .el-input__inner {
+            font-size: 20px;
+            font-weight: bold;
+            height: 36px;
+            line-height: 36px;
+        }
+        .header-spacer {
+            flex-grow: 1;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .timeline-content {
+            flex: 1;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+            padding: 0 10px;
+        }
+        .timeline-node-content {
+            position: relative;
+        }
+        .node-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            min-height: 24px;
+        }
+        .timeline-node-date {
+            width: 135px;
+            min-width: 135px;
+            text-align: left;
+            cursor: pointer;
+            color: #409EFF;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            line-height: 1.4;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        .timeline-node-date:hover {
+            background-color: #ecf5ff;
+        }
+        .node-date-picker.el-date-editor.el-input {
+            width: 135px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+        .node-delete-btn.el-button--text {
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: #909399;
+            padding: 5px;
+            font-size: 14px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        .timeline-node-item:hover .node-delete-btn.el-button--text {
+            opacity: 1;
+        }
+        .node-delete-btn.el-button--text:hover {
+            color: #F56C6C;
+        }
+        .node-content-area {
+            padding-left: 0;
+        }
+        .node-content-display {
+            padding: 10px;
+            background-color: #f9fafc;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #606266;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            min-height: 30px;
+            border: 1px solid transparent;
+        }
+        .node-content-display:hover {
+            background-color: #f5f7fa;
+            border-color: #e4e7ed;
+        }
+        .timeline-node-textarea.content-editor {
+            margin-top: 0;
+        }
+        .timeline-footer {
+            border-top: 1px solid #ebeef5;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .timeline-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .add-node-btn {
+            margin: 10px 0;
+            text-align: center;
+            color: #409EFF;
+            cursor: pointer;
+        }
+        .add-node-btn:hover {
+            color: #66b1ff;
+        }
+        .empty-timeline {
+            text-align: center;
+            padding: 50px 0;
+            color: #909399;
+        }
+        .el-timeline {
+            padding-left: 10px;
+        }
+        .el-timeline-item {
+            padding-bottom: 15px;
+        }
+        .date-picker-popper {
+            z-index: 9999 !important;
+        }
+        .el-date-editor.el-input {
+            position: relative;
+            top: 0px;
+            margin-bottom: 8px;
+        }
+        .el-date-editor .el-input__prefix,
+        .el-date-editor .el-input__suffix {
+            pointer-events: auto !important;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .task-list {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
+        .empty-nodes {
+            text-align: center;
+            padding: 50px 0;
+            color: #909399;
+        }
+        /* === Timeline Item Styling === */
+        .timeline-node-item .el-timeline-item__wrapper {
+            position: relative;
+            top: -16px;
+            padding-left: 30px;
+        }
+        .timeline-node-item .el-timeline-item__tail {
+            border-left-width: 3px;
+            left: 6px;
+        }
+        .custom-timeline-dot {
+            cursor: pointer;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background-color: #dcdfe6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border: 2px solid #fff;
+            box-sizing: border-box;
+            transition: background-color 0.3s;
+        }
+        .timeline-node-item.is-completed .custom-timeline-dot {
+            background-color: #67C23A;
+        }
+        .timeline-node-item.is-completed .el-timeline-item__tail {
+            border-left-color: #67C23A;
+        }
+        .completed-icon {
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        /* === Node Header (Date/Delete) Styling === */
+        .node-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            min-height: 24px;
+        }
+        .timeline-node-date {
+            cursor: pointer;
+            color: #409EFF;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            line-height: 1.4;
+            flex-shrink: 0;
+        }
+        .timeline-node-date:hover {
+            background-color: #ecf5ff;
+        }
+        .node-date-picker.el-date-editor.el-input {
+            width: 135px;
+            flex-shrink: 0;
+        }
+        .node-delete-btn.el-button--text {
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: #909399;
+            padding: 5px;
+            font-size: 14px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        .timeline-node-item:hover .node-delete-btn.el-button--text {
+            opacity: 1;
+        }
+        .node-delete-btn.el-button--text:hover {
+            color: #F56C6C;
+        }
+        /* === Node Content Area Styling === */
+        .node-content-area {
+            padding-left: 0;
+        }
+        .node-content-display {
+            padding: 10px;
+            background-color: #f9fafc;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #606266;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+            min-height: 30px;
+            border: 1px solid transparent;
+        }
+        .node-content-display:hover {
+            background-color: #f5f7fa;
+            border-color: #e4e7ed;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="container">
+        <!-- 左侧任务列表 -->
+        <div class="task-list">
+            <div class="task-list-header">
+                <div class="task-list-title">任务列表</div>
+                <el-dropdown trigger="hover" @command="handleCommand">
+                    <el-button type="text" class="more-menu-btn">
+                        更多菜单<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="add">
+                            <i class="el-icon-plus"></i>新建任务
+                        </el-dropdown-item>
+                        <el-dropdown-item command="import">
+                            <i class="el-icon-upload2"></i>导入任务
+                        </el-dropdown-item>
+                        <el-dropdown-item command="clear">
+                            <i class="el-icon-delete"></i>清空任务
+                        </el-dropdown-item>
+                        <el-dropdown-item command="export">
+                            <i class="el-icon-download"></i>导出任务
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </div>
+            <div v-if="timelines.length === 0" class="empty-timeline">
+                暂无任务，点击右上角菜单创建新任务
+            </div>
+            <div v-else>
+                <div
+                        v-for="(timeline, index) in timelines"
+                        :key="index"
+                        class="task-item"
+                        :class="{ active: currentTimelineIndex === index }"
+                        @click="switchTimeline(index)">
+                    <div class="task-content">
+                        <div class="task-name">{{ timeline.title || '未命名任务' }}</div>
+                        <div class="task-time">{{ timeline.createTime }}</div>
+                    </div>
+                    <div class="task-item-actions">
+                        <el-tooltip content="导出为PNG" placement="top">
+                            <i class="el-icon-picture-outline" @click.stop="exportSpecificTimelineImage(index)"></i>
+                        </el-tooltip>
+                        <el-tooltip content="导出当前任务数据" placement="top">
+                            <i class="el-icon-download" @click.stop="exportCurrentToExcel"></i>
+                        </el-tooltip>
+                        <el-tooltip content="删除任务" placement="top">
+                            <i class="el-icon-delete" @click.stop="deleteTimeline(index)"></i>
+                        </el-tooltip>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧时间线 -->
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <div v-if="!editingTitle && currentTimeline"
+                     class="timeline-title-container"
+                     @click="startEditTitle"
+                     :title="currentTimeline.title || '请输入名称'">
+                    <span class="timeline-title-text">{{ currentTimeline.title || '请输入名称' }}</span>
+                    <i class="el-icon-edit title-edit-icon"></i>
+                </div>
+                <el-input
+                        v-if="editingTitle"
+                        v-model="titleInput"
+                        placeholder="请输入名称"
+                        size="medium"
+                        ref="titleInput"
+                        class="title-input"
+                        @blur="saveTitle"
+                        @keyup.enter.native="saveTitle">
+                </el-input>
+
+                <div class="header-spacer"></div>
+
+                <div v-if="currentTimeline" class="header-actions">
+                    <el-button
+                            type="primary"
+                            icon="el-icon-plus"
+                            size="small"
+                            @click="addNode"
+                            title="添加新节点">
+                        添加新节点
+                    </el-button>
+
+                    <el-button
+                            type="danger"
+                            icon="el-icon-delete"
+                            size="small"
+                            @click="clearNodes"
+                            title="清空所有节点">
+                        清空节点
+                    </el-button>
+
+                    <el-button
+                            type="success"
+                            icon="el-icon-document"
+                            size="small"
+                            @click="exportCurrentToExcel"
+                            title="导出为Excel">
+                        导出为Excel
+                    </el-button>
+
+                    <el-button
+                            type="warning"
+                            icon="el-icon-picture-outline"
+                            size="small"
+                            @click="exportImage"
+                            title="导出为PNG">
+                        导出为PNG
+                    </el-button>
+                </div>
+            </div>
+
+            <div v-if="!currentTimeline" class="empty-timeline">
+                请在左侧创建或选择一个任务
+            </div>
+
+            <div v-else class="timeline-content" ref="timelineContent">
+                <el-timeline :reverse="currentTimeline.reverse">
+                    <el-timeline-item
+                            v-for="node in sortedNodes"
+                            :key="node.id"
+                            placement="top"
+                            :class="{ 'is-completed': node.completed }"
+                            class="timeline-node-item">
+                        <template slot="dot">
+                            <div
+                                    class="custom-timeline-dot"
+                                    @click="toggleCompletion(node)"
+                                    title="点击切换完成状态">
+                                <i v-if="node.completed" class="el-icon-check completed-icon"></i>
+                            </div>
+                        </template>
+                        <div class="timeline-node-content">
+                            <div class="node-header">
+                                <div v-if="!node.editingDate"
+                                     class="timeline-node-date"
+                                     @click.stop="startEditDate(node)">
+                                    {{ node.date || '请选择日期' }}
+                                </div>
+                                <el-date-picker
+                                        v-if="node.editingDate"
+                                        v-model="node.dateValue"
+                                        type="date"
+                                        placeholder="选择日期"
+                                        size="small"
+                                        value-format="yyyy-MM-dd"
+                                        @change="saveDateValue(node)"
+                                        @click.stop
+                                        class="node-date-picker"
+                                        :clearable="false"
+                                        popper-class="date-picker-popper">
+                                </el-date-picker>
+
+                                <el-button
+                                        size="mini"
+                                        type="text"
+                                        icon="el-icon-delete"
+                                        class="node-delete-btn"
+                                        @click.stop="deleteNode(node)"
+                                        title="删除此节点">
+                                </el-button>
+                            </div>
+
+                            <div class="node-content-area">
+                                <div v-if="!node.editingContent"
+                                     class="node-content-display"
+                                     @click.stop="startEditContent(node)"
+                                     v-html="formatContent(node.content || '点击输入内容')">
+                                </div>
+                                <el-input
+                                        v-if="node.editingContent"
+                                        type="textarea"
+                                        v-model="node.contentInput"
+                                        :autosize="{ minRows: 3, maxRows: 8 }"
+                                        placeholder="请输入内容"
+                                        :ref="'contentInput-' + node.id"
+                                        class="timeline-node-textarea content-editor"
+                                        @click.stop
+                                        @blur="saveContent(node)">
+                                </el-input>
+                            </div>
+                        </div>
+                    </el-timeline-item>
+                </el-timeline>
+                <div v-if="currentTimeline && currentTimeline.nodes && currentTimeline.nodes.length === 0" class="empty-nodes">
+                    当前时间线没有节点，点击上方"添加节点"按钮创建。
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 恢复隐藏的文件输入元素 -->
+    <input
+            type="file"
+            ref="fileInput"
+            @change="importData"
+            accept=".xlsx,.xls"
+            class="hidden-upload"
+            style="display: none;">
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                timelines: [],
+                currentTimelineIndex: -1,
+                editingTitle: false,
+                titleInput: '',
+                storageKey: 'timeline-data',
+                showDropdown: false
+            };
+        },
+        computed: {
+            // The currently selected timeline object
+            currentTimeline() {
+                if (this.currentTimelineIndex === -1 || !this.timelines.length) return null;
+                // Ensure the selected index is valid
+                if (this.currentTimelineIndex >= this.timelines.length) {
+                    console.warn('currentTimelineIndex out of bounds, resetting.');
+                    this.currentTimelineIndex = this.timelines.length - 1;
+                }
+                return this.timelines[this.currentTimelineIndex];
+            },
+            // Computes the sorted array of nodes based on date and the reverse flag
+            sortedNodes() {
+                if (!this.currentTimeline || !this.currentTimeline.nodes) {
+                    return [];
+                }
+                const nodesToSort = [...this.currentTimeline.nodes];
+                nodesToSort.sort((a, b) => {
+                    const dateA = a.date ? new Date(a.date) : null;
+                    const dateB = b.date ? new Date(b.date) : null;
+                    const timeA = dateA && !isNaN(dateA) ? dateA.getTime() : null;
+                    const timeB = dateB && !isNaN(dateB) ? dateB.getTime() : null;
+
+                    // Sort logic: Handle null/invalid dates first
+                    if (timeA === null && timeB === null) return 0;
+                    if (timeA === null) return this.currentTimeline.reverse ? -1 : 1;
+                    if (timeB === null) return this.currentTimeline.reverse ? 1 : -1;
+
+                    // Sort by valid date timestamps
+                    const diff = timeA - timeB;
+                    return this.currentTimeline.reverse ? -diff : diff;
+                });
+                return nodesToSort;
+            }
+        },
+        created() {
+            this.loadFromStorage();
+        },
+        methods: {
+            // --- Timeline Management ---
+
+            // Generates the next available default title (e.g., "未命名任务", "未命名任务 1", ...)
+            getNextDefaultTitle() {
+                let baseName = '未命名任务';
+                let count = 0;
+                let nextTitle = baseName;
+                // 检查 "未命名任务" 是否存在
+                if (this.timelines.some(t => t.title === baseName)) {
+                    count = 1;
+                    nextTitle = `${baseName} ${count}`;
+                    // 检查 "未命名任务 N" 是否存在，递增 N
+                    while (this.timelines.some(t => t.title === nextTitle)) {
+                        count++;
+                        nextTitle = `${baseName} ${count}`;
+                    }
+                }
+                return nextTitle;
+            },
+
+            // Creates a new timeline with a unique default title and an initial node
+            addNewTimeline() {
+                const newTitle = this.getNextDefaultTitle();
+                const newTimeline = {
+                    title: newTitle,
+                    createTime: this.formatDateTime(new Date()),
+                    nodes: [],
+                    reverse: false
+                };
+                this.timelines.push(newTimeline);
+                this.currentTimelineIndex = this.timelines.length - 1;
+                this.saveToStorage();
+
+                // 自动添加一个初始节点
+                this.addNode();
+            },
+
+            // Switches the view to the selected timeline
+            switchTimeline(index) {
+                if (index >= 0 && index < this.timelines.length) {
+                    this.currentTimelineIndex = index;
+                } else {
+                    console.error('Invalid index for switchTimeline:', index);
+                }
+            },
+
+            // Enters title editing mode
+            startEditTitle() {
+                if (!this.currentTimeline) return;
+                this.titleInput = this.currentTimeline.title || '';
+                this.editingTitle = true;
+                this.$nextTick(() => {
+                    this.$refs.titleInput?.focus(); // Optional chaining for safety
+                });
+            },
+
+            // Saves the edited title, ensuring uniqueness and handling empty input
+            saveTitle() {
+                if (this.currentTimeline) {
+                    let finalTitle = this.titleInput.trim();
+                    if (!finalTitle) {
+                        // 如果用户清空了标题，则生成一个新的默认标题
+                        // 但要确保这个新默认标题不与当前正在编辑的时间线之外的其他时间线冲突
+                        let baseName = '未命名任务';
+                        let count = 0;
+                        finalTitle = baseName;
+                        const otherTimelines = this.timelines.filter((t, i) => i !== this.currentTimelineIndex);
+                        if (otherTimelines.some(t => t.title === baseName)) {
+                            count = 1;
+                            finalTitle = `${baseName} ${count}`;
+                            while (otherTimelines.some(t => t.title === finalTitle)) {
+                                count++;
+                                finalTitle = `${baseName} ${count}`;
+                            }
+                        }
+                        this.titleInput = finalTitle;
+                    } else {
+                        // 检查新标题是否与 *其他* 时间线冲突
+                        const originalTitle = this.currentTimeline.title;
+                        if (finalTitle !== originalTitle && this.timelines.some((t, i) => i !== this.currentTimelineIndex && t.title === finalTitle)) {
+                            this.$message.error(`标题 "${finalTitle}" 已存在，请使用其他标题。`);
+                            this.titleInput = originalTitle;
+                            this.editingTitle = false;
+                            return;
+                        }
+                    }
+                    this.currentTimeline.title = finalTitle;
+                    this.editingTitle = false;
+                    this.saveToStorage();
+                }
+            },
+
+            // Deletes a timeline after confirmation
+            deleteTimeline(index) {
+                this.$confirm('确定要删除该时间线吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.timelines.splice(index, 1);
+
+                    // 调整当前选中的时间线
+                    if (this.timelines.length === 0) {
+                        this.currentTimelineIndex = -1;
+                    } else if (index === this.currentTimelineIndex) {
+                        // 如果删除的是当前选中的时间线，选择前一个或第一个
+                        this.currentTimelineIndex = Math.max(0, index - 1);
+                    } else if (index < this.currentTimelineIndex) {
+                        // 如果删除的时间线在当前选中时间线之前，需要调整索引
+                        this.currentTimelineIndex--;
+                    }
+
+                    this.saveToStorage();
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功'
+                    });
+                }).catch(() => {});
+            },
+
+            // --- Node Management ---
+
+            // Adds a new node to the current timeline with a default date
+            addNode() {
+                if (!this.currentTimeline) return;
+                if (!this.currentTimeline.nodes) {
+                    this.$set(this.currentTimeline, 'nodes', []);
+                }
+
+                let defaultDateStr = '';
+                const existingNodes = this.currentTimeline.nodes;
+
+                if (existingNodes && existingNodes.length > 0) {
+                    let maxDate = null;
+                    existingNodes.forEach(node => {
+                        if (node.date) {
+                            try {
+                                const currentDate = new Date(node.date);
+                                if (!isNaN(currentDate)) {
+                                    if (maxDate === null || currentDate > maxDate) {
+                                        maxDate = currentDate;
+                                    }
+                                }
+                            } catch (e) {
+                                // Ignore invalid date formats during search for max
+                                console.warn('Invalid date format encountered:', node.date);
+                            }
+                        }
+                    });
+
+                    if (maxDate) {
+                        // Calculate next day
+                        const nextDay = new Date(maxDate);
+                        nextDay.setDate(nextDay.getDate() + 1);
+                        defaultDateStr = this.formatDate(nextDay); // Use existing format helper
+                    } else {
+                        // No valid dates found, default to today
+                        defaultDateStr = this.formatDate(new Date());
+                    }
+                } else {
+                    // No existing nodes, default to today
+                    defaultDateStr = this.formatDate(new Date());
+                }
+
+                this.currentTimeline.nodes.push({
+                    id: this.generateNodeId(),
+                    date: defaultDateStr, // Set the calculated default date
+                    content: '',
+                    editingDate: false,
+                    editingContent: false,
+                    dateValue: '', // Keep empty, user needs to explicitly edit if needed
+                    contentInput: '',
+                    completed: false
+                });
+                this.saveToStorage();
+            },
+
+            // Generates a simple unique ID for nodes
+            generateNodeId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            },
+
+            // Ensures a node object has default 'id' and 'completed' properties
+            ensureNodeDefaults(node) {
+                if (!node.id) {
+                    this.$set(node, 'id', this.generateNodeId());
+                }
+                if (node.completed === undefined) {
+                    this.$set(node, 'completed', false);
+                }
+                return node;
+            },
+
+            // Deletes a node from the current timeline after confirmation
+            deleteNode(nodeToDelete) {
+                if (!this.currentTimeline || !this.currentTimeline.nodes) return;
+                this.$confirm('确定要删除此节点吗?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    const index = this.currentTimeline.nodes.findIndex(node => node.id === nodeToDelete.id);
+                    if (index > -1) {
+                        this.currentTimeline.nodes.splice(index, 1);
+                        this.saveToStorage();
+                        this.$message({ type: 'success', message: '节点已删除' });
+                    } else {
+                        this.$message({ type: 'error', message: '未能找到要删除的节点' });
+                    }
+                }).catch(() => {});
+            },
+
+            // Clears all nodes from the current timeline after confirmation
+            clearNodes() {
+                if (!this.currentTimeline || !this.currentTimeline.nodes || this.currentTimeline.nodes.length === 0) {
+                    this.$message.info('当前时间线没有节点可清空。');
+                    return;
+                }
+                this.$confirm('确定要清空当前时间线的所有节点吗? 此操作不可恢复!', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.currentTimeline.nodes = [];
+                    this.saveToStorage();
+                    this.$message({
+                        message: '节点已清空',
+                        type: 'success'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消清空操作'
+                    });
+                });
+            },
+
+            // Enters date editing mode for a node
+            startEditDate(node) {
+                this.$set(node, 'editingDate', true);
+                this.$set(node, 'dateValue', node.date || this.formatDate(new Date()));
+
+                // Add click outside listener
+                this.$nextTick(() => {
+                    this.addDatePickerListener(node);
+                });
+            },
+
+            // Saves the selected date for a node
+            saveDateValue(node) {
+                if (!node.editingDate) return;
+                this.$set(node, 'date', node.dateValue);
+                this.$set(node, 'editingDate', false);
+                this.saveToStorage();
+                // Remove listener when saving/closing
+                this.removeDatePickerListener(node);
+            },
+
+            // Enters content editing mode for a node
+            startEditContent(node) {
+                this.$set(node, 'editingContent', true);
+                this.$set(node, 'contentInput', node.content || '');
+                this.$nextTick(() => {
+                    const inputRef = this.$refs['contentInput-' + node.id]; // Use ID in ref
+                    if (inputRef && inputRef[0] && typeof inputRef[0].focus === 'function') {
+                        inputRef[0].focus();
+                    } else if (inputRef && typeof inputRef.focus === 'function') {
+                        inputRef.focus();
+                    }
+                });
+            },
+
+            // Saves the edited content for a node
+            saveContent(node) {
+                // Find the actual node in the *original* array if needed for safety, though direct modification should work
+                const actualNode = this.currentTimeline?.nodes?.find(n => n.id === node.id);
+                if (!actualNode || !actualNode.editingContent) return;
+
+                this.$set(actualNode, 'content', actualNode.contentInput);
+                this.$set(actualNode, 'editingContent', false);
+                this.saveToStorage();
+            },
+
+            // Toggles the completion status of nodes based on the clicked node's position in the *sorted* list
+            toggleCompletion(clickedNodeProxy) {
+                console.log('[toggleCompletion] Start for node:', clickedNodeProxy.id);
+                if (!this.currentTimeline || !this.currentTimeline.nodes) return;
+
+                const clickedNodeOriginal = this.currentTimeline.nodes.find(n => n.id === clickedNodeProxy.id);
+                if (!clickedNodeOriginal) {
+                    console.error('[toggleCompletion] Original node not found:', clickedNodeProxy.id);
+                    return;
+                }
+
+                const newState = !clickedNodeOriginal.completed;
+                console.log(`[toggleCompletion] Target state for ${clickedNodeOriginal.id}: ${newState}`);
+
+                const currentSortedNodes = this.sortedNodes;
+                const sortedIndex = currentSortedNodes.findIndex(n => n.id === clickedNodeProxy.id);
+                if (sortedIndex === -1) {
+                    console.error('[toggleCompletion] Clicked node not found in sorted array:', clickedNodeProxy.id);
+                    return;
+                }
+                console.log(`[toggleCompletion] Node ${clickedNodeProxy.id} is at sorted index ${sortedIndex}`);
+
+                let changesMade = false;
+                for (let i = 0; i < currentSortedNodes.length; i++) {
+                    const nodeInSortedOrder = currentSortedNodes[i];
+                    const originalNode = this.currentTimeline.nodes.find(n => n.id === nodeInSortedOrder.id);
+                    if (!originalNode) continue;
+
+                    let shouldBeCompleted;
+                    // --- REVERSED LOGIC ---
+                    if (newState) {
+                        // Completing: Mark self and all SUBSEQUENT nodes as complete.
+                        // Nodes before remain incomplete.
+                        shouldBeCompleted = (i >= sortedIndex);
+                    } else {
+                        // Un-completing: Mark self and all PRECEDING nodes as incomplete.
+                        // Nodes after remain complete.
+                        shouldBeCompleted = !(i <= sortedIndex);
+                    }
+                    // --- END REVERSED LOGIC ---
+
+                    if (originalNode.completed !== shouldBeCompleted) {
+                        this.$set(originalNode, 'completed', shouldBeCompleted);
+                        console.log(`[toggleCompletion Reversed] Setting original node ${originalNode.id} (sorted index ${i}) completed to ${shouldBeCompleted}`);
+                        changesMade = true;
+                    }
+                }
+
+                if (changesMade) {
+                    this.saveToStorage();
+                    console.log('[toggleCompletion Reversed] Changes saved.');
+                } else {
+                    console.log('[toggleCompletion Reversed] No state changes needed.');
+                }
+            },
+
+            // --- Date Picker Click Outside Logic ---
+            addDatePickerListener(node) {
+                // Define the handler using the node's ID for uniqueness if needed
+                const handler = (event) => {
+                    // Check if the click is outside the date picker elements
+                    const clickedInsidePicker = event.target.closest('.el-date-editor') ||
+                        event.target.closest('.el-picker-panel');
+
+                    if (!clickedInsidePicker) {
+                        console.log('Clicked outside date picker for node:', node.id);
+                        // If clicked outside, save (which also closes and removes listener)
+                        this.saveDateValue(node);
+                    }
+                };
+
+                // Store the handler reference on the node object to remove it later
+                // Prefixing with _ to indicate it's somewhat internal
+                node._datePickerListener = handler;
+
+                // Use setTimeout to ensure the listener is added after the current event cycle
+                setTimeout(() => {
+                    document.addEventListener('mousedown', handler);
+                    console.log('Added date picker listener for node:', node.id);
+                }, 0);
+            },
+
+            removeDatePickerListener(node) {
+                if (node._datePickerListener) {
+                    document.removeEventListener('mousedown', node._datePickerListener);
+                    console.log('Removed date picker listener for node:', node.id);
+                    delete node._datePickerListener; // Clean up the reference
+                }
+            },
+            // --- End Date Picker Logic ---
+            beforeDestroy() {
+                if (this.currentTimeline && this.currentTimeline.nodes) {
+                    this.currentTimeline.nodes.forEach(node => {
+                        this.removeDatePickerListener(node);
+                    });
+                }
+            },
+            // --- Data Persistence ---
+
+            // Saves the entire timelines array to local storage
+            saveToStorage() {
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(this.timelines));
+                } catch (e) {
+                    console.error('Failed to save to localStorage:', e);
+                    this.$message.error('保存数据时出错，可能存储已满。');
+                }
+            },
+
+            // Loads timelines from local storage on component creation
+            loadFromStorage() {
+                const data = localStorage.getItem(this.storageKey);
+                if (data) {
+                    try {
+                        const loadedTimelines = JSON.parse(data);
+                        loadedTimelines.forEach(timeline => {
+                            if (timeline.nodes) {
+                                timeline.nodes.forEach(this.ensureNodeDefaults);
+                            }
+                        });
+                        this.timelines = loadedTimelines;
+                        if (this.timelines.length > 0) {
+                            this.currentTimelineIndex = 0;
+                        }
+                    } catch (e) {
+                        console.error('加载数据失败', e);
+                        this.timelines = []; // Reset if loading fails
+                        this.currentTimelineIndex = -1;
+                    }
+                }
+            },
+
+            // Clears all data from local storage after confirmation
+            clearStorage() {
+                this.$confirm('确定要清空所有时间线缓存数据吗? 此操作不可恢复!', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    localStorage.removeItem(this.storageKey);
+                    this.timelines = [];
+                    this.currentTimelineIndex = -1;
+                    this.$message({
+                        message: '所有时间线缓存数据已清空',
+                        type: 'success'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消清空操作'
+                    });
+                });
+            },
+
+            // --- Import/Export ---
+
+            // Exports the currently selected timeline's nodes to an Excel file
+            exportCurrentToExcel() {
+                if (!this.currentTimeline) return;
+
+                const data = [['日期', '内容']];
+                (this.currentTimeline.nodes || []).forEach(node => {
+                    data.push([node.date || '未设置日期', node.content || '']);
+                });
+
+                this.generateExcel(data, this.currentTimeline.title || '未命名任务');
+            },
+
+            // Exports all timelines to a multi-sheet Excel file
+            exportAllToExcel() {
+                const workbook = XLSX.utils.book_new();
+
+                this.timelines.forEach((timeline, index) => {
+                    const data = [['日期', '内容']];
+                    timeline.nodes.forEach(node => {
+                        data.push([node.date || '未设置日期', node.content || '']);
+                    });
+
+                    const worksheet = XLSX.utils.aoa_to_sheet(data);
+                    XLSX.utils.book_append_sheet(
+                        workbook,
+                        worksheet,
+                        (timeline.title || `未命名任务${index+1}`).substring(0, 31)
+                    );
+                });
+
+                XLSX.writeFile(workbook, '所有时间线数据.xlsx');
+            },
+
+            // Helper function to generate and download an Excel workbook
+            generateExcel(data, sheetName) {
+                const worksheet = XLSX.utils.aoa_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, sheetName.substring(0, 31));
+                XLSX.writeFile(workbook, `${sheetName}.xlsx`);
+            },
+
+            // Exports the current timeline view (including title) as a PNG image
+            // Handles scrollable content by temporarily rendering full content off-screen
+            exportImage() {
+                return new Promise((resolve, reject) => {
+                    const originalContainer = this.$refs.timelineContent;
+                    if (!originalContainer) {
+                        this.$message.error('无法获取时间线内容元素');
+                        return reject(new Error('Timeline content element not found'));
+                    }
+                    if (!this.currentTimeline) {
+                        this.$message.error('没有选中的时间线可导出');
+                        return reject(new Error('No timeline selected'));
+                    }
+
+                    // --- Capture original styles ---
+                    const originalOverflow = originalContainer.style.overflowY;
+                    const originalMaxHeight = originalContainer.style.maxHeight;
+                    const originalScrollTop = originalContainer.scrollTop;
+                    console.log('Original styles:', { originalOverflow, originalMaxHeight, originalScrollTop });
+
+                    // --- Temporarily modify original container to measure full height ---
+                    originalContainer.style.overflowY = 'visible';
+                    originalContainer.style.maxHeight = 'none';
+                    originalContainer.scrollTop = 0;
+                    const fullHeight = originalContainer.scrollHeight;
+                    const fullWidth = originalContainer.scrollWidth;
+                    console.log('Measured full dimensions:', { fullWidth, fullHeight });
+
+                    // --- Restore original container styles IMMEDIATELY after measurement ---
+                    originalContainer.style.overflowY = originalOverflow;
+                    originalContainer.style.maxHeight = originalMaxHeight;
+                    originalContainer.scrollTop = originalScrollTop;
+                    console.log('Original container styles restored after measurement');
+
+                    // --- Create a temporary wrapper for export ---
+                    const exportWrapper = document.createElement('div');
+                    exportWrapper.style.padding = '30px';
+                    exportWrapper.style.backgroundColor = '#ffffff';
+                    exportWrapper.style.width = fullWidth + 'px';
+                    exportWrapper.style.height = (fullHeight + 100) + 'px';
+                    exportWrapper.style.overflow = 'hidden';
+
+                    // --- Add Title ---
+                    const titleElement = document.createElement('h2');
+                    titleElement.innerText = this.currentTimeline.title || '未命名任务';
+                    titleElement.style.textAlign = 'center';
+                    titleElement.style.marginBottom = '25px';
+                    titleElement.style.color = '#303133';
+                    titleElement.style.fontWeight = 'bold';
+                    exportWrapper.appendChild(titleElement);
+
+                    // --- Clone the timeline content ---
+                    const clonedContainer = originalContainer.cloneNode(true);
+                    clonedContainer.style.maxHeight = 'none';
+                    clonedContainer.style.overflowY = 'visible';
+                    clonedContainer.style.height = fullHeight + 'px';
+                    clonedContainer.scrollTop = 0;
+                    exportWrapper.appendChild(clonedContainer);
+
+                    // --- Append wrapper temporarily to body for rendering ---
+                    exportWrapper.style.position = 'absolute';
+                    exportWrapper.style.left = '-9999px';
+                    exportWrapper.style.top = '-9999px';
+                    document.body.appendChild(exportWrapper);
+                    console.log('Temporary export wrapper added to DOM');
+
+                    // --- Use setTimeout to allow rendering before capture ---
+                    setTimeout(() => {
+                        console.log('Starting html2canvas capture on export wrapper...');
+                        html2canvas(exportWrapper, {
+                            allowTaint: true,
+                            useCORS: true,
+                            scale: 2,
+                            width: exportWrapper.scrollWidth,
+                            height: exportWrapper.scrollHeight,
+                            windowWidth: exportWrapper.scrollWidth,
+                            windowHeight: exportWrapper.scrollHeight
+                        }).then(canvas => {
+                            console.log('html2canvas capture successful');
+                            document.body.removeChild(exportWrapper);
+                            console.log('Temporary export wrapper removed from DOM');
+
+                            const fileName = `${this.currentTimeline.title || '未命名任务'}_${this.formatDate(new Date())}.png`;
+                            const link = document.createElement('a');
+                            link.download = fileName;
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                            console.log('Image download triggered');
+                            resolve();
+
+                        }).catch(err => {
+                            console.error('导出图片失败', err);
+                            this.$message.error('导出图片失败，请查看控制台获取详情');
+                            if (document.body.contains(exportWrapper)) {
+                                document.body.removeChild(exportWrapper);
+                                console.log('Temporary export wrapper removed from DOM after error');
+                            }
+                            reject(err);
+                        });
+                    }, 100);
+                });
+            },
+
+            // Exports a specific timeline as a PNG image (used by task list icon)
+            // Temporarily switches view, exports, then switches back
+            async exportSpecificTimelineImage(index) {
+                if (index < 0 || index >= this.timelines.length) {
+                    console.error('Invalid index for exportSpecificTimelineImage:', index);
+                    return;
+                }
+                const originalIndex = this.currentTimelineIndex;
+                console.log(`Exporting image for index ${index}, original index was ${originalIndex}`);
+
+                // Switch to the target timeline
+                this.currentTimelineIndex = index;
+
+                // Wait for the DOM to potentially update
+                await this.$nextTick();
+                console.log(`Switched to index ${index}, calling exportImage...`);
+
+                try {
+                    // Call exportImage and wait for it to complete (or fail)
+                    await this.exportImage();
+                    console.log(`Export process finished for index ${index}.`);
+                } catch (error) {
+                    console.error(`Export process failed for index ${index}:`, error);
+                    // Error message already shown in exportImage
+                } finally {
+                    // ALWAYS restore the original index
+                    console.log(`Restoring original index ${originalIndex}.`);
+                    this.currentTimelineIndex = originalIndex;
+                    // Optional: Wait for DOM update after restoring if needed, but likely not necessary
+                    // await this.$nextTick();
+                }
+            },
+
+            // Triggers the hidden file input element
+            triggerFileInput() {
+                this.$refs.fileInput?.click(); // Optional chaining
+            },
+
+            // Handles the file selection event for importing data
+            importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+
+                        if (workbook.SheetNames.length === 0) {
+                            this.$message.error('Excel文件没有工作表');
+                            return;
+                        }
+
+                        // 如果只有一个工作表，导入为单个时间线
+                        if (workbook.SheetNames.length === 1) {
+                            this.importSingleTimeline(workbook, workbook.SheetNames[0]);
+                        } else {
+                            // 否则询问用户是导入单个还是全部
+                            this.$confirm('检测到多个工作表，是否导入所有工作表作为多个时间线?', '导入确认', {
+                                confirmButtonText: '导入所有',
+                                cancelButtonText: '只导入第一个',
+                                type: 'info'
+                            }).then(() => {
+                                // 导入所有
+                                this.importAllTimelines(workbook);
+                            }).catch(() => {
+                                // 只导入第一个
+                                this.importSingleTimeline(workbook, workbook.SheetNames[0]);
+                            });
+                        }
+                    } catch (error) {
+                        console.error('导入数据失败', error);
+                        this.$message.error('导入数据失败，请检查文件格式');
+                    }
+
+                    // 清除文件输入，允许再次选择同一文件
+                    event.target.value = '';
+                };
+                reader.readAsArrayBuffer(file);
+            },
+
+            // Imports data from a single sheet of an Excel workbook
+            // Handles potential duplicate timeline names with confirmation
+            importSingleTimeline(workbook, sheetName) {
+                const self = this;
+                const existingTimelineIndex = self.timelines.findIndex(t => t.title === sheetName);
+
+                const importLogic = () => {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    if (json.length <= 1) {
+                        self.$message.warning(`工作表 "${sheetName}" 没有有效数据，已跳过。`);
+                        return false; // Indicate not imported
+                    }
+
+                    const nodes = [];
+                    for (let i = 1; i < json.length; i++) {
+                        const row = json[i];
+                        if (row && (row[0] !== undefined || row[1] !== undefined)) {
+                            nodes.push(self.ensureNodeDefaults({
+                                date: self.formatExcelDate(row[0]) || '',
+                                content: row[1] || '',
+                                editingDate: false,
+                                editingContent: false,
+                                dateValue: '',
+                                contentInput: ''
+                            }));
+                        }
+                    }
+
+                    if (existingTimelineIndex > -1) {
+                        // Overwrite existing timeline
+                        self.$set(self.timelines[existingIndex], 'nodes', nodes);
+                    } else {
+                        // Create new timeline
+                        const newTimeline = {
+                            title: sheetName,
+                            createTime: self.formatDateTime(new Date()),
+                            nodes: nodes,
+                            reverse: false
+                        };
+                        self.timelines.push(newTimeline);
+                        self.currentTimelineIndex = self.timelines.length - 1;
+                    }
+                    return true; // Indicate successful import
+                };
+
+                if (existingTimelineIndex > -1) {
+                    self.$confirm(`任务 "${sheetName}" 已存在，是否覆盖其节点数据?`, '导入确认', {
+                        confirmButtonText: '覆盖',
+                        cancelButtonText: '跳过',
+                        type: 'warning'
+                    }).then(() => {
+                        if (importLogic()) { // Call importLogic
+                            self.saveToStorage(); // Use self
+                            self.$message({ message: `任务 "${sheetName}" 已覆盖`, type: 'success' });
+                        }
+                    }).catch(() => {
+                        self.$message({ message: `已跳过导入任务 "${sheetName}"`, type: 'info' });
+                    });
+                } else {
+                    if (importLogic()) { // Call importLogic
+                        self.saveToStorage(); // Use self
+                        self.$message({ message: `任务 "${sheetName}" 导入成功`, type: 'success' });
+                    }
+                }
+            },
+
+            // Imports data from all sheets of an Excel workbook
+            // Handles potential duplicate timeline names with confirmation
+            importAllTimelines(workbook) {
+                const self = this;
+                let importCount = 0;
+                let overwriteCount = 0;
+                let skippedCount = 0;
+                const sheetsToImport = [];
+                const duplicateSheets = [];
+
+                // Classify sheets first
+                workbook.SheetNames.forEach(sheetName => {
+                    const existingIndex = self.timelines.findIndex(t => t.title === sheetName);
+                    if (existingIndex > -1) {
+                        duplicateSheets.push(sheetName);
+                    }
+                    sheetsToImport.push({ name: sheetName, isDuplicate: existingIndex > -1 });
+                });
+
+                const performImport = (sheets) => {
+                    sheets.forEach(sheetInfo => {
+                        const worksheet = workbook.Sheets[sheetInfo.name];
+                        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                        if (json.length <= 1) {
+                            console.warn(`Sheet "${sheetInfo.name}" has no data, skipping.`);
+                            skippedCount++;
+                            return; // Skip empty or header-only sheets
+                        }
+
+                        const nodes = [];
+                        for (let i = 1; i < json.length; i++) {
+                            const row = json[i];
+                            if (row && (row[0] !== undefined || row[1] !== undefined)) {
+                                nodes.push(self.ensureNodeDefaults({
+                                    date: self.formatExcelDate(row[0]) || '',
+                                    content: row[1] || '',
+                                    editingDate: false,
+                                    editingContent: false,
+                                    dateValue: '',
+                                    contentInput: ''
+                                }));
+                            }
+                        }
+
+                        const existingIndex = self.timelines.findIndex(t => t.title === sheetInfo.name);
+                        if (existingIndex > -1) {
+                            // Overwrite
+                            self.$set(self.timelines[existingIndex], 'nodes', nodes);
+                            overwriteCount++;
+                        } else {
+                            // Add new
+                            const newTimeline = {
+                                title: sheetInfo.name,
+                                createTime: self.formatDateTime(new Date()),
+                                nodes: nodes,
+                                reverse: false
+                            };
+                            self.timelines.push(newTimeline);
+                            importCount++;
+                        }
+                    });
+
+                    if (importCount > 0 || overwriteCount > 0) {
+                        self.currentTimelineIndex = Math.max(0, self.timelines.length - 1);
+                        self.saveToStorage(); // Use self
+                        let message = '';
+                        if (importCount > 0) message += `成功导入 ${importCount} 个新任务。`;
+                        if (overwriteCount > 0) message += `成功覆盖 ${overwriteCount} 个任务。`;
+                        if (skippedCount > 0) message += `${skippedCount} 个工作表因无数据被跳过。`;
+                        self.$message({ message: message.trim(), type: 'success' });
+                    } else if (skippedCount === sheets.length) {
+                        self.$message.error('所有选定工作表均无有效数据可导入。');
+                    } else {
+                        self.$message.info('没有导入或覆盖任何任务。');
+                    }
+                };
+
+                if (duplicateSheets.length > 0) {
+                    self.$confirm(`检测到 ${duplicateSheets.length} 个同名任务 (${duplicateSheets.join(', ')})。是否覆盖这些任务的节点数据? 选择"取消"将只导入不重名的任务。`, '覆盖确认', {
+                        confirmButtonText: '全部覆盖',
+                        cancelButtonText: '跳过重名',
+                        type: 'warning'
+                    }).then(() => {
+                        // Overwrite mode: import all found sheets
+                        performImport(sheetsToImport);
+                    }).catch(() => {
+                        // Skip mode: import only non-duplicates
+                        skippedCount += duplicateSheets.length; // Count duplicates as skipped
+                        performImport(sheetsToImport.filter(s => !s.isDuplicate));
+                    });
+                } else {
+                    // No duplicates, import all directly
+                    performImport(sheetsToImport);
+                }
+            },
+            // --- Helpers ---
+
+            // Handles commands from the task list dropdown menu
+            handleCommand(command) {
+                switch(command) {
+                    case 'add':
+                        this.addNewTimeline();
+                        break;
+                    case 'import':
+                        this.triggerFileInput();
+                        break;
+                    case 'clear':
+                        this.clearAllTasks();
+                        break;
+                    case 'export':
+                        this.exportAllToExcel();
+                        break;
+                }
+            },
+
+            // Formats a JavaScript Date object or string/number into YYYY-MM-DD
+            formatDate(date) {
+                const d = new Date(date);
+                let month = '' + (d.getMonth() + 1);
+                let day = '' + d.getDate();
+                const year = d.getFullYear();
+
+                if (month.length < 2) month = '0' + month;
+                if (day.length < 2) day = '0' + day;
+
+                return [year, month, day].join('-');
+            },
+
+            // Formats a JavaScript Date object into a locale-specific date/time string
+            formatDateTime(date) {
+                return new Date(date).toLocaleString('zh-CN');
+            },
+
+            // Attempts to parse and format dates coming from Excel (numbers or strings)
+            formatExcelDate(excelDate) {
+                // ... function definition remains the same ...
+            },
+
+            // Converts newline characters to <br> tags for HTML display
+            formatContent(content) {
+                if (!content) return '';
+                // Replace newline characters with <br> tags for HTML display
+                return String(content).replace(/\r\n|\r|\n/g, '<br>');
+            },
+            clearAllTasks() {
+                this.$confirm('确定要清空所有任务吗? 此操作不可恢复!', '警告', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    localStorage.removeItem(this.storageKey);
+                    this.timelines = [];
+                    this.currentTimelineIndex = -1;
+                    this.$message({
+                        message: '所有任务已清空',
+                        type: 'success'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消清空操作'
+                    });
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>
