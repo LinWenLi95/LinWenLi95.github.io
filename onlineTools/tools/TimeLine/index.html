@@ -537,11 +537,16 @@
             </div>
             <div v-else>
                 <div
-                        v-for="(timeline, index) in timelines"
-                        :key="index"
-                        class="task-item"
-                        :class="{ active: currentTimelineIndex === index }"
-                        @click="switchTimeline(index)">
+                    v-for="(timeline, index) in timelines"
+                    :key="index"
+                    class="task-item"
+                    :class="{ active: currentTimelineIndex === index }"
+                    @click="switchTimeline(index)"
+                    draggable="true"
+                    @dragstart="dragStart(index)"
+                    @dragover.prevent
+                    @drop="drop(index)"
+                >
                     <div class="task-content">
                         <div class="task-name">{{ timeline.title || '未命名任务' }}</div>
                         <div class="task-time">创建于 {{ timeline.createTime }}</div>
@@ -721,7 +726,8 @@
                 editingTitle: false,
                 titleInput: '',
                 storageKey: 'timeline-data',
-                showDropdown: false
+                showDropdown: false,
+                draggedIndex: null
             };
         },
         computed: {
@@ -767,6 +773,24 @@
             }
         },
         methods: {
+        dragStart(index) {
+                this.draggedIndex = index;
+            },
+            drop(index) {
+                if (this.draggedIndex!== null) {
+                    const draggedTimeline = this.timelines.splice(this.draggedIndex, 1)[0];
+                    this.timelines.splice(index, 0, draggedTimeline);
+                    if (this.currentTimelineIndex === this.draggedIndex) {
+                        this.currentTimelineIndex = index;
+                    } else if (this.draggedIndex < this.currentTimelineIndex && index >= this.currentTimelineIndex) {
+                        this.currentTimelineIndex--;
+                    } else if (this.draggedIndex > this.currentTimelineIndex && index <= this.currentTimelineIndex) {
+                        this.currentTimelineIndex++;
+                    }
+                    this.draggedIndex = null;
+                    this.saveToStorage();
+                }
+            },
             // --- Timeline Management ---
 
             // Generates the next available default title (e.g., "未命名任务", "未命名任务 1", ...)
