@@ -1239,7 +1239,7 @@
                     data.push([node.date || '未设置日期', node.content || '']);
                 });
 
-                this.generateExcel(data, this.currentTimeline.title || '未命名任务');
+                this.generateExcel(data, (this.currentTimeline.title || '未命名任务').replace(/[\\\/?*[\]"]/g, ''));
             },
 
             // Exports all timelines to a multi-sheet Excel file
@@ -1256,7 +1256,7 @@
                     XLSX.utils.book_append_sheet(
                         workbook,
                         worksheet,
-                        (timeline.title || `未命名任务${index+1}`).substring(0, 31)
+                        ((timeline.title || `未命名任务${index+1}`).replace(/[\\\/?*[\]"]/g, '')).substring(0, 31)
                     );
                 });
 
