@@ -25,15 +25,18 @@
             min-height: 100vh;
             padding: 20px;
             box-sizing: border-box;
+            max-width: 1400px;
+            margin: 0 auto;
         }
         .task-list {
-            width: 300px;
+            width: 350px;
             background-color: #fff;
             border-radius: 4px;
             box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
             margin-right: 20px;
             padding: 15px;
             position: relative;
+            flex-shrink: 0;
         }
         .task-list-header {
             display: flex;
@@ -42,11 +45,26 @@
             padding-bottom: 15px;
             border-bottom: 1px solid #ebeef5;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .task-list-title {
             font-size: 18px;
             font-weight: bold;
             color: #303133;
+            margin-right: auto;
+        }
+        .new-task-btn {
+            color: #409EFF;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            border: none;
+            background: none;
+            margin-right: 10px;
+        }
+        .new-task-btn:hover {
+            color: #66b1ff;
         }
         .more-menu-btn {
             color: #409EFF;
@@ -129,6 +147,8 @@
             display: flex;
             flex-direction: column;
             min-height: 600px;
+            max-width: 880px;
+            min-width: 0; /* 防止内容溢出 */
         }
         .timeline-header {
             display: flex;
@@ -184,9 +204,12 @@
         }
         .header-actions {
             display: flex;
-            align-items: center;
             gap: 10px;
-            flex-shrink: 0;
+            flex-wrap: wrap;
+            margin-left: 0;
+        }
+        .header-actions .el-button {
+            margin-left: 0;
         }
         .timeline-content {
             flex: 1;
@@ -306,14 +329,79 @@
         .el-date-editor .el-input__suffix {
             pointer-events: auto !important;
         }
+        @media (max-width: 1200px) {
+            .container {
+                padding: 15px;
+            }
+            .task-list {
+                width: 320px;
+                margin-right: 15px;
+            }
+        }
+        @media (max-width: 992px) {
+            .container {
+                padding: 10px;
+            }
+            .task-list {
+                width: 300px;
+                margin-right: 10px;
+            }
+        }
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
+                padding: 10px;
             }
-            .task-list {
+            .task-list, .timeline-container {
                 width: 100%;
-                margin-right: 0;
-                margin-bottom: 20px;
+                margin: 0 0 15px 0;
+            }
+            .timeline-container {
+                min-height: 400px;
+            }
+            .task-list-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .header-actions {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .el-button {
+                margin: 0;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+            .task-list, .timeline-container {
+                padding: 12px;
+                margin: 0 0 8px 0;
+            }
+            .task-list-title {
+                font-size: 16px;
+            }
+            .timeline-title-text {
+                font-size: 18px;
+            }
+            .el-button {
+                padding: 8px 12px;
+                margin-left: 0;
+            }
+            .node-content-display {
+                padding: 8px;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+                gap: 0;
+            }
+            .header-actions .el-button {
+                flex: 1;
+                min-width: 80px;
+                text-align: center;
+                margin-left: 0;
             }
         }
         .empty-nodes {
@@ -426,14 +514,12 @@
         <div class="task-list">
             <div class="task-list-header">
                 <div class="task-list-title">任务列表</div>
+                <button class="new-task-btn el-icon-plus" @click="addNewTimeline">新建任务</button>
                 <el-dropdown trigger="hover" @command="handleCommand">
                     <el-button type="text" class="more-menu-btn">
-                        更多菜单<i class="el-icon-arrow-down el-icon--right"></i>
+                        菜单<i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="add">
-                            <i class="el-icon-plus"></i>新建任务
-                        </el-dropdown-item>
                         <el-dropdown-item command="import">
                             <i class="el-icon-upload2"></i>导入任务
                         </el-dropdown-item>
@@ -458,7 +544,7 @@
                         @click="switchTimeline(index)">
                     <div class="task-content">
                         <div class="task-name">{{ timeline.title || '未命名任务' }}</div>
-                        <div class="task-time">{{ timeline.createTime }}</div>
+                        <div class="task-time">创建于 {{ timeline.createTime }}</div>
                     </div>
                     <div class="task-item-actions">
                         <el-tooltip content="导出为PNG" placement="top">
@@ -675,6 +761,10 @@
         },
         created() {
             this.loadFromStorage();
+            // 如果没有任务，自动创建一个新任务
+            if (this.timelines.length === 0) {
+                this.addNewTimeline();
+            }
         },
         methods: {
             // --- Timeline Management ---
