@@ -13,6 +13,10 @@
     <script src="js/xlsx.full.min.js"></script>
     <!-- 引入html2canvas用于导出图片 -->
     <script src="js/html2canvas.min.js"></script>
+    <!-- 引入Markdown相关组件 -->
+    <script src="js/marked_4.3.0.min.js"></script>
+    <script src="components/MarkdownToolbar.js"></script>
+    <script src="components/MarkdownRenderer.js"></script>
     <style>
         body {
             font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
@@ -505,6 +509,49 @@
             background-color: #f5f7fa;
             border-color: #e4e7ed;
         }
+        .editor-container {
+            position: relative;
+            width: 100%;
+        }
+        .editor-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 5px;
+        }
+        .mode-toggle {
+            color: #409EFF;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .mode-toggle:hover {
+            background-color: #ecf5ff;
+        }
+        .mode-toggle.active {
+            font-weight: bold;
+        }
+        .mode-toggle-in-editor {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            color: #409EFF;
+            cursor: pointer;
+            padding: 2px 5px;
+            z-index: 10;
+            user-select: none;
+        }
+        .mode-toggle-in-editor:hover {
+            background-color: #ecf5ff;
+        }
+        .renderDiv {
+            border-radius: 3px;
+            border: 1px solid rgba(157, 157, 157, 0.1);
+        }
+        .toolBarDiv {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -680,22 +727,46 @@
                             </div>
 
                             <div class="node-content-area">
-                                <div v-if="!node.editingContent"
-                                     class="node-content-display"
-                                     @click.stop="startEditContent(node)"
-                                     v-html="formatContent(node.content || '点击输入内容')">
+                                <div v-if="!node.editingContent && !node.isMarkdownMode"
+                                        class="node-content-display"
+                                        @click.stop="startEditContent(node)"
+                                        v-html="node.isMarkdownMode ? null : formatContent(node.content || '点击输入内容')">
                                 </div>
-                                <el-input
-                                        v-if="node.editingContent"
-                                        type="textarea"
-                                        v-model="node.contentInput"
-                                        :autosize="{ minRows: 3, maxRows: 8 }"
-                                        placeholder="请输入内容"
-                                        :ref="'contentInput-' + node.id"
-                                        class="timeline-node-textarea content-editor"
-                                        @click.stop
-                                        @blur="saveContent(node)">
-                                </el-input>
+                                <div v-if="node.editingContent" class="editor-container">
+                                    <div v-if="node.showEditor" class="textarea-wrapper">
+                                        <span class="mode-toggle-in-editor"
+                                              @mousedown.prevent
+                                              @click.stop="toggleMarkdownMode(node)"
+                                              :class="{ 'active': node.isMarkdownMode }">
+                                            {{ node.isMarkdownMode ? '转文本模式' : '转Markdown模式' }}
+                                        </span>
+                                        <el-input
+                                                type="textarea"
+                                                v-model="node.contentInput"
+                                                :autosize="{ minRows: 8, maxRows: 8 }"
+                                                placeholder="请输入内容"
+                                                :ref="'contentInput-' + node.id"
+                                                class="timeline-node-textarea content-editor"
+                                                @click.stop
+                                                @blur="saveContent(node)">
+                                        </el-input>
+                                        <markdown-toolbar
+                                                class="toolBarDiv"
+                                                v-if="node.isMarkdownMode && node.showEditor"
+                                                :content="node.contentInput"
+                                                @update:content="node.contentInput = $event"
+                                                @click.stop
+                                                :key="'toolbar-' + node.id">
+                                        </markdown-toolbar>
+                                    </div>
+                                </div>
+                                <div v-if="node.isMarkdownMode" class="renderDiv" @click="startEditContent(node)">
+                                    <markdown-renderer
+                                            :content="node.contentInput || ''"
+                                            :key="'md-' + node.id"
+                                    >
+                                    </markdown-renderer>
+                                </div>
                             </div>
                         </div>
                     </el-timeline-item>
@@ -963,7 +1034,9 @@
                     editingContent: false,
                     dateValue: '', // Keep empty, user needs to explicitly edit if needed
                     contentInput: '',
-                    completed: false
+                    completed: false,
+                    isMarkdownMode: false,
+                    showEditor: true
                 });
                 this.saveToStorage();
             },
@@ -980,6 +1053,12 @@
                 }
                 if (node.completed === undefined) {
                     this.$set(node, 'completed', false);
+                }
+                if (node.isMarkdownMode === undefined) {
+                    this.$set(node, 'isMarkdownMode', false);
+                }
+                if (node.showEditor === undefined) {
+                    this.$set(node, 'showEditor', true);
                 }
                 return node;
             },
@@ -1053,6 +1132,7 @@
             startEditContent(node) {
                 this.$set(node, 'editingContent', true);
                 this.$set(node, 'contentInput', node.content || '');
+                this.$set(node, 'showEditor', true);
                 this.$nextTick(() => {
                     const inputRef = this.$refs['contentInput-' + node.id]; // Use ID in ref
                     if (inputRef && inputRef[0] && typeof inputRef[0].focus === 'function') {
@@ -1069,8 +1149,41 @@
                 const actualNode = this.currentTimeline?.nodes?.find(n => n.id === node.id);
                 if (!actualNode || !actualNode.editingContent) return;
 
+                // 如果设置了阻止保存的标志，则不执行保存操作
+                if (actualNode._preventSaveOnBlur) {
+                    return;
+                }
+
                 this.$set(actualNode, 'content', actualNode.contentInput);
-                this.$set(actualNode, 'editingContent', false);
+                if (actualNode.isMarkdownMode) {
+                    this.$set(actualNode, 'showEditor', false);
+                } else {
+                    this.$set(actualNode, 'editingContent', false);
+                }
+                this.saveToStorage();
+            },
+
+            // Toggle markdown mode for a node
+            toggleMarkdownMode(node) {
+                // 标记正在切换模式，避免blur事件中错误地保存
+                node._preventSaveOnBlur = true;
+                this.$set(node, 'isMarkdownMode', !node.isMarkdownMode);
+
+                this.$nextTick(() => {
+                    // 如果有焦点元素，保持其焦点
+                    const inputRef = this.$refs['contentInput-' + node.id];
+                    if (inputRef && inputRef[0] && typeof inputRef[0].focus === 'function') {
+                        inputRef[0].focus();
+                    } else if (inputRef && typeof inputRef.focus === 'function') {
+                        inputRef.focus();
+                    }
+
+                    // 延迟一小段时间后恢复blur事件的保存功能
+                    setTimeout(() => {
+                        node._preventSaveOnBlur = false;
+                    }, 100);
+                });
+
                 this.saveToStorage();
             },
 
