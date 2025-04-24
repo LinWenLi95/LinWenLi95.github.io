@@ -65,6 +65,7 @@
                     <button @click.stop="insertMarkdown('五级标题', '##### 标题文本')">H5</button>
                     <button @click.stop="insertMarkdown('六级标题', '###### 标题文本')">H6</button>
                     <button @click.stop="insertMarkdown('缩进', '    ')">缩进</button>
+                    <button @click.stop="insertMarkdown('换行', '\\n\\n<br>\\n')">换行</button>
                     <button @click.stop="insertMarkdown('无序列表', '- 列表项\\n- 列表项\\n- 列表项')">无序列表</button>
                     <button @click.stop="insertMarkdown('有序列表', '1. 列表项\\n2. 列表项\\n3. 列表项')">有序列表</button>
                     <button @click.stop="insertMarkdown('待办事项', '- [ ] 待办事项\\n- [x] 已完成事项')">待办事项</button>
@@ -425,7 +426,7 @@
                     };
                 }
             },
-            
+
             // 应用文本样式（加粗、斜体、删除线）
             applyTextStyle(textarea, content, start, end, style) {
                 const selectedText = content.substring(start, end);
@@ -593,6 +594,15 @@
                     case '缩进':
                         // 应用缩进
                         result = this.applyIndent(textarea, this.content, start, end);
+                        break;
+
+                    case '换行':
+                        // 应用换行
+                        result = {
+                            content: this.content.substring(0, start) + '\n\n<br>\n' + this.content.substring(end),
+                            newCursorPos: end,
+                            newSelectionEnd: end
+                        };
                         break;
                         
                     case '无序列表':

@@ -747,6 +747,7 @@
                                                 placeholder="请输入内容"
                                                 :ref="'contentInput-' + node.id"
                                                 class="timeline-node-textarea content-editor"
+                                                :spellcheck="false"
                                                 @click.stop
                                                 @blur="saveContent(node)">
                                         </el-input>
