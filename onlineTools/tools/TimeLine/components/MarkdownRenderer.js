@@ -14,7 +14,21 @@
         border-bottom: 1px solid #eaecef;
         padding-bottom: 0.3em;
     }
-    
+    /* 一到六级标题上下高度调整 */
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4,
+    .markdown-body h5,
+    .markdown-body h6 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    /* 段落上下高度调整 */
+    .markdown-body p {
+            margin-top: 0;
+            margin-bottom: 0;
+    }
     /* 列表样式 - 完全重置 */
     .markdown-body ul,
     .markdown-body ol {

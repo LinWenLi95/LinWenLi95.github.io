@@ -602,8 +602,8 @@
                         <el-tooltip content="导出为PNG" placement="top">
                             <i class="el-icon-picture-outline" @click.stop="exportSpecificTimelineImage(index)"></i>
                         </el-tooltip>
-                        <el-tooltip content="导出当前任务数据" placement="top">
-                            <i class="el-icon-download" @click.stop="exportCurrentToExcel"></i>
+                        <el-tooltip content="导出任务数据" placement="top">
+                            <i class="el-icon-download" @click.stop="exportCurrentToExcel(index)"></i>
                         </el-tooltip>
                         <el-tooltip content="删除任务" placement="top">
                             <i class="el-icon-delete" @click.stop="deleteTimeline(index)"></i>
@@ -1344,15 +1344,19 @@
             // --- Import/Export ---
 
             // Exports the currently selected timeline's nodes to an Excel file
-            exportCurrentToExcel() {
-                if (!this.currentTimeline) return;
-
+            exportCurrentToExcel(index) {
                 const data = [['日期', '内容']];
-                (this.currentTimeline.nodes || []).forEach(node => {
+                let timeline
+                if (index && index >= 0) {
+                    timeline = this.timelines[index]
+                } else {
+                    if (!this.currentTimeline) return;
+                    timeline = this.currentTimeline
+                }
+                (timeline.nodes || []).forEach(node => {
                     data.push([node.date || '未设置日期', node.content || '']);
                 });
-
-                this.generateExcel(data, (this.currentTimeline.title || '未命名任务').replace(/[\\\/?*[\]"]/g, ''));
+                this.generateExcel(data, (timeline.title || '未命名任务').replace(/[\\\/?*[\]"]/g, ''));
             },
 
             // Exports all timelines to a multi-sheet Excel file
