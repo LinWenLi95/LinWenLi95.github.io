@@ -5,25 +5,25 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>条形码生成工具</title>
-    
+
     <!-- 外部依赖 -->
-    <link rel="stylesheet" href="css/element-ui.full.css">
-    <script src="js/vue.min.js"></script>
-    <script src="js/element-ui.min.js"></script>
+    <link rel="stylesheet" href="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/css/element-ui.full.css">
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/vue.min.js"></script>
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/element-ui.min.js"></script>
     <!-- 引入其他必要的库 -->
-    <script src="js/jsbarcode.min.js"></script>
-    <script src="js/jspdf.min.js"></script>
-    <script src="js/filesaver.min.js"></script>
-    <script src="js/jszip.min.js"></script>
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/jsbarcode.min.js"></script>
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/jspdf.min.js"></script>
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/filesaver.min.js"></script>
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/jszip.min.js"></script>
     <!-- 引入Excel处理库 -->
-    <script src="js/xlsx.min.js"></script>
-    
+    <script src="https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/js/xlsx.min.js"></script>
+
     <style>
         /* 全局样式 */
         * {
             box-sizing: border-box;
         }
-        
+
         body {
             margin: 0;
             padding: 10px;
@@ -31,7 +31,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             line-height: 1.6;
         }
-        
+
         /* 容器样式 */
         .container {
             max-width: 1200px;
@@ -41,7 +41,7 @@
             box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
             padding: 10px;
         }
-        
+
         /* 头部样式 */
         .header {
             text-align: center;
@@ -49,32 +49,32 @@
             padding-bottom: 20px;
             border-bottom: 1px solid #ebeef5;
         }
-        
+
         .header h1 {
             color: #303133;
             margin: 0 0 10px 0;
             font-size: 28px;
             font-weight: 600;
         }
-        
+
         .header p {
             color: #909399;
             margin: 0;
             font-size: 16px;
         }
-        
+
         /* 表单区域样式 */
         .form-section {
             margin-bottom: 30px;
         }
-        
+
         .form-section h3 {
             color: #303133;
             margin-bottom: 20px;
             font-size: 18px;
             font-weight: 500;
         }
-        
+
         /* 条形码项目样式 */
         .barcode-item {
             border: 1px solid #dcdfe6;
@@ -87,16 +87,16 @@
             gap: 15px;
             align-items: center;
         }
-        
+
         .barcode-item:hover {
             border-color: #c0c4cc;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        
+
         .barcode-item-content {
             flex: 1;
         }
-        
+
         .barcode-item-preview {
             width: 250px;
             height: 150px;
@@ -105,36 +105,36 @@
             border-radius: 4px;
             overflow: hidden;
         }
-        
+
         .barcode-preview-canvas {
             width: 100%;
             height: 100%;
         }
-        
+
         @media (max-width: 768px) {
             .barcode-item {
                 flex-direction: column;
             }
-            
+
             .barcode-item-preview {
                 width: 100%;
                 height: 120px;
             }
         }
-        
+
         .form-row {
             display: flex;
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .form-group {
             display: flex;
             align-items: center;
             margin-right: 5px;
         }
-        
+
         .form-group label {
             margin-right: 5px;
             margin-bottom: 0 !important;
@@ -143,16 +143,16 @@
             color: #606266;
             font-size: 14px;
         }
-        
+
         .form-row {
             flex-wrap: nowrap !important;
         }
-        
+
         .form-group:last-child {
             flex: 0 0 auto;
             align-items: center;
         }
-        
+
         /* 信息区域样式 */
         .info-section {
             background: linear-gradient(135deg, #f0f9ff 0%, #e6f3ff 100%);
@@ -161,31 +161,31 @@
             padding: 20px;
             margin-bottom: 25px;
         }
-        
+
         .info-section h3 {
             margin: 0 0 15px 0;
             color: #409eff;
             font-size: 18px;
             font-weight: 600;
         }
-        
+
         .info-section p {
             margin: 8px 0;
             color: #606266;
             font-size: 14px;
         }
-        
+
         .example-link {
             color: #409eff;
             text-decoration: none;
             transition: color 0.3s ease;
         }
-        
+
         .example-link:hover {
             color: #337ecc;
             text-decoration: underline;
         }
-        
+
         /* Canvas容器样式 */
         .canvas-container {
             text-align: center;
@@ -195,18 +195,18 @@
             border-radius: 6px;
             border: 1px solid #e9ecef;
         }
-        
+
         .canvas-container h3 {
             color: #303133;
             margin-bottom: 10px;
         }
-        
+
         .canvas-container p {
             color: #909399;
             margin-bottom: 20px;
             font-size: 14px;
         }
-        
+
         canvas {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -215,14 +215,14 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
+
         /* 按钮组样式 */
         .button-group {
             display: flex;
             gap: 15px;
             flex-wrap: wrap;
         }
-        
+
         /* 区域头部样式 */
         .section-header {
             display: flex;
@@ -232,44 +232,44 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .header-buttons {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .section-header h3 {
             margin: 0;
             flex: 1;
             min-width: 250px;
         }
-        
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
                 margin: 10px;
             }
-            
+
             .form-row {
                 flex-direction: column;
                 gap: 15px;
             }
-            
+
             .form-group {
                 min-width: 100%;
             }
-            
+
             .button-group {
                 flex-direction: column;
             }
-            
+
             .header h1 {
                 font-size: 24px;
             }
         }
-        
+
         /* 加载状态样式 */
         .loading-overlay {
             position: fixed;
@@ -283,18 +283,18 @@
             align-items: center;
             z-index: 9999;
         }
-        
+
         /* Excel拖放区域活动状态样式 */
         .excel-drop-area-active {
             border-color: #409eff !important;
             background-color: #ecf5ff !important;
         }
-        
+
         .excel-drop-area:hover {
             border-color: #c6e2ff;
             background-color: #f0f9ff;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -307,7 +307,7 @@
         <div v-if="loading" class="loading-overlay">
             <div style="width: 40px; height: 40px; border: 3px solid #409eff; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
         </div>
-        
+
         <div class="container" style="width: 1100px;">
             <!-- 头部 -->
             <div class="header" style="margin-bottom: 0px;">
@@ -325,7 +325,7 @@
                     <p style="font-size: 12px; margin: 0 0 4px 0; line-height: 1.3;"><strong>提示：</strong> 支持英文逗号(,)和中文逗号(，)</p>
                     <p style="font-size: 12px; margin: 0; line-height: 1.3;"><a href="https://www.6label.com/barcodeDecode?identity=eoqpxh&ref=67tool.com" class="example-link" target="_blank">🔗 核验链接</a></p>
                 </div>
-                
+
                 <!-- 右侧：Excel输入说明 -->
                 <div style="flex: 1; min-width: 280px;">
                     <h3 style="color: #409eff; font-size: 15px; font-weight: 600; margin: 0 0 8px 0;">📊 Excel输入说明</h3>
@@ -348,7 +348,7 @@
                               <h3 style="font-weight: bold; font-size: 16px; margin: 0; white-space: nowrap;">
                                   批量输入：
                               </h3>
-                              
+
                               <!-- 批量输入文本框 - 调整高度与Excel拖放区域相同 -->
                                <el-input
                                    type="textarea"
@@ -368,9 +368,9 @@
                                    :style="{ borderColor: isDragging ? '#409eff' : '#dcdfe6' }"
                                >
                                </el-input>
-                            
+
                             <!-- Excel导入拖放区域 -->
-                            <div 
+                            <div
                                 class="excel-drop-area"
                                 @dragover.prevent="handleDragOver"
                                 @dragleave="handleDragLeave"
@@ -394,8 +394,8 @@
                                 <i class="el-icon-excel" style="font-size: 48px; color: #409eff; margin-bottom: 10px;"></i>
                                 <p style="color: #606266; margin: 0;">拖放Excel文件到此处</p>
                                 <p style="color: #909399; font-size: 12px; margin-top: 5px;">或点击选择文件</p>
-                                <input 
-                                    type="file" 
+                                <input
+                                    type="file"
                                     ref="fileInput"
                                     accept=".xlsx,.xls"
                                     style="display: none;"
@@ -467,7 +467,7 @@
     <script type="text/javascript">
         // 安装Element UI
         Vue.use(ELEMENT);
-        
+
         new Vue({
             el: '#app',
             data() {
@@ -507,7 +507,7 @@
                     this.barcodeItems.forEach((_, index) => {
                         this.updateItemPreview(index);
                     });
-                    
+
                     // 初始化时确保批量输入框和条形码项目列表同步
                     this.updateBarcodeItemsFromBatchInput()
                 }, 500);
@@ -517,7 +517,7 @@
                 loadExcelExample() {
                     this.excelExampleLoaded = true;
                 },
-                
+
                 // 添加单个条形码项目
                 addBarcodeItem() {
                     this.barcodeItems.push({
@@ -532,23 +532,23 @@
                         fnskuFontSize: 12,
                         quantityFontSize: 11
                     });
-                    
+
                     // 延迟更新预览，确保DOM已渲染
                     setTimeout(() => {
                         const index = this.barcodeItems.length - 1;
                         this.updateItemPreview(index);
                     }, 100);
-                    
+
                     // 更新批量输入框
                     this.updateBatchInputFromBarcodeItems();
                 },
-                
+
                 // 移除条形码项目
                 removeBarcodeItem(index) {
                     this.barcodeItems.splice(index, 1);
                     this.updateBatchInputFromBarcodeItems();
                 },
-                
+
                 // 清空所有条形码项目
                 clearAllBarcodeItems() {
                     this.$confirm('确定要清空所有项目吗？', '提示', {
@@ -565,25 +565,25 @@
                         });
                     });
                 },
-                
+
                 // 从批量输入更新条形码项目列表
                 updateBarcodeItemsFromBatchInput() {
                     if (!this.formData.batchInput.trim()) {
                         return;
                     }
-                    
+
                     try {
                         const items = [];
                         // 分割输入内容（支持中英文逗号）
                         const parts = this.formData.batchInput.split(/[,，]/);
-                        
+
                         parts.forEach(part => {
                             part = part.trim();
                             if (!part) return;
-                            
+
                             // 解析每行数据：FNSKU:SKU:数量
                             const [fnsku, customTexts, countStr] = part.split(':');
-                            
+
                             if (fnsku && fnsku.trim()) {
                                 items.push({
                                     fnsku: fnsku.trim(),
@@ -599,7 +599,7 @@
                                 });
                             }
                         });
-                        
+
                         if (items.length > 0) {
                             this.barcodeItems = items;
                             // 延迟更新预览，确保DOM已渲染
@@ -614,37 +614,37 @@
                         this.$message.error('批量输入格式不正确，请检查格式：FNSKU:SKU:数量，多个用逗号分隔');
                     }
                 },
-                
+
                 // 从条形码项目列表更新批量输入
                 updateBatchInputFromBarcodeItems() {
                     if (this.barcodeItems.length === 0) {
                         this.formData.batchInput = '';
                         return;
                     }
-                    
+
                     // 使用防抖避免频繁更新
                     if (this.batchInputUpdateTimer) {
                         clearTimeout(this.batchInputUpdateTimer);
                     }
-                    
+
                     this.batchInputUpdateTimer = setTimeout(() => {
                         const lines = this.barcodeItems.map(item => {
                             return `${item.fnsku || ''}:${item.customTexts || ''}:${item.count || 1}`;
                         }).filter(line => line.trim());
-                        
+
                         this.formData.batchInput = lines.join(', ');
                     }, 300);
                 },
-                
+
                 // Excel导入相关方法
                 handleDragOver() {
                     this.isDragging = true;
                 },
-                
+
                 handleDragLeave() {
                     this.isDragging = false;
                 },
-                
+
                 handleDrop(event) {
                     this.isDragging = false;
                     const file = event.dataTransfer.files[0];
@@ -652,11 +652,11 @@
                         this.processExcelFile(file);
                     }
                 },
-                
+
                 triggerFileInput() {
                     this.$refs.fileInput.click();
                 },
-                
+
                 handleFileSelect(event) {
                     const file = event.target.files[0];
                     if (file) {
@@ -665,40 +665,40 @@
                         event.target.value = '';
                     }
                 },
-                
+
                 processExcelFile(file) {
                     if (!file.name.match(/\.(xls|xlsx)$/)) {
                         this.$message.error('请选择Excel文件(.xls或.xlsx)');
                         return;
                     }
-                    
+
                     this.loading = true;
-                    
+
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         try {
                             // 解析Excel文件
                             const data = new Uint8Array(e.target.result);
                             const workbook = XLSX.read(data, { type: 'array' });
-                            
+
                             // 获取第一个工作表
                             const firstSheetName = workbook.SheetNames[0];
                             const worksheet = workbook.Sheets[firstSheetName];
-                            
+
                             // 转换为JSON
                             const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                            
+
                             if (jsonData.length === 0) {
                                 this.$message.warning('Excel文件中没有数据');
                                 return;
                             }
-                            
+
                             // 查找FNSKU、自定义文本、数量对应的列
                             const headers = Object.keys(jsonData[0]);
                             let fnskuColumn = '';
                             let customTextColumn = '';
                             let countColumn = '';
-                            
+
                             headers.forEach(header => {
                                 const headerLower = header.toLowerCase();
                                 if (headerLower.includes('fnsku')) {
@@ -709,31 +709,31 @@
                                     countColumn = header;
                                 }
                             });
-                            
+
                             // 检查是否找到必要的列
                             if (!fnskuColumn) {
                                 this.$message.error('未找到FNSKU列，请确保第一行包含FNSKU标题');
                                 return;
                             }
-                            
+
                             // 处理数据并转换为批量输入格式
                             const batchLines = [];
                             jsonData.forEach((row, index) => {
                                 // 跳过标题行（如果第一行是标题）
-                                if (index === 0 && typeof row[fnskuColumn] === 'string' && 
+                                if (index === 0 && typeof row[fnskuColumn] === 'string' &&
                                     row[fnskuColumn].toLowerCase().includes('fnsku')) {
                                     return;
                                 }
-                                
+
                                 const fnsku = row[fnskuColumn] || '';
                                 if (fnsku.toString().trim()) {
                                     const customText = customTextColumn ? (row[customTextColumn] || '') : '';
                                     const count = countColumn ? (row[countColumn] || 1) : 1;
-                                    
+
                                     batchLines.push(`${fnsku}:${customText}:${count}`);
                                 }
                             });
-                            
+
                             if (batchLines.length > 0) {
                                 // 更新批量输入文本框
                                 this.formData.batchInput = batchLines.join(', ');
@@ -750,75 +750,75 @@
                             this.loading = false;
                         }
                     };
-                    
+
                     reader.onerror = () => {
                         this.$message.error('读取文件失败');
                         this.loading = false;
                     };
-                    
+
                     reader.readAsArrayBuffer(file);
                 },
-                
+
                 // 更新单个项目的预览
                 updateItemPreview(index) {
                     const item = this.barcodeItems[index];
                     const canvas = document.getElementById('preview-' + index);
                     if (!canvas) return;
-                    
+
                     const ctx = canvas.getContext('2d');
-                    
+
                     // 清除画布
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
+
                     // 如果没有FNSKU，不生成条形码
                     if (!item.fnsku) return;
-                    
+
                     // 计算实际尺寸（1mm = 10px用于预览）
                     const boxWidth = 500; // 50mm * 10px/mm
                     const boxHeight = 300; // 30mm * 10px/mm
                     const barcodeWidth = 460; // 46mm * 10px/mm
                     const barcodeHeight = 150; // 15mm * 10px/mm
-                    
+
                     // 计算条形码位置
                     const xOffset = (canvas.width - boxWidth) / 2;
                     const yOffset = (canvas.height - boxHeight) / 2;
                     const barcodeX = xOffset + (boxWidth - barcodeWidth) / 2;
                     const barcodeY = yOffset + (boxWidth - barcodeWidth) / 2;
-                    
+
                     // 生成条形码
                     this.generateBarcodeImage(item.fnsku, barcodeX, barcodeY, barcodeWidth, barcodeHeight, canvas);
-                    
+
                     // 绘制文本（FNSKU）
                     const fnskuTextY = yOffset + 20 + barcodeHeight + 30;
                     // 预览效果的文字显示增大2.5倍
                     this.drawText(item.fnsku, xOffset + boxWidth/2 + (item.fnskuX || 0) * 0.265, fnskuTextY + (item.fnskuY || 0) * 0.265, 'center', item.fnskuFontSize * 2.5, canvas);
-                    
+
                     // 绘制自定义内容
                     let currentY = fnskuTextY;
                     if (item.customTexts) {
                         currentY += 38;
                         this.drawText(item.customTexts, xOffset + boxWidth/2 + (item.fnskuX || 0) * 0.265, currentY + (item.fnskuY || 0) * 0.265, 'center', item.fnskuFontSize * 2.5, canvas);
                     }
-                    
+
                     // 绘制数量
                     if (item.quantity) {
                         currentY += 38;
                         this.drawText(item.quantity, xOffset + boxWidth/2 + (item.fnskuX || 0) * 0.265, currentY + (item.fnskuY || 0) * 0.265, 'center', item.fnskuFontSize * 2.5, canvas);
                     }
                 },
-                
+
                 // 生成条形码图像
                 generateBarcodeImage(data, x, y, width, height, canvas) {
                     // 创建临时canvas用于生成条形码
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = width;
                     tempCanvas.height = height;
-                    
+
                     // 设置临时canvas背景为白色
                     const tempCtx = tempCanvas.getContext('2d');
                     tempCtx.fillStyle = '#FFFFFF';
                     tempCtx.fillRect(0, 0, width, height);
-                    
+
                     // 使用JsBarcode生成条形码
                     JsBarcode(tempCanvas, data, {
                         format: 'CODE128',
@@ -828,29 +828,29 @@
                         margin: 0,
                         backgroundColor: '#FFFFFF'
                     });
-                    
+
                     // 将临时canvas的内容绘制到主canvas上
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(tempCanvas, x, y, width, height);
                 },
-                
+
                 // 绘制文本
                 drawText(text, x, y, align, fontSize, canvas) {
                     const ctx = canvas.getContext('2d');
-                    
+
                     // 使用支持中文的字体堆栈
                     ctx.font = fontSize + "px 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif";
                     ctx.textAlign = align;
                     ctx.fillStyle = '#000';
                     ctx.fillText(text, x, y);
                 },
-                
+
                 // 下载所有PNG图片
                 downloadAllImages() {
                     if (this.barcodeItems.length === 0) return;
-                    
+
                     this.loading = true;
-                    
+
                     setTimeout(() => {
                         try {
                             if (this.barcodeItems.length === 1) {
@@ -868,12 +868,12 @@
                         }
                     }, 100);
                 },
-                
+
                 // 下载单个PNG图片
                 downloadSingleImage(item, index) {
                     const canvas = document.getElementById('preview-' + index);
                     if (!canvas) return;
-                    
+
                     // 获取图片数据
                     canvas.toBlob((blob) => {
                         // 生成文件名：自定义文本#FNSKU#数量
@@ -884,13 +884,13 @@
                         saveAs(blob, fileName);
                     });
                 },
-                
+
                 // 下载多个PNG图片为ZIP
                 downloadImagesAsZip() {
                     const zip = new JSZip();
                     const imagesFolder = zip.folder("barcode_images");
                     const promises = [];
-                    
+
                     // 为每个条形码创建图片并添加到ZIP
                     this.barcodeItems.forEach((item, index) => {
                         const promise = new Promise((resolve) => {
@@ -899,7 +899,7 @@
                                 resolve();
                                 return;
                             }
-                            
+
                             canvas.toBlob((blob) => {
                             // 生成文件名：自定义文本#FNSKU#数量
                             const customText = item.customTexts || 'unnamed';
@@ -912,13 +912,13 @@
                         });
                         promises.push(promise);
                     });
-                    
+
                     // 等待所有图片处理完成后生成ZIP
                     Promise.all(promises).then(() => {
                         zip.generateAsync({type: "blob"}).then((content) => {
                             const fileName = 'barcode_images_' + Date.now() + '.zip';
                             saveAs(content, fileName);
-                            
+
                             this.$message({
                                 type: 'success',
                                 message: `成功生成包含 ${this.barcodeItems.length} 个图片的ZIP压缩包`
@@ -926,11 +926,11 @@
                         });
                     });
                 },
-                
+
                 // 生成并下载所有PDF
                 generateAllPDFs() {
                     this.loading = true;
-                    
+
                     // 使用setTimeout避免UI阻塞
                     setTimeout(() => {
                         try {
@@ -953,13 +953,13 @@
                         }
                     }, 100);
                 },
-                
+
                 // 生成多个PDF为ZIP
                 generatePDFsAsZip() {
                     const zip = new JSZip();
                     const pdfsFolder = zip.folder("barcode_pdfs");
                     const promises = [];
-                    
+
                     // 为每个条形码创建PDF并添加到ZIP
                     this.barcodeItems.forEach((item, index) => {
                         const promise = new Promise((resolve) => {
@@ -970,7 +970,7 @@
                                     unit: 'mm',
                                     format: [50.5, 30.5] // 宽度50.5mm，高度30.5mm
                                 });
-                                
+
                                 // 计算PDF中的位置
                                 const barcodeBoxWidth = 50;
                                 const barcodeBoxHeight = 30;
@@ -978,20 +978,20 @@
                                 const barcodeHeight = 15;
                                 const x = 0.25; // 从左上角开始，留出0.25mm边距
                                 const y = 0.25; // 从左上角开始，留出0.25mm边距
-                                
+
                                 // 像素到毫米的转换系数
                                 const pxToMm = 1 / 3.7795;
-                                
+
                                 // 创建临时canvas用于生成条形码图片
                                 const tempCanvas = document.createElement('canvas');
                                 tempCanvas.width = barcodeWidth * 10; // 10px/mm
                                 tempCanvas.height = barcodeHeight * 10;
-                                
+
                                 // 设置临时canvas背景为白色
                                 const tempCtx = tempCanvas.getContext('2d');
                                 tempCtx.fillStyle = '#FFFFFF';
                                 tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-                                
+
                                 // 生成条形码
                                 JsBarcode(tempCanvas, item.fnsku, {
                                     format: 'CODE128',
@@ -1001,45 +1001,45 @@
                                     margin: 0,
                                     backgroundColor: '#FFFFFF'
                                 });
-                                
+
                                 // 将条形码转换为DataURL并添加到PDF
                                 const imgData = tempCanvas.toDataURL('image/png');
                                 const barcodeX = x + (barcodeBoxWidth - barcodeWidth) / 2;
                                 const barcodeY = y + (barcodeBoxWidth - barcodeWidth) / 2;
                                 doc.addImage(imgData, 'PNG', barcodeX, barcodeY, barcodeWidth, barcodeHeight);
-                                
+
                                 // 添加文本
                                 const fnskuTextY = y + 2 + barcodeHeight + 3;
                                 doc.setFontSize(item.fnskuFontSize * 0.7);
                                 doc.text(item.fnsku, x + barcodeBoxWidth/2 + (item.fnskuX || 0) * pxToMm, fnskuTextY + (item.fnskuY || 0) * pxToMm, { align: 'center' });
-                                
+
                                 // 绘制自定义内容
                                 let currentY = fnskuTextY;
-                                
+
                                 // 绘制customTexts值
                                 if (item.customTexts) {
                                     currentY += 4;
                                     doc.setFontSize(item.fnskuFontSize * 0.7); // 使用与FNSKU相同的字体大小
                                     doc.text(item.customTexts, x + barcodeBoxWidth/2 + (item.fnskuX || 0) * pxToMm, currentY + (item.fnskuY || 0) * pxToMm, { align: 'center' });
                                 }
-                                
+
                                 // 绘制数量
                                 if (item.quantity) {
                                     currentY += 4;
                                     doc.setFontSize(item.fnskuFontSize * 0.7); // 使用与FNSKU相同的字体大小
                                     doc.text(item.quantity, x + barcodeBoxWidth/2 + (item.fnskuX || 0) * pxToMm, currentY + (item.fnskuY || 0) * pxToMm, { align: 'center' });
                                 }
-                                
+
                                 // 生成文件名：自定义文本#FNSKU#数量
                                 const customText = item.customTexts || 'unnamed';
                                 const fnsku = item.fnsku || 'unknown';
                                 const count = item.count || 1;
                                 const fileName = `${customText}#${fnsku}#${count}.pdf`;
-                                
+
                                 // jsPDF的output方法直接返回结果，不返回Promise
                                 const buffer = doc.output('arraybuffer');
                                 pdfsFolder.file(fileName, buffer);
-                                
+
                                 // 立即resolve当前Promise
                                 resolve();
                             } catch (error) {
@@ -1049,13 +1049,13 @@
                         });
                         promises.push(promise);
                     });
-                    
+
                     // 等待所有PDF处理完成后生成ZIP
                     Promise.all(promises).then(() => {
                         zip.generateAsync({type: "blob"}).then((content) => {
                             const fileName = 'barcode_pdfs_' + Date.now() + '.zip';
                             saveAs(content, fileName);
-                            
+
                             this.$message({
                                 type: 'success',
                                 message: `成功生成包含 ${this.barcodeItems.length} 个PDF文件的ZIP压缩包`
@@ -1063,7 +1063,7 @@
                         });
                     });
                 },
-                
+
                 // 生成单个PDF
                 generateSinglePDF(item, index) {
                     // 创建PDF文档
@@ -1073,7 +1073,7 @@
                         unit: 'mm',
                         format: [50.5, 30.5] // 宽度50.5mm，高度30.5mm
                     });
-                    
+
                     // 计算PDF中的位置
                     const barcodeBoxWidth = 50;
                     const barcodeBoxHeight = 30;
@@ -1081,20 +1081,20 @@
                     const barcodeHeight = 15;
                     const x = 0.25; // 从左上角开始，留出0.25mm边距
                     const y = 0.25; // 从左上角开始，留出0.25mm边距
-                    
+
                     // 像素到毫米的转换系数
                     const pxToMm = 1 / 3.7795;
-                    
+
                     // 创建临时canvas用于生成条形码图片
                     const tempCanvas = document.createElement('canvas');
                     tempCanvas.width = barcodeWidth * 10; // 10px/mm
                     tempCanvas.height = barcodeHeight * 10;
-                    
+
                     // 设置临时canvas背景为白色
                     const tempCtx = tempCanvas.getContext('2d');
                     tempCtx.fillStyle = '#FFFFFF';
                     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-                    
+
                     // 生成条形码
                     JsBarcode(tempCanvas, item.fnsku, {
                         format: 'CODE128',
@@ -1104,35 +1104,35 @@
                         margin: 0,
                         backgroundColor: '#FFFFFF'
                     });
-                    
+
                     // 将条形码转换为DataURL并添加到PDF
                     const imgData = tempCanvas.toDataURL('image/png');
                     const barcodeX = x + (barcodeBoxWidth - barcodeWidth) / 2;
                     const barcodeY = y + (barcodeBoxWidth - barcodeWidth) / 2;
                     doc.addImage(imgData, 'PNG', barcodeX, barcodeY, barcodeWidth, barcodeHeight);
-                    
+
                     // 添加文本
                     const fnskuTextY = y + 2 + barcodeHeight + 3;
                     doc.setFontSize(item.fnskuFontSize * 0.7);
                     doc.text(item.fnsku, x + barcodeBoxWidth/2 + (item.fnskuX || 0) * pxToMm, fnskuTextY + (item.fnskuY || 0) * pxToMm, { align: 'center' });
-                    
+
                     // 绘制自定义内容
                     let currentY = fnskuTextY;
-                    
+
                     // 绘制customTexts值
                     if (item.customTexts) {
                         currentY += 4;
                         doc.setFontSize(item.fnskuFontSize * 0.7); // 使用与FNSKU相同的字体大小
                         doc.text(item.customTexts, x + barcodeBoxWidth/2 + (item.fnskuX || 0) * pxToMm, currentY + (item.fnskuY || 0) * pxToMm, { align: 'center' });
                     }
-                    
+
                     // 绘制数量
                     if (item.quantity) {
                         currentY += 4;
                         doc.setFontSize(item.fnskuFontSize * 0.7); // 使用与FNSKU相同的字体大小
                         doc.text(item.quantity, x + barcodeBoxWidth/2 + (item.fnskuX || 0) * pxToMm, currentY + (item.fnskuY || 0) * pxToMm, { align: 'center' });
                     }
-                    
+
                     // 下载PDF（只在单文件情况下调用）
                     // 生成文件名：自定义文本#FNSKU#数量
                     const customText = item.customTexts || 'unnamed';

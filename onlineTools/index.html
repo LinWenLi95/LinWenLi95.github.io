@@ -74,6 +74,13 @@
             </div>
             <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">各站点城市邮编📝</el-button>
         </el-tooltip><br/><br/>
+        <el-tooltip v-model="showTip.tip11" placement="top-start" effect="light">
+            <div slot="content">
+                <label>生成亚马逊商品标签</label><br/>
+                <label>网址：https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/index.html</label>
+            </div>
+            <el-button type="primary" style="width: 200px" @click="handleTools('barcode_pdfs')">条形码生成器</el-button>
+        </el-tooltip><br/><br/>
         <el-tooltip v-model="showTip.tip4" placement="top-start" effect="light">
             <div slot="content">
                 <label>好东西，亚马逊工具集、跨境资讯网站，有空可以逛逛</label><br/>
@@ -158,7 +165,8 @@
                     tip7: false,
                     tip8: false,
                     tip9: false,
-                    tip10: false
+                    tip10: false,
+                    tip11: false
                 },
                 iframe: {
                     show: false,
@@ -178,7 +186,8 @@
                     patent: 'https://designdb.wipo.int/designdb/en/index.jsp',// 外观专利查询
                     uspto: 'https://tmsearch.uspto.gov',// 美标查询
                     ukipo: 'https://trademarks.ipo.gov.uk/ipo-tmtext',// 英标查询
-                    imgWeightLoss: 'https://tinypng.com/'// 图片压缩
+                    imgWeightLoss: 'https://tinypng.com/',// 图片压缩
+                    barcode_pdfs: 'https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/index.html'
                 }
             }
         },
