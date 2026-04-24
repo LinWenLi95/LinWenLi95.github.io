@@ -851,8 +851,12 @@
         methods: {
         handleOutsideDblClick(e) {
             if(!this.currentNodeId) return
+            console.log('this.currentNodeId')
+            console.log(this.currentNodeId)
             // 核心判断
             const inputRef = this.$refs['contentInput-' + this.currentNodeId];
+            console.log('inputRef')
+            console.log(inputRef)
             if (inputRef && !inputRef.contains(e.target)) {
               console.log('✅ 双击了文本框外部！执行自定义逻辑')
               const actualNode = this.currentTimeline?.nodes?.find(n => n.id === this.currentNodeId);
