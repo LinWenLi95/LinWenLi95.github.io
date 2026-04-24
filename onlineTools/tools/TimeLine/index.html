@@ -880,14 +880,13 @@
             document.addEventListener('dblclick', this.handleOutsideDblClick)
         },
         methods: {
+
         handleOutsideDblClick(e) {
             if(!this.currentNodeId) return
             // 核心判断
-            const inputRef = this.$refs['contentInput-' + this.currentNodeId];
-            if (inputRef && !inputRef.$el?.contains(e.target)) {
+            if (this.$refs['contentInput-' + this.currentNodeId]) {
               const actualNode = this.currentTimeline?.nodes?.find(n => n.id === this.currentNodeId);
               this.saveContent(actualNode)
-              this.currentNodeId = ''
             }
         },
         dragStart(index) {
@@ -1176,6 +1175,7 @@
 
             // Enters content editing mode for a node
             startEditContent(node) {
+                if(this.currentNodeId) return
                 this.currentNodeId = node.id
                 this.$set(node, 'editingContent', true);
                 this.$set(node, 'contentInput', node.content || '');
@@ -1213,6 +1213,7 @@
                     this.$set(actualNode, 'editingContent', false);
                 }
                 this.saveToStorage();
+                this.currentNodeId = ''
             },
 
             // Toggle markdown mode for a node
