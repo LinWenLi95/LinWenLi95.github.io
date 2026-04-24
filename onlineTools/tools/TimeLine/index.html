@@ -532,17 +532,34 @@
             font-weight: bold;
         }
         .mode-toggle-in-editor {
-            position: absolute;
-            top: 5px;
-            right: 5px;
             color: #409EFF;
             cursor: pointer;
             padding: 2px 5px;
-            z-index: 10;
             user-select: none;
         }
         .mode-toggle-in-editor:hover {
             background-color: #ecf5ff;
+        }
+        .editor-div {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 10;
+        }
+        .save-editor {
+            color: #409EFF;
+            cursor: pointer;
+            padding: 2px 5px;
+            user-select: none;
+        }
+        .save-editor:hover {
+            background-color: #ecf5ff;
+        }
+        .cancel-editor {
+            color: #409EFF;
+            cursor: pointer;
+            padding: 2px 5px;
+            user-select: none;
         }
         .renderDiv {
             border-radius: 3px;
@@ -734,12 +751,26 @@
                                 </div>
                                 <div v-if="node.editingContent" class="editor-container">
                                     <div v-if="node.showEditor" class="textarea-wrapper">
-                                        <span class="mode-toggle-in-editor"
-                                              @mousedown.prevent
-                                              @click.stop="toggleMarkdownMode(node)"
-                                              :class="{ 'active': node.isMarkdownMode }">
+                                        <div class="editor-div">
+                                            <span class="save-editor"
+                                                  @mousedown.prevent
+                                                  @click.stop="saveContent(node)"
+                                                  :class="{ 'active': node.isMarkdownMode }">
+                                            {{ '保存' }}
+                                            </span>
+                                            <span class="cancel-editor"
+                                                  @mousedown.prevent
+                                                  @click.stop="cancelSaveContent(node)"
+                                                  :class="{ 'active': node.isMarkdownMode }">
+                                                {{ '取消' }}
+                                            </span>
+                                            <span class="mode-toggle-in-editor"
+                                                  @mousedown.prevent
+                                                  @click.stop="toggleMarkdownMode(node)"
+                                                  :class="{ 'active': node.isMarkdownMode }">
                                             {{ node.isMarkdownMode ? '转文本模式' : '转Markdown模式' }}
                                         </span>
+                                        </div>
                                         <el-input
                                                 type="textarea"
                                                 v-model="node.contentInput"
@@ -851,14 +882,9 @@
         methods: {
         handleOutsideDblClick(e) {
             if(!this.currentNodeId) return
-            console.log('this.currentNodeId')
-            console.log(this.currentNodeId)
             // 核心判断
             const inputRef = this.$refs['contentInput-' + this.currentNodeId];
-            console.log('inputRef')
-            console.log(inputRef)
             if (inputRef && !inputRef.$el?.contains(e.target)) {
-              console.log('✅ 双击了文本框外部！执行自定义逻辑')
               const actualNode = this.currentTimeline?.nodes?.find(n => n.id === this.currentNodeId);
               this.saveContent(actualNode)
               this.currentNodeId = ''
@@ -1067,7 +1093,7 @@
             },
 
             // Ensures a node object has default 'id' and 'completed' properties
-            ensureNodeDefaults
+            ensureNodeDefaults(node) {
                 if (!node.id) {
                     this.$set(node, 'id', this.generateNodeId());
                 }
@@ -1128,7 +1154,7 @@
             },
 
             // Enters date editing mode for a node
-            startEditDate
+            startEditDate(node) {
                 this.$set(node, 'editingDate', true);
                 this.$set(node, 'dateValue', node.date || this.formatDate(new Date()));
 
@@ -1139,7 +1165,7 @@
             },
 
             // Saves the selected date for a node
-            saveDateValue
+            saveDateValue(node) {
                 if (!node.editingDate) return;
                 this.$set(node, 'date', node.dateValue);
                 this.$set(node, 'editingDate', false);
@@ -1149,7 +1175,7 @@
             },
 
             // Enters content editing mode for a node
-            startEditContent
+            startEditContent(node) {
                 this.currentNodeId = node.id
                 this.$set(node, 'editingContent', true);
                 this.$set(node, 'contentInput', node.content || '');
@@ -1163,7 +1189,12 @@
                     }
                 });
             },
-
+            cancelSaveContent(node) {
+                this.currentNodeId = ''
+                this.$set(node, 'editingContent', false);
+                this.$set(node, 'contentInput', node.content || '');
+                this.$set(node, 'showEditor', false);
+            },
             // Saves the edited content for a node
             saveContent(node) {
                 // Find the actual node in the *original* array if needed for safety, though direct modification should work
