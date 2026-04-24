@@ -857,7 +857,7 @@
             const inputRef = this.$refs['contentInput-' + this.currentNodeId];
             console.log('inputRef')
             console.log(inputRef)
-            if (inputRef && !inputRef.contains(e.target)) {
+            if (inputRef && !inputRef.$el?.contains(e.target)) {
               console.log('✅ 双击了文本框外部！执行自定义逻辑')
               const actualNode = this.currentTimeline?.nodes?.find(n => n.id === this.currentNodeId);
               this.saveContent(actualNode)
@@ -1165,7 +1165,7 @@
             },
 
             // Saves the edited content for a node
-            saveContent(node) {
+            (node) {
                 // Find the actual node in the *original* array if needed for safety, though direct modification should work
                 const actualNode = this.currentTimeline?.nodes?.find(n => n.id === node.id);
                 if (!actualNode || !actualNode.editingContent) return;
