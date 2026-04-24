@@ -743,13 +743,12 @@
                                         <el-input
                                                 type="textarea"
                                                 v-model="node.contentInput"
-                                                :autosize="{ minRows: 8, maxRows: 8 }"
+                                                :autosize="{ minRows: 8, maxRows: 20 }"
                                                 placeholder="请输入内容"
                                                 :ref="'contentInput-' + node.id"
                                                 class="timeline-node-textarea content-editor"
                                                 :spellcheck="false"
-                                                @click.stop
-                                                @blur="saveContent(node)">
+                                                @click.stop>
                                         </el-input>
                                         <markdown-toolbar
                                                 class="toolBarDiv"
@@ -793,6 +792,7 @@
         el: '#app',
         data() {
             return {
+                currentNodeId: '',
                 timelines: [],
                 currentTimelineIndex: -1,
                 editingTitle: false,
@@ -844,7 +844,22 @@
                 this.addNewTimeline();
             }
         },
+        mounted() {
+            // 绑定双击事件
+            document.addEventListener('dblclick', this.handleOutsideDblClick)
+        },
         methods: {
+        handleOutsideDblClick(e) {
+            if(!this.currentNodeId) return
+            // 核心判断
+            const inputRef = this.$refs['contentInput-' + this.currentNodeId];
+            if (inputRef && !inputRef.contains(e.target)) {
+              console.log('✅ 双击了文本框外部！执行自定义逻辑')
+              const actualNode = this.currentTimeline?.nodes?.find(n => n.id === this.currentNodeId);
+              this.saveContent(actualNode)
+              this.currentNodeId = ''
+            }
+        },
         dragStart(index) {
                 this.draggedIndex = index;
             },
@@ -1131,6 +1146,7 @@
 
             // Enters content editing mode for a node
             startEditContent(node) {
+                this.currentNodeId = node.id
                 this.$set(node, 'editingContent', true);
                 this.$set(node, 'contentInput', node.content || '');
                 this.$set(node, 'showEditor', true);
@@ -1279,6 +1295,8 @@
             },
             // --- End Date Picker Logic ---
             beforeDestroy() {
+                // 解绑双击事件
+                document.removeEventListener('dblclick', this.handleOutsideDblClick)
                 if (this.currentTimeline && this.currentTimeline.nodes) {
                     this.currentTimeline.nodes.forEach(node => {
                         this.removeDatePickerListener(node);
