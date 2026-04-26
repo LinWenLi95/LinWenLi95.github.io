@@ -732,14 +732,21 @@
                                         :clearable="false"
                                         popper-class="date-picker-popper">
                                 </el-date-picker>
-
+                                <el-button
+                                        size="mini"
+                                        type="text"
+                                        icon="el-icon-edit"
+                                        class="node-delete-btn"
+                                        @click.stop="startEditContent(node)"
+                                        title="点击编辑此步骤或双击步骤框文本">
+                                </el-button>
                                 <el-button
                                         size="mini"
                                         type="text"
                                         icon="el-icon-delete"
                                         class="node-delete-btn"
                                         @click.stop="deleteNode(node)"
-                                        title="删除此节点">
+                                        title="删除此步骤">
                                 </el-button>
                             </div>
 
@@ -752,12 +759,15 @@
                                 <div v-if="node.editingContent" class="editor-container" @dblclick.stop>
                                     <div v-if="node.showEditor" class="textarea-wrapper">
                                         <div class="editor-div">
-                                            <span class="save-editor"
-                                                  @mousedown.prevent
-                                                  @click.stop="saveContent(node)"
-                                                  :class="{ 'active': node.isMarkdownMode }">
-                                            {{ '保存' }}
-                                            </span>
+                                            <el-tooltip content="单击此按钮或双击文本框外部保存" placement="top">
+                                                <span class="save-editor"
+                                                      @mousedown.prevent
+                                                      @click.stop="saveContent(node)"
+                                                      :class="{ 'active': node.isMarkdownMode }">
+                                                    {{ '保存' }}
+                                                </span>
+                                            </el-tooltip>
+
                                             <span class="cancel-editor"
                                                   @mousedown.prevent
                                                   @click.stop="cancelSaveContent(node)"
@@ -803,7 +813,7 @@
                     </el-timeline-item>
                 </el-timeline>
                 <div v-if="currentTimeline && currentTimeline.nodes && currentTimeline.nodes.length === 0" class="empty-nodes">
-                    当前时间线没有节点，点击上方"添加节点"按钮创建。
+                    当前计划没有步骤，点击上方"添加步骤"按钮创建。
                 </div>
             </div>
         </div>
@@ -940,7 +950,7 @@
                 this.currentTimelineIndex = this.timelines.length - 1;
                 this.saveToStorage();
 
-                // 自动添加一个初始节点
+                // 自动添加一个初始步骤节点
                 this.addNode();
             },
 
@@ -1141,7 +1151,7 @@
                     this.currentTimeline.nodes = [];
                     this.saveToStorage();
                     this.$message({
-                        message: '节点已清空',
+                        message: '步骤已清空',
                         type: 'success'
                     });
                 }).catch(() => {
@@ -1676,7 +1686,7 @@
                 };
 
                 if (existingTimelineIndex > -1) {
-                    self.$confirm(`计划 "${sheetName}" 已存在，是否覆盖其节点数据?`, '导入确认', {
+                    self.$confirm(`计划 "${sheetName}" 已存在，是否覆盖其步骤数据?`, '导入确认', {
                         confirmButtonText: '覆盖',
                         cancelButtonText: '跳过',
                         type: 'warning'
@@ -1775,7 +1785,7 @@
                 };
 
                 if (duplicateSheets.length > 0) {
-                    self.$confirm(`检测到 ${duplicateSheets.length} 个同名计划 (${duplicateSheets.join(', ')})。是否覆盖这些计划的节点数据? 选择"取消"将只导入不重名的计划。`, '覆盖确认', {
+                    self.$confirm(`检测到 ${duplicateSheets.length} 个同名计划 (${duplicateSheets.join(', ')})。是否覆盖这些计划的步骤数据? 选择"取消"将只导入不重名的计划。`, '覆盖确认', {
                         confirmButtonText: '全部覆盖',
                         cancelButtonText: '跳过重名',
                         type: 'warning'
