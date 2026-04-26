@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时间线任务管理</title>
+    <title>时间线计划管理</title>
     <!-- 引入Element UI样式 (Replaced CDN) -->
     <link href="https://linwenli95.github.io/onlineTools/css/element-ui.css" rel="stylesheet">
     <!-- 引入Vue和Element UI的JS (Replaced CDN) -->
@@ -572,32 +572,32 @@
     </style>
 </head>
 <body>
-<div id="app">
+<div id="app" @dblclick="handleOutsideDblClick">
     <div class="container">
-        <!-- 左侧任务列表 -->
+        <!-- 左侧计划列表 -->
         <div class="task-list">
             <div class="task-list-header">
-                <div class="task-list-title">任务列表</div>
-                <button class="new-task-btn el-icon-plus" @click="addNewTimeline">新建任务</button>
+                <div class="task-list-title">我的计划</div>
+                <button class="new-task-btn el-icon-plus" @click="addNewTimeline">新建计划</button>
                 <el-dropdown trigger="hover" @command="handleCommand">
                     <el-button type="text" class="more-menu-btn">
                         菜单<i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item command="import">
-                            <i class="el-icon-upload2"></i>导入任务
-                        </el-dropdown-item>
-                        <el-dropdown-item command="clear">
-                            <i class="el-icon-delete"></i>清空任务
+                            <i class="el-icon-upload2"></i>导入计划
                         </el-dropdown-item>
                         <el-dropdown-item command="export">
-                            <i class="el-icon-download"></i>导出任务
+                            <i class="el-icon-download"></i>导出计划
+                        </el-dropdown-item>
+                        <el-dropdown-item command="clear">
+                            <i class="el-icon-delete"></i>清空计划
                         </el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
             <div v-if="timelines.length === 0" class="empty-timeline">
-                暂无任务，点击右上角菜单创建新任务
+                暂无计划，点击右上角菜单创建新计划
             </div>
             <div v-else>
                 <div
@@ -612,17 +612,17 @@
                     @drop="drop(index)"
                 >
                     <div class="task-content">
-                        <div class="task-name">{{ timeline.title || '未命名任务' }}</div>
+                        <div class="task-name">{{ timeline.title || '新计划' }}</div>
                         <div class="task-time">创建于 {{ timeline.createTime }}</div>
                     </div>
                     <div class="task-item-actions">
                         <el-tooltip content="导出为PNG" placement="top">
                             <i class="el-icon-picture-outline" @click.stop="exportSpecificTimelineImage(index)"></i>
                         </el-tooltip>
-                        <el-tooltip content="导出任务数据" placement="top">
+                        <el-tooltip content="导出计划数据" placement="top">
                             <i class="el-icon-download" @click.stop="exportCurrentToExcel(index)"></i>
                         </el-tooltip>
-                        <el-tooltip content="删除任务" placement="top">
+                        <el-tooltip content="删除计划" placement="top">
                             <i class="el-icon-delete" @click.stop="deleteTimeline(index)"></i>
                         </el-tooltip>
                     </div>
@@ -659,8 +659,8 @@
                             icon="el-icon-plus"
                             size="small"
                             @click="addNode"
-                            title="添加新节点">
-                        添加新节点
+                            title="添加步骤">
+                        添加步骤
                     </el-button>
 
                     <el-button
@@ -668,8 +668,8 @@
                             icon="el-icon-delete"
                             size="small"
                             @click="clearNodes"
-                            title="清空所有节点">
-                        清空节点
+                            title="清空所有步骤">
+                        清空所有步骤
                     </el-button>
 
                     <el-button
@@ -693,7 +693,7 @@
             </div>
 
             <div v-if="!currentTimeline" class="empty-timeline">
-                请在左侧创建或选择一个任务
+                请在左侧创建或选择一个计划
             </div>
 
             <div v-else class="timeline-content" ref="timelineContent">
@@ -746,10 +746,10 @@
                             <div class="node-content-area">
                                 <div v-if="!node.editingContent && !node.isMarkdownMode"
                                         class="node-content-display"
-                                        @click.stop="startEditContent(node)"
+                                        @dblclick.stop="startEditContent(node)"
                                         v-html="node.isMarkdownMode ? null : formatContent(node.content || '点击输入内容')">
                                 </div>
-                                <div v-if="node.editingContent" class="editor-container">
+                                <div v-if="node.editingContent" class="editor-container" @dblclick.stop>
                                     <div v-if="node.showEditor" class="textarea-wrapper">
                                         <div class="editor-div">
                                             <span class="save-editor"
@@ -779,7 +779,7 @@
                                                 :ref="'contentInput-' + node.id"
                                                 class="timeline-node-textarea content-editor"
                                                 :spellcheck="false"
-                                                @click.stop>
+                                        >
                                         </el-input>
                                         <markdown-toolbar
                                                 class="toolBarDiv"
@@ -870,14 +870,14 @@
         },
         created() {
             this.loadFromStorage();
-            // 如果没有任务，自动创建一个新任务
+            // 如果没有计划，自动创建一个新计划
             if (this.timelines.length === 0) {
                 this.addNewTimeline();
             }
         },
         mounted() {
             // 绑定双击事件
-            document.addEventListener('dblclick', this.handleOutsideDblClick)
+            // document.addEventListener('dblclick', this.handleOutsideDblClick)
         },
         methods: {
 
@@ -909,16 +909,16 @@
             },
             // --- Timeline Management ---
 
-            // Generates the next available default title (e.g., "未命名任务", "未命名任务 1", ...)
+            // Generates the next available default title (e.g., "新计划", "新计划 1", ...)
             getNextDefaultTitle() {
-                let baseName = '未命名任务';
+                let baseName = '新计划';
                 let count = 0;
                 let nextTitle = baseName;
-                // 检查 "未命名任务" 是否存在
+                // 检查 "新计划" 是否存在
                 if (this.timelines.some(t => t.title === baseName)) {
                     count = 1;
                     nextTitle = `${baseName} ${count}`;
-                    // 检查 "未命名任务 N" 是否存在，递增 N
+                    // 检查 "新计划 N" 是否存在，递增 N
                     while (this.timelines.some(t => t.title === nextTitle)) {
                         count++;
                         nextTitle = `${baseName} ${count}`;
@@ -970,7 +970,7 @@
                     if (!finalTitle) {
                         // 如果用户清空了标题，则生成一个新的默认标题
                         // 但要确保这个新默认标题不与当前正在编辑的时间线之外的其他时间线冲突
-                        let baseName = '未命名任务';
+                        let baseName = '新计划';
                         let count = 0;
                         finalTitle = baseName;
                         const otherTimelines = this.timelines.filter((t, i) => i !== this.currentTimelineIndex);
@@ -1111,7 +1111,7 @@
             // Deletes a node from the current timeline after confirmation
             deleteNode(nodeToDelete) {
                 if (!this.currentTimeline || !this.currentTimeline.nodes) return;
-                this.$confirm('确定要删除此节点吗?', '提示', {
+                this.$confirm('确定要删除此步骤吗?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -1120,9 +1120,9 @@
                     if (index > -1) {
                         this.currentTimeline.nodes.splice(index, 1);
                         this.saveToStorage();
-                        this.$message({ type: 'success', message: '节点已删除' });
+                        this.$message({ type: 'success', message: '步骤已删除' });
                     } else {
-                        this.$message({ type: 'error', message: '未能找到要删除的节点' });
+                        this.$message({ type: 'error', message: '未能找到要删除的步骤' });
                     }
                 }).catch(() => {});
             },
@@ -1130,10 +1130,10 @@
             // Clears all nodes from the current timeline after confirmation
             clearNodes() {
                 if (!this.currentTimeline || !this.currentTimeline.nodes || this.currentTimeline.nodes.length === 0) {
-                    this.$message.info('当前时间线没有节点可清空。');
+                    this.$message.info('当前计划没有步骤可清空。');
                     return;
                 }
-                this.$confirm('确定要清空当前时间线的所有节点吗? 此操作不可恢复!', '警告', {
+                this.$confirm('确定要清空当前计划的所有步骤吗? 此操作不可恢复!', '警告', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -1411,7 +1411,7 @@
                 (timeline.nodes || []).forEach(node => {
                     data.push([node.date || '未设置日期', node.content || '']);
                 });
-                this.generateExcel(data, (timeline.title || '未命名任务').replace(/[\\\/?*[\]"]/g, ''));
+                this.generateExcel(data, (timeline.title || '新计划').replace(/[\\\/?*[\]"]/g, ''));
             },
 
             // Exports all timelines to a multi-sheet Excel file
@@ -1428,7 +1428,7 @@
                     XLSX.utils.book_append_sheet(
                         workbook,
                         worksheet,
-                        ((timeline.title || `未命名任务${index+1}`).replace(/[\\\/?*[\]"]/g, '')).substring(0, 31)
+                        ((timeline.title || `新计划${index+1}`).replace(/[\\\/?*[\]"]/g, '')).substring(0, 31)
                     );
                 });
 
@@ -1487,7 +1487,7 @@
 
                     // --- Add Title ---
                     const titleElement = document.createElement('h2');
-                    titleElement.innerText = this.currentTimeline.title || '未命名任务';
+                    titleElement.innerText = this.currentTimeline.title || '新计划';
                     titleElement.style.textAlign = 'center';
                     titleElement.style.marginBottom = '25px';
                     titleElement.style.color = '#303133';
@@ -1525,7 +1525,7 @@
                             document.body.removeChild(exportWrapper);
                             console.log('Temporary export wrapper removed from DOM');
 
-                            const fileName = `${this.currentTimeline.title || '未命名任务'}_${this.formatDate(new Date())}.png`;
+                            const fileName = `${this.currentTimeline.title || '新计划'}_${this.formatDate(new Date())}.png`;
                             const link = document.createElement('a');
                             link.download = fileName;
                             link.href = canvas.toDataURL('image/png');
@@ -1676,22 +1676,22 @@
                 };
 
                 if (existingTimelineIndex > -1) {
-                    self.$confirm(`任务 "${sheetName}" 已存在，是否覆盖其节点数据?`, '导入确认', {
+                    self.$confirm(`计划 "${sheetName}" 已存在，是否覆盖其节点数据?`, '导入确认', {
                         confirmButtonText: '覆盖',
                         cancelButtonText: '跳过',
                         type: 'warning'
                     }).then(() => {
                         if (importLogic()) { // Call importLogic
                             self.saveToStorage(); // Use self
-                            self.$message({ message: `任务 "${sheetName}" 已覆盖`, type: 'success' });
+                            self.$message({ message: `计划 "${sheetName}" 已覆盖`, type: 'success' });
                         }
                     }).catch(() => {
-                        self.$message({ message: `已跳过导入任务 "${sheetName}"`, type: 'info' });
+                        self.$message({ message: `已跳过导入计划 "${sheetName}"`, type: 'info' });
                     });
                 } else {
                     if (importLogic()) { // Call importLogic
                         self.saveToStorage(); // Use self
-                        self.$message({ message: `任务 "${sheetName}" 导入成功`, type: 'success' });
+                        self.$message({ message: `计划 "${sheetName}" 导入成功`, type: 'success' });
                     }
                 }
             },
@@ -1763,19 +1763,19 @@
                         self.currentTimelineIndex = Math.max(0, self.timelines.length - 1);
                         self.saveToStorage(); // Use self
                         let message = '';
-                        if (importCount > 0) message += `成功导入 ${importCount} 个新任务。`;
-                        if (overwriteCount > 0) message += `成功覆盖 ${overwriteCount} 个任务。`;
+                        if (importCount > 0) message += `成功导入 ${importCount} 个新计划。`;
+                        if (overwriteCount > 0) message += `成功覆盖 ${overwriteCount} 个计划。`;
                         if (skippedCount > 0) message += `${skippedCount} 个工作表因无数据被跳过。`;
                         self.$message({ message: message.trim(), type: 'success' });
                     } else if (skippedCount === sheets.length) {
                         self.$message.error('所有选定工作表均无有效数据可导入。');
                     } else {
-                        self.$message.info('没有导入或覆盖任何任务。');
+                        self.$message.info('没有导入或覆盖任何计划。');
                     }
                 };
 
                 if (duplicateSheets.length > 0) {
-                    self.$confirm(`检测到 ${duplicateSheets.length} 个同名任务 (${duplicateSheets.join(', ')})。是否覆盖这些任务的节点数据? 选择"取消"将只导入不重名的任务。`, '覆盖确认', {
+                    self.$confirm(`检测到 ${duplicateSheets.length} 个同名计划 (${duplicateSheets.join(', ')})。是否覆盖这些计划的节点数据? 选择"取消"将只导入不重名的计划。`, '覆盖确认', {
                         confirmButtonText: '全部覆盖',
                         cancelButtonText: '跳过重名',
                         type: 'warning'
@@ -1867,7 +1867,7 @@
                 return String(content).replace(/\r\n|\r|\n/g, '<br>');
             },
             clearAllTasks() {
-                this.$confirm('确定要清空所有任务吗? 此操作不可恢复!', '警告', {
+                this.$confirm('确定要清空所有计划吗? 此操作不可恢复!', '警告', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
@@ -1876,7 +1876,7 @@
                     this.timelines = [];
                     this.currentTimelineIndex = -1;
                     this.$message({
-                        message: '所有任务已清空',
+                        message: '所有计划已清空',
                         type: 'success'
                     });
                 }).catch(() => {
