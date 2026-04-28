@@ -801,7 +801,7 @@
                                         </markdown-toolbar>
                                     </div>
                                 </div>
-                                <div v-if="node.isMarkdownMode" class="renderDiv" @click="startEditContent(node)">
+                                <div v-if="node.isMarkdownMode" class="renderDiv" @dblclick.stop="startEditContent(node)">
                                     <markdown-renderer
                                             :content="node.contentInput || ''"
                                             :key="'md-' + node.id"
