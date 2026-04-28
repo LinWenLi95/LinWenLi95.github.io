@@ -126,11 +126,11 @@
     </style>
 </head>
 <body>
-<div id="collectionModule">
+<div id="collectionModule" class="transparent">
     <span id="coinCount">0</span>
     <div id="collectionBox"></div>
     <button id="collectButton" class="common-button">收集金币</button>
-    <button id="toggleButton" class="common-button">关闭特效</button>
+    <button id="toggleButton" class="common-button">打开特效</button>
 </div>
 <!-- chn中 usa美 can加 mex墨西哥 bra巴西 gbr英 eu欧 tur土耳其 pol波兰 swe瑞典 jpn日 aus澳 sgp新 are阿联酋 sau沙特  rus俄罗斯 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -377,12 +377,12 @@
     <el-row>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" @click="show1 = !show1" id="" class="cardHeader clickable-div waves-effect waves-light">
+                <div slot="header" @click="showSizePanel = !showSizePanel" id="" class="cardHeader clickable-div waves-effect waves-light">
                     <span>单位换算/FBA配送费计算</span>
-                    <el-button class="right-positioned" type="text"><i :class="show1?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
+                    <el-button class="right-positioned" type="text"><i :class="showSizePanel?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
-                    <div v-show="show1" class="container">
+                    <div v-show="showSizePanel" class="container">
                         <el-form label-width="auto" v-model="size">
                             <!--长-->
                             <div class="divItem">
@@ -598,12 +598,12 @@
         </el-col>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" @click="show2 = !show2" class="cardHeader clickable-div waves-effect waves-light">
+                <div slot="header" @click="showRatePanel = !showRatePanel" class="cardHeader clickable-div waves-effect waves-light">
                     <span>汇率换算/利润计算</span>
-                    <el-button class="right-positioned" type="text"><i :class="show2?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
+                    <el-button class="right-positioned" type="text"><i :class="showRatePanel?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
-                    <div v-show="show2" class="container">
+                    <div v-show="showRatePanel" class="container">
                         <el-form label-width="auto" v-model="size">
                             <!--常用汇率-->
                             <div class="divItem">
@@ -989,12 +989,12 @@
         </el-col>
         <el-col>
             <el-card shadow="hover" body-style="padding: 0">
-                <div slot="header" @click="show3 = !show3" class="cardHeader clickable-div waves-effect waves-light">
+                <div slot="header" @click="showAdPanel = !showAdPanel" class="cardHeader clickable-div waves-effect waves-light">
                     <span>其他</span>
-                    <el-button class="right-positioned" type="text"><i :class="show3?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
+                    <el-button class="right-positioned" type="text"><i :class="showAdPanel?'el-icon-arrow-up':'el-icon-arrow-down'"></i></el-button>
                 </div>
                 <el-collapse-transition>
-                    <div v-show="show3" class="container">
+                    <div v-show="showAdPanel" class="container">
                         <el-form label-width="auto">
                             <!--bid计算-->
                             <div class="divItem">
@@ -1055,9 +1055,9 @@
     new Vue({
         el: '#app',
         data: {
-            show1: true,
-            show2: true,
-            show3: false,
+            showSizePanel: true,
+            showRatePanel: true,
+            showAdPanel: false,
             currencys: ['CNY', 'USD', 'CAD', 'MXN', 'BRL', 'GBP', 'EUR', 'SEK', 'PLN', 'TRY', 'JPY', 'SGD', 'AUD', 'AED', 'SAR', "RUB"],
             sizeAndWeightSpanNum: 4,
             costProfitSpanNum: 7,

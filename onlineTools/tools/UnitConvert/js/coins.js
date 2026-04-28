@@ -7,7 +7,7 @@ const coinCountElement = document.getElementById('coinCount');
 let coinCount = 0;
 let isDraggingModule = false;
 let startX, startY;
-let isEffectEnabled = true;
+let isEffectEnabled = false;
 const collectionBox = document.getElementById('collectionBox'); // 缓存收集箱元素
 
 // 创建金币消失闪光特效
@@ -60,7 +60,7 @@ toggleButton.addEventListener('click', function () {
         fragment.appendChild(coin);
     });
     coins.length = 0;
-    document.body.removeChild(fragment);
+    // document.body.removeChild(fragment);
 });
 
 document.addEventListener('mousedown', function (event) {
