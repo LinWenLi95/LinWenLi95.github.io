@@ -320,8 +320,8 @@
                 <!-- 左侧：文本输入说明 -->
                 <div style="flex: 1; min-width: 280px;">
                     <h3 style="color: #409eff; font-size: 15px; font-weight: 600; margin: 0 0 8px 0;">📋 文本输入说明</h3>
-                    <p style="font-size: 12px; margin: 0 0 4px 0; line-height: 1.3;"><strong>格式示例：</strong> FNSKU1:Product1, FNSKU2:Product2</p>
-                    <p style="font-size: 12px; margin: 0 0 4px 0; line-height: 1.3;"><strong>说明：</strong> 可通过逗号、空格、换行来分隔数据，支持中英文符号</p>
+                    <p style="font-size: 12px; margin: 0 0 4px 0; line-height: 1.3;"><strong>格式说明：</strong>条码内容：产品SKU，可通过逗号、空格、换行来分隔多条数据，支持中英文符号</p>
+                    <p style="font-size: 12px; margin: 0 0 4px 0; line-height: 1.3;"><strong>示例：</strong>FNSKU1:Product1, FNSKU2:Product2</p>
                     <p style="font-size: 12px; margin: 0; line-height: 1.3;"><strong>校验工具：</strong><a href="https://www.6label.com/barcodeDecode?identity=eoqpxh&ref=67tool.com" class="example-link" target="_blank">🔗 条形码内容识别</a></p>
                 </div>
 
@@ -356,6 +356,7 @@
                                    :rows="6"
                                    placeholder="请输入条形码信息，格式：FNSKU:SKU:数量，多个用逗号(,或，)分隔"
                                    @input="updateBarcodeItemsFromBatchInput"
+                                   spellcheck="false"
                                    style="
                                        flex: 1;
                                        width: 100%;
@@ -436,15 +437,22 @@
                     <div class="barcode-item-content">
                         <div class="form-row" style="display: flex; align-items: center;">
                             <div class="form-group">
-                                <label>FNSKU<el-tooltip content="仅支持英文与英文字符" placement="top"><sup style="color: #409eff; cursor: help; margin-left: 2px;">?</sup></el-tooltip></label>
+                                <label>FNSKU<el-tooltip content="仅支持英文与英文字符" placement="top" effect="light"><sup style="color: #409eff; cursor: help; margin-left: 2px;">?</sup></el-tooltip></label>
                                 <el-input v-model="item.fnsku" placeholder="请输入FNSKU" @input="updateItemPreview(index); updateBatchInputFromBarcodeItems()" style="width: 180px;"></el-input>
                             </div>
                             <div class="form-group">
-                                <label>自定义文本<el-tooltip content="若填写中文请下载为PNG图片，下载PDF文件中文部分会变乱码" placement="top"><sup style="color: #409eff; cursor: help; margin-left: 2px;">?</sup></el-tooltip></label>
+                                <label>自定义文本<el-tooltip content="若填写中文请下载为PNG图片，下载PDF文件中文部分会变乱码" placement="top" effect="light"><sup style="color: #409eff; cursor: help; margin-left: 2px;">?</sup></el-tooltip></label>
                                 <el-input v-model="item.customTexts" placeholder="请输入自定义文本" @input="updateItemPreview(index); updateBatchInputFromBarcodeItems()" style="width: 220px;"></el-input>
                             </div>
                             <div class="form-group">
-                                <label>数量<el-tooltip content="数量只在下载的文件名上体现，无其他作用" placement="top"><sup style="color: #409eff; cursor: help; margin-left: 2px;">?</sup></el-tooltip></label>
+                                <span style="color: #409eff; cursor: help; margin-left: 2px;" @click="isShowNumberInput = !isShowNumberInput">
+                                    <el-tooltip content="点击可显示数量文本框，数量只在下载的文件名上体现，无其他作用" placement="top" effect="light">
+                                        <sup style="color: #409eff; cursor: help; margin-left: 2px;">{{ isShowNumberInput?'<':'>' }}</sup>
+                                    </el-tooltip>
+                                </span>
+                            </div>
+                            <div class="form-group" v-show="isShowNumberInput">
+                                <label>数量</label>
                                 <el-input-number v-model="item.count" :min="1" :max="9999" controls-position="right" @change="updateItemPreview(index); updateBatchInputFromBarcodeItems()" style="width: 100px;"></el-input-number>
                             </div>
                             <div class="form-group">
@@ -492,6 +500,7 @@
                         quantityFontSize: 11
                     }
                 ],
+                isShowNumberInput: false,
                 batchInputUpdateTimer: null,
                 isDragging: false,
                 // Excel示例图片懒加载相关数据
