@@ -1,1525 +1,1008 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>Amazon多站点上架辅助工具</title>
-    <link href="https://linwenli95.github.io/onlineTools/css/element-ui.css" rel="stylesheet">
-    <style>
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* 使容器的高度为窗口高度 */
-        }
-
-        /* div宽度 */
-        #borderDiv {
-            border: 1px solid #808080;
-            padding: 20px;
-            border-radius: 10px;
-            width: auto;
-            height: auto;
-            /*允许移动*/
-            position: absolute;
-            cursor: move;
-        }
-
-        /* div边框阴影 */
-        .div-3d-border {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 50px;
-        }
-
-        /* 按钮水平居中 */
-        #read-excel {
-            margin: 0 auto;
-            display: block;
-            text-align: center;
-        }
-
-        /* 按钮样式 */
-        .custom-button {
-            background-color: #4CAF50; /* 按钮背景颜色 */
-            border: none; /* 无边框 */
-            color: white; /* 文本颜色 */
-            padding: 10px 14px; /* 内边距 */
-            text-align: center; /* 文本居中 */
-            text-decoration: none; /* 无下划线 */
-            display: inline-block; /* 支持设置宽度和高度 */
-            font-size: 16px; /* 字体大小 */
-            margin: 4px 2px; /* 外边距 */
-            cursor: pointer; /* 鼠标光标变为点击手势 */
-            border-radius: 5px; /* 圆角边框 */
-            transition: background-color 0.3s, color 0.3s; /* 过渡效果 */
-        }
-
-        /* 按钮样式（鼠标悬浮时） */
-        .custom-button:hover {
-            background-color: #45a049; /* 鼠标悬浮时的背景颜色 */
-            color: #ffffff; /* 鼠标悬浮时的文本颜色 */
-        }
-
-        /* sku文本框 */
-        #sourceSKUText, #targetSKUText {
-            width: 40px;
-        }
-
-        .linkCss {
-            font-size: 12px;
-        }
-
-        #sourceSheetDiv {
-            display: inline-block;
-            visibility: hidden;
-        }
-        #sourceSheet {
-            width: 120px;
-        }
-        #instructionsDiv {
-            border-radius: 10px;
-            background-color: #f2f2f2;
-            width: 600px;
-            min-width: 600px;
-            max-width: 600px;
-            height: 0;
-            overflow-y: auto;
-            transition: width 0.5s ease, height 0.5s ease;
-        }
-        #domainDiv {
-            border-radius: 10px;
-            /*border: 1px solid #f2f2f2;*/
-            padding: 0 20px;
-            margin-top: 30px;
-        }
-        .instructionHref {
-            color: #3a3636;
-        }
-        #bodyDiv {
-            border-radius: 10px;
-            padding: 20px;
-            /*内阴影*/
-            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5); /* 水平偏移、垂直偏移、模糊半径、颜色 */
-            border: 1px solid #808080;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>亚马逊商品表格属性映射工具</title>
+  <script src="https://linwenli95.github.io/onlineTools/js/vue.min.2.6.14.js"></script>
+  <script>
+    if (!window.Vue || !/^2\./.test(String(window.Vue.version || ''))) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"><\/script>');
+    }
+  </script>
+  <script src="js/xlsx.full.min.js"></script>
+  <script>
+    if (!window.XLSX) {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #182033;
+      --muted: #667085;
+      --border: #d9dfeb;
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --success: #138a50;
+      --danger: #b42318;
+      --warning: #b54708;
+      --soft-blue: #eef4ff;
+      --soft-green: #ecfdf3;
+      --soft-red: #fef3f2;
+      --soft-orange: #fff7ed;
+      --shadow: 0 12px 32px rgba(16, 24, 40, 0.08);
+    }
+    * { box-sizing: border-box; }
+    [v-cloak] { display: none !important; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eef4ff 0, var(--bg) 300px);
+      line-height: 1.55;
+    }
+    #app { max-width: 1180px; margin: 0 auto; padding: 28px 18px 48px; }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    h1 { font-size: 28px; margin: 0 0 8px; letter-spacing: -0.03em; }
+    .subtitle { margin: 0; color: var(--muted); max-width: 760px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border: 1px solid #b2ccff;
+      background: #eff8ff;
+      color: #175cd3;
+      border-radius: 999px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .card h2 { margin: 0 0 12px; font-size: 18px; }
+    .upload-card h2 { margin-bottom: 4px; }
+    .upload-tip { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+    .upload-tip-below { margin: 12px 0 0; text-align: center; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      background: #fafcff;
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--primary);
+      background: var(--soft-blue);
+    }
+    .drop-title { font-weight: 700; margin-bottom: 6px; }
+    .drop-tip { color: var(--muted); font-size: 13px; }
+    input[type="file"] { display: none; }
+    .file-row {
+      margin-top: 12px;
+      padding: 11px 12px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e4e7ec;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .file-remove {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #98a2b3;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+    .file-remove svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+    .file-remove:hover {
+      background: #fee4e2;
+      color: #b42318;
+    }
+    .file-remove:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(217, 45, 32, 0.16);
+    }
+    label { font-weight: 650; font-size: 13px; color: #344054; }
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 11px;
+      background: white;
+      color: var(--text);
+      outline: none;
+    }
+    select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+    .sheet-row {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .sheet-row label { white-space: nowrap; }
+    .sheet-row select {
+      width: 220px;
+      flex: 0 0 220px;
+      min-height: 36px;
+    }
+    .sheet-note { margin: 0; white-space: nowrap; }
+    .advanced-toggle-row {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #eef2f6;
+    }
+    .advanced-title { font-weight: 800; }
+    .settings {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+    .form-row { display: grid; gap: 6px; }
+    .assignment-panel {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #fedf89;
+      background: #fffbeb;
+    }
+    .assignment-panel h3 { margin: 0 0 6px; font-size: 16px; color: #93370d; }
+    .assignment-panel p { margin: 0; color: #93370d; font-size: 13px; }
+    .assignment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .options {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      color: #344054;
+      font-size: 14px;
+    }
+    .check { display: inline-flex; align-items: center; gap: 7px; }
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .check-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+    }
+    .check-spacer, .check-right {
+      min-width: 0;
+    }
+    .check-header h2 {
+      margin: 0;
+    }
+    .generate-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .summary-line {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .summary-line b {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+      margin-left: 3px;
+    }
+    .summary-sep {
+      color: #c5ccda;
+      margin: 0 8px;
+    }
+    .action-help {
+      margin-top: 0;
+      text-align: right;
+      line-height: 1.5;
+    }
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-weight: 750;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: #eef2f6; color: #344054; }
+    .btn-secondary:hover { background: #e4e7ec; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .notice {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 13px;
+      font-size: 14px;
+    }
+    .notice-with-close {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .notice-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .notice-close {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: inherit;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 800;
+      flex: 0 0 auto;
+      opacity: 0.72;
+    }
+    .notice-close:hover {
+      background: rgba(16, 24, 40, 0.08);
+      opacity: 1;
+    }
+    .notice.error { background: var(--soft-red); color: var(--danger); border: 1px solid #fecdca; }
+    .notice.success { background: var(--soft-green); color: var(--success); border: 1px solid #abefc6; }
+    .notice.warning { background: var(--soft-orange); color: var(--warning); border: 1px solid #fedf89; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+    .stat {
+      background: #f8fafc;
+      border: 1px solid #e4e7ec;
+      border-radius: 14px;
+      padding: 13px;
+    }
+    .stat-value { font-size: 24px; font-weight: 800; }
+    .stat-label { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .panel { margin-top: 16px; }
+    .panel-title { font-weight: 800; margin-bottom: 8px; }
+    .preview-title-meta {
+      margin-left: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .preview-title-meta b {
+      color: #344054;
+      font-weight: 750;
+    }
+    .pill-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      border: 1px solid #d0d5dd;
+      background: #fff;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: #344054;
+      max-width: 420px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .pill.miss { border-color: #fecdca; background: #fff6f5; color: #b42318; }
+    .pill.extra { border-color: #fedf89; background: #fffbeb; color: #93370d; }
+    .table-wrap { overflow: auto; border: 1px solid #e4e7ec; border-radius: 14px; margin-top: 10px; max-height: 560px; }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 720px; }
+    th, td { border-bottom: 1px solid #e4e7ec; border-right: 1px solid #eef2f6; padding: 8px 10px; vertical-align: top; }
+    th { background: #f8fafc; text-align: left; position: sticky; top: 0; z-index: 2; }
+    .meta-head-row th { background: #eef4ff; top: 0; }
+    .header-row th { top: 35px; }
+    td { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .footer-note { color: var(--muted); font-size: 13px; margin-top: 18px; }
+    .small-muted { color: var(--muted); font-size: 12px; }
+    .help-text { color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      .hero { display: block; }
+      .hero-actions { margin-top: 14px; justify-content: flex-start; }
+      .badge { margin-top: 0; }
+      .grid, .settings, .stats, .assignment-grid { grid-template-columns: 1fr; }
+      .sheet-row select { width: 100%; flex-basis: 100%; }
+      .sheet-note { white-space: normal; }
+      .check-header {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+      .check-spacer { display: none; }
+      .check-right { width: 100%; }
+      .action-help { width: 100%; text-align: center; }
+      .summary-line { width: 100%; text-align: left; white-space: normal; line-height: 1.8; }
+    }
+  </style>
 </head>
 <body>
-<div id="app" class="container">
-    <div id="borderDiv" class="div-3d-border">
-        <label style="text-align: center;display: flow">Amazon多站点上架辅助工具 v1.9</label>
-        <label id="statusLabel" style="color: blue;position:absolute;top:20px;right:30px">资源加载中...</label><br/>
-        <div id="bodyDiv">
-            <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(1)">功能说明</a>
-            <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(2)">使用步骤</a>
-            <a class="instructionHref" href="javascript:void(0)" @click="loadInstructions(3)">更新日志</a>
-            <div id="instructionsDiv"></div>
-            <div id="domainDiv">
-                <label>源站点表格：</label><input type="file" id="input-source-excel" @change="sourceInputChangeHandler"/>
-                <div id="sourceSheetDiv">
-                    <label for="sourceSheet">Sheet：</label><select id="sourceSheet"></select>
-                </div>
-                <br/><br/>
-                <label>新站点表格：</label><input type="file" id="input-target-excel" multiple @change="targetInputChangeHandler"/>
-                <div id="targetDiv"></div>
-                <br/>
-
-                <!--        <label for="sourceSKUText">SKU固定开头后两位替换为对应站点缩写：</label><input type="text" id="sourceSKUText"/>-->
-                <!--        <label for="targetSKUText">&ndash;&gt;</label><input type="text" id="targetSKUText"/><br/><br/>-->
-                <label for="checkboxSku" style="color: grey">SKU开头两位替换为对应站点缩写：</label><input type="checkbox"
-                                                                                      id="checkboxSku"/><br/><br/>
-                <label style="color: grey">文案提取合并：</label><input type="file" id="textExcelFile" multiple  style="width: 200px" @change="textExcelFileChangeHandler"/>
-                <a class="linkCss" href="javascript:void(0);" @click="excelMergeAndDownload()">文案合并</a>
-                <a href="javascript:void(0);" class="linkCss" @click="textExtraction()">提取源站点表格文案</a>
-                <div id="translateFileDiv"></div><br/>
-
-                <label style="color: grey">售价/文案配置：</label><input type="file" id="priceExcel" style="width: 180px" @change="priceExcelChangeHandler"/>
-                <a class="linkCss" href="file/TemplateExcel.xlsx">下载配置表格(空)</a>
-                <a href="javascript:void(0);" class="linkCss" @click="excelMerge2TemplateExcel()">下载配置表格(合并文案)</a><br/><br/>
-
-                <button id="read-excel" class="custom-button" @click="executeDataHandler">执行数据处理</button>
-            </div>
-        </div>
+<div id="app" v-cloak>
+  <div class="hero">
+    <div>
+      <h1>亚马逊商品上架表格属性映射工具</h1>
+      <p v-if="showHelp" class="subtitle">上传原数据表格和目标空白表格，工具会读取商品数据页的属性表头，按目标表格的属性顺序重新排列原表格数据，并导出新的 Excel。</p>
     </div>
+    <div class="hero-actions">
+      <div v-if="showHelp" class="badge">本地浏览器处理，不上传服务器</div>
+      <button class="btn-secondary" @click="showHelp = !showHelp">{{ showHelp ? '隐藏说明' : '显示说明' }}</button>
+    </div>
+  </div>
+
+  <div class="card upload-card">
+    <div class="grid">
+      <div>
+        <h2>原数据表格</h2>
+        <div class="dropzone" @click="$refs.sourceInput.click()" @dragover.prevent="sourceDrag = true" @dragleave.prevent="sourceDrag = false" @drop.prevent="handleDrop($event, 'source')" :class="{dragover: sourceDrag}">
+          <div>
+            <div class="drop-title">拖入或点击选择原数据表格</div>
+            <div v-if="showHelp" class="drop-tip">单个文件会读取为原数据表格；两个文件会按命名标记识别</div>
+          </div>
+        </div>
+        <input ref="sourceInput" type="file" multiple accept=".xlsx,.xls,.xlsm,.xlsb,.csv" @change="handleFileSelect($event, 'source')" />
+        <div v-if="source.file" class="file-row">
+          <div class="file-name" :title="source.file.name">{{ source.file.name }}</div>
+          <div class="file-meta">{{ formatSize(source.file.size) }}</div>
+          <button type="button" class="file-remove" @click.stop="removeFile('source')" aria-label="删除原数据表格文件" title="删除原数据表格文件"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg></button>
+        </div>
+        <div v-if="source.sheetNames.length" class="sheet-row">
+          <label>商品数据页</label>
+          <select v-model="source.selectedSheet" @change="refreshPreview">
+            <option v-for="name in source.sheetNames" :key="name" :value="name">{{ name }}</option>
+          </select>
+          <span v-if="showHelp" class="small-muted sheet-note">默认第 5 个 sheet，可手动改选。</span>
+        </div>
+      </div>
+
+      <div>
+        <h2>目标表格</h2>
+        <div class="dropzone" @click="$refs.targetInput.click()" @dragover.prevent="targetDrag = true" @dragleave.prevent="targetDrag = false" @drop.prevent="handleDrop($event, 'target')" :class="{dragover: targetDrag}">
+          <div>
+            <div class="drop-title">拖入或点击选择目标表格</div>
+            <div v-if="showHelp" class="drop-tip">单个文件会读取为目标表格；两个文件会按命名标记识别</div>
+          </div>
+        </div>
+        <input ref="targetInput" type="file" multiple accept=".xlsx,.xls,.xlsm,.xlsb,.csv" @change="handleFileSelect($event, 'target')" />
+        <div v-if="target.file" class="file-row">
+          <div class="file-name" :title="target.file.name">{{ target.file.name }}</div>
+          <div class="file-meta">{{ formatSize(target.file.size) }}</div>
+          <button type="button" class="file-remove" @click.stop="removeFile('target')" aria-label="删除目标表格文件" title="删除目标表格文件"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg></button>
+        </div>
+        <div v-if="target.sheetNames.length" class="sheet-row">
+          <label>商品数据页</label>
+          <select v-model="target.selectedSheet" @change="refreshPreview">
+            <option v-for="name in target.sheetNames" :key="name" :value="name">{{ name }}</option>
+          </select>
+          <span v-if="showHelp" class="small-muted sheet-note">默认第 5 个 sheet，可手动改选。</span>
+        </div>
+      </div>
+    </div>
+
+    <p v-if="showHelp" class="upload-tip upload-tip-below">单个文件拖到哪个区域，就读取为哪个表格；一次拖入两个文件时会按文件名标记自动识别，识别失败则手动选择。</p>
+
+    <div v-if="pendingAssignment.visible" class="assignment-panel">
+      <h3>需要手动确认表格身份</h3>
+      <p>这两个文件没有通过文件名标记明确识别，请手动指定原数据表格和目标表格。</p>
+      <div class="assignment-grid">
+        <div class="form-row">
+          <label>原数据表格</label>
+          <select v-model.number="pendingAssignment.sourceIndex" @change="syncManualAssignment('source')">
+            <option v-for="(file, idx) in pendingAssignment.files" :key="'s-' + idx" :value="idx">{{ file.name }}</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>目标表格</label>
+          <select v-model.number="pendingAssignment.targetIndex" @change="syncManualAssignment('target')">
+            <option v-for="(file, idx) in pendingAssignment.files" :key="'t-' + idx" :value="idx">{{ file.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions" style="margin-top: 14px;">
+        <button class="btn-primary" @click="confirmManualAssignment">确认并读取</button>
+        <button class="btn-secondary" @click="cancelManualAssignment">取消</button>
+      </div>
+    </div>
+
+    <div class="advanced-toggle-row">
+      <div>
+        <div class="advanced-title">高级设置</div>
+        <div v-if="showHelp" class="small-muted">文件名标记、表头行、数据行和读取规则，一般保持默认即可。</div>
+      </div>
+      <button class="btn-secondary" @click="showAdvanced = !showAdvanced">{{ showAdvanced ? '收起设置' : '展开设置' }}</button>
+    </div>
+
+    <div v-if="showAdvanced">
+      <div class="settings">
+        <div class="form-row">
+          <label>原数据表格文件名标记</label>
+          <input type="text" v-model="sourceMarkers" placeholder="如：原,旧,source,old" />
+        </div>
+        <div class="form-row">
+          <label>目标表格文件名标记</label>
+          <input type="text" v-model="targetMarkers" placeholder="如：目标,新,target,new" />
+        </div>
+        <div class="form-row">
+          <label>友好属性名所在行</label>
+          <input type="number" min="1" v-model.number="friendlyHeaderRow" />
+        </div>
+        <div class="form-row">
+          <label>系统属性名所在行</label>
+          <input type="number" min="1" v-model.number="headerRow" />
+        </div>
+        <div class="form-row">
+          <label>数据开始行</label>
+          <input type="number" min="1" v-model.number="dataStartRow" />
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="check"><input type="checkbox" v-model="readAsText" /> 按 Excel 显示文本读取数据</label>
+        <label class="check"><input type="checkbox" v-model="ignoreCase" /> 属性名匹配时忽略大小写</label>
+        <label class="check"><input type="checkbox" v-model="skipBlankSourceRows" /> 跳过原数据表格空白数据行</label>
+        <label class="check"><input type="checkbox" v-model="includeReportSheet" /> 导出匹配报告 sheet</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 18px;">
+    <div class="check-header">
+      <div class="check-spacer"></div>
+      <div class="generate-buttons">
+        <button class="btn-primary" :disabled="!canGenerate" @click="generateWorkbook">生成并下载 Excel</button>
+      </div>
+      <div class="check-right">
+        <div v-if="showHelp" class="small-muted action-help">导出文件：第 1、2 行分别是目标表格第 {{ friendlyHeaderRow }}、{{ headerRow }} 行属性；第 3 行开始为商品数据。</div>
+      </div>
+    </div>
+
+    <div v-if="message.text" class="notice notice-with-close" :class="message.type">
+      <div class="notice-text">{{ message.text }}</div>
+      <button type="button" class="notice-close" @click="clearMessage" aria-label="关闭提示">×</button>
+    </div>
+
+    <div v-if="previewReady && previewHeaders.length" class="panel">
+      <div class="panel-title">导出预览<span class="preview-title-meta">（目标属性 <b>{{ stats.targetHeaders }}</b> ｜ 原表属性 <b>{{ stats.sourceHeaders }}</b> ｜ 可匹配 <b>{{ stats.matchedHeaders }}</b> ｜ 商品数据 <b>{{ stats.sourceRows }}</b> 行）</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr class="meta-head-row">
+              <th v-for="(h, idx) in previewTopHeaders" :key="'top-' + idx" :title="cellText(h)">{{ cellText(h) }}</th>
+            </tr>
+            <tr class="header-row">
+              <th v-for="(h, idx) in previewHeaders" :key="'head-' + idx" :title="cellText(h)">{{ cellText(h) }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, rIdx) in previewRows" :key="rIdx">
+              <td v-for="(cell, cIdx) in row" :key="cIdx" :title="cellText(cell)">{{ cellText(cell) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div v-if="previewReady && unmatchedTargetHeaders.length" class="panel">
+      <div class="panel-title">目标表有、原数据表格没有的属性（导出为空）</div>
+      <div class="pill-list">
+        <span class="pill miss" v-for="(h, idx) in unmatchedTargetHeaders.slice(0, 80)" :key="'miss-' + idx" :title="h">{{ h }}</span>
+        <span class="pill miss" v-if="unmatchedTargetHeaders.length > 80">另有 {{ unmatchedTargetHeaders.length - 80 }} 个...</span>
+      </div>
+    </div>
+
+    <div v-if="previewReady && sourceOnlyHeaders.length" class="panel">
+      <div class="panel-title">原数据表格有、目标表没有的属性（不会导出）</div>
+      <div class="pill-list">
+        <span class="pill extra" v-for="(h, idx) in sourceOnlyHeaders.slice(0, 80)" :key="'extra-' + idx" :title="h">{{ h }}</span>
+        <span class="pill extra" v-if="sourceOnlyHeaders.length > 80">另有 {{ sourceOnlyHeaders.length - 80 }} 个...</span>
+      </div>
+    </div>
+
+    <div v-if="previewReady && duplicateWarnings.length" class="panel">
+      <div class="panel-title">重复属性提醒</div>
+      <div class="pill-list">
+        <span class="pill extra" v-for="(w, idx) in duplicateWarnings" :key="'dup-' + idx" :title="w">{{ w }}</span>
+      </div>
+    </div>
+
+    <p v-if="showHelp" class="footer-note">说明：属性名匹配时会自动去掉首尾空格，并把连续空白合并为一个空格。目标表格第 {{ friendlyHeaderRow }} 行只用于预览和导出展示，不参与属性匹配。未匹配到的目标属性列会保留为空，便于你后续在 Excel 中补充。</p>
+  </div>
 </div>
-<script color="0,0,0" opacity="0.8" count="200" src="js/canvas-nest.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/xlsx.full.min.js"></script>
-<script src="js/FileSaver.min.js" charset="utf-8"></script>
-<script src="https://linwenli95.github.io/onlineTools/js/vue.min.2.6.14.js"></script>
-<script src="https://linwenli95.github.io/onlineTools/js/element-ui.js"></script>
+
 <script>
-    // 创建一个Vue实例
-    new Vue({
-        el: '#app',
-        data() {
-            return {
-                sourceWorkBook: null,
-                targetWorkBookMap: null,
-                priceWorkBook: null,
-                translateWorkBookMap: null,
-                textKeyArr: ['item_name', 'product_description', 'bullet_point1', 'bullet_point2', 'bullet_point3', 'bullet_point4', 'bullet_point5', 'generic_keywords'],
-                siteMap: {
-                    "US": "美国",
-                    "CA": "加拿大",
-                    "MX": "墨西哥",
-                    "BR": "巴西",
-                    "UK": "英国",
-                    "FR": "法国",
-                    "DE": "德国",
-                    "IT": "意大利",
-                    "ES": "西班牙",
-                    "BE": "比利时",
-                    "NL": "荷兰",
-                    "SE": "瑞典",
-                    "PL": "波兰",
-                    'TR': '土耳其',
-                    "JP": "日本",
-                    "AU": "澳大利亚",
-                    "SG": "新加坡",
-                    "AE": "阿拉伯联合酋长国",
-                    "SA": "沙特阿拉伯"
-                },
-                listPricePlus: {
-                    "US": 5,
-                    "CA": 7,
-                    "MX": 90,
-                    "BR": 27,
-                    "UK": 5,
-                    "FR": 5,
-                    "DE": 5,
-                    "IT": 5,
-                    "ES": 5,
-                    "BE": 5,
-                    "NL": 5,
-                    "SE": 52,
-                    "PL": 20,
-                    'TR': 9,
-                    "JP": 780,
-                    "AU": 8,
-                    "SG": 7,
-                    "AE": 18,
-                    "SA": 19
-                },
-                instructionState: { code:1, show: false },
-                // 属性列表 不同站点对应同一属性的不同选项
-                attrWords: {
-                    update_delete: {
-                        'US': ['Update', 'PartialUpdate', 'Delete'],
-                        'CA': ['Update', 'PartialUpdate', 'Delete'],
-                        'MX': ['Actualizar', 'Actualizar Parcialmente', 'Borrar'],
-                        'BR': [],//暂无表格
-                        'UK': ['Update', 'PartialUpdate', 'Delete'],
-                        'FR': ['Actualisation', 'Actualisation partielle', 'Supprimer'],
-                        'DE': ['Aktualisierung', 'Partielle Aktualisierung', 'Löschung'],
-                        'IT': ['Aggiorna', 'AggiornamentoParziale', 'Elimina'],
-                        'ES': ['Actualización', 'Actualizar parcialmente', 'Eliminación'],
-                        'BE': ['update', 'partialupdate', 'delete'],
-                        'NL': ['Verwijderen', 'Partiaalupdate', 'Bijwerken'],
-                        'SE': ['Radera', 'Partielluppdatering', 'Uppdatera'],
-                        'PL': ['Aktualizuj', 'partialupdate', 'delete'],
-                        'TR': [],// 暂无表格
-                        'JP': ['Update', 'PartialUpdate', 'Delete'],
-                        'AU': ['Update', 'PartialUpdate', 'Delete'],
-                        'SG': ['Update', 'PartialUpdate', 'Delete'],
-                        'AE': ['Update', 'partialupdate', 'delete'],
-                        'SA': ['Update', 'partialupdate', 'delete']
-                    },
-                    external_product_id_type: {
-                        'US': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'CA': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'MX': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'BR': [],
-                        'UK': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'FR': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'DE': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'IT': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'ES': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'BE': ['gtin', 'ean', 'gcid','upc', 'asin', 'isbn'],
-                        'NL': ['GTIN', 'EAN', 'GCID (algemene catalogus-id)', 'UPC', 'ASIN'],
-                        'SE': ['Gtin', 'Ean', 'Gcid (gcid)', 'Upc', 'asin', 'ISBN'],
-                        'PL': ['gtin', 'ean', 'gcid','upc', 'asin'],
-                        'TR': [],
-                        'JP': ['GTIN', 'EAN/JAN', 'GCID', 'UPC', 'ASIN'],
-                        'AU': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'SG': ['GTIN', 'EAN', 'GCID', 'UPC', 'ASIN'],
-                        'AE': ['Gtin', 'Ean', 'Gcid','Upc', 'asin', 'ISBN'],
-                        'SA': ['Gtin', 'Ean', 'Gcid','Upc', 'asin', 'ISBN']
-                    },
-                    // 父子变体关系
-                    parent_child: {
-                        'US': ['Parent', 'Child'],
-                        'CA': ['Parent', 'Child'],
-                        'MX': ['Padre', 'Niño'],
-                        'BR': [],
-                        'UK': ['Parent', 'Child'],
-                        'FR': ['Parent', 'Enfant'],
-                        'DE': ['Parent', 'Child'],
-                        'IT': ['Parent', 'Child'],
-                        'ES': ['Principal', 'Hijo'],
-                        'BE': ['parent', 'child'],
-                        'NL': ['Onderliggend', 'Bovenliggend'],
-                        'SE': ['Barn', 'Förälder'],
-                        'PL': ['Nadrzędny', 'Dziecko'],
-                        'TR': [],
-                        'JP': ['Parent', 'Child'],
-                        'AU': ['Parent', 'Child'],
-                        'SG': ['Parent', 'Child'],
-                        'AE': ['Parent', 'Child'],
-                        'SA': ['Parent', 'Child']
-                    },
-                    // 变体关系
-                    relationship_type: {
-                        'US': ['Accessory', 'Variation', 'package_contains'],
-                        'CA': ['Accessory', 'Variation'],
-                        'MX': ['Accesorio', 'Variation', 'variation'],
-                        'BR': [],
-                        'UK': ['Accessory', 'Variation', 'package_contains'],
-                        'FR': ['Accessory', 'Variation', 'package_contains'],
-                        'DE': ['Accessory', 'Variation', 'package_contains'],
-                        'IT': ['Accessory', 'Variation', 'package_contains'],
-                        'ES': ['Accessory', 'Variation', 'package_contains'],
-                        'BE': ['', 'variation'],
-                        'NL': ['Accessoire', 'Variatie', 'variation'],
-                        'SE': ['Tillbehör', 'Variation', 'Variationer'],
-                        'PL': ['', 'Opcja'],
-                        'TR': [],
-                        'JP': ['Accessory', 'Variation', 'package_contains'],
-                        'AU': ['', 'Variation'],
-                        'SG': ['Accessory', 'Variation'],
-                        'AE': ['', 'Variation'],
-                        'SA': ['Accessory', 'Variation']
-                    },
-                    // Months/Years
-                    mfg_minimum_unit_of_measure: {
-                        'US': ['Months', 'Years'],
-                        'CA': ['Months', 'Years'],
-                        'MX': ['Meses', 'Años'],
-                        'BR': [],
-                        'UK': ['Months', 'Years'],
-                        'FR': ['Mois', 'Années'],
-                        'DE': ['Monate', 'Jahre'],
-                        'IT': ['Mesi', 'Anni'],
-                        'ES': ['Meses', 'Años'],
-                        'BE': ['months', 'years'],
-                        'NL': ['6 maanden', 'Jaren'],
-                        'SE': ['Månader', 'År'],
-                        'PL': ['Miesiące', 'Lata'],
-                        'TR': [],
-                        'JP': ['Months', 'Years'],
-                        'AU': ['Months', 'Years'],
-                        'SG': ['Months', 'Years'],
-                        'AE': ['Months', 'Years'],
-                        'SA': ['Months', 'Years']
-                    },
-                    mfg_maximum_unit_of_measure: {
-                        'US': ['Months', 'Years'],
-                        'CA': ['Months', 'Years'],
-                        'MX': ['Meses', 'Años'],
-                        'BR': [],
-                        'UK': ['Months', 'Years'],
-                        'FR': ['Mois', 'Années'],
-                        'DE': ['Monate', 'Jahre'],
-                        'IT': ['Mesi', 'Anni'],
-                        'ES': ['Meses', 'Años'],
-                        'BE': ['months', 'years'],
-                        'NL': ['6 maanden', 'Jaren'],
-                        'SE': ['Månader', 'År'],
-                        'PL': ['Miesiące', 'Lata'],
-                        'TR': [],
-                        'JP': ['Months', 'Years'],
-                        'AU': ['Months', 'Years'],
-                        'SG': ['Months', 'Years'],
-                        'AE': ['Months', 'Years'],
-                        'SA': ['Months', 'Years']
-                    },
-                    target_audience_keywords: {
-                        'US': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
-                        'CA': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
-                        'MX': ['Mujeres', 'Niños unisex', 'Hombres', 'Niños', 'Niñas', 'Adultos unisex'],
-                        'BR': [],
-                        'UK': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
-                        'FR': ['Femme', 'Enfants unisexes', 'Homme', 'Garçon', 'Fille', 'Adulte unisexe'],
-                        'DE': ['Damen', 'Unisex-Kinder', 'Herren', 'Jungen', 'Mädchen', 'Unisex – Erwachsene'],
-                        'IT': ['Donna', 'Bambini unisex', 'Uomo', 'Ragazzo', 'Ragazza', 'Unisex adulto'],
-                        'ES': ['Mujeres', 'Niños unisex', 'Hombres', 'Niños', 'Niñas', 'Adultos unisex'],
-                        'BE': ['Femme', 'Enfants unisexes', 'Homme', 'Garçon','Fille', 'Adulte unisexe'],
-                        'NL': ['Vrouwen', 'Uniseks kinderen', 'Mannen', 'Jongens', 'Meisjes', 'Unisex volwassene'],
-                        'SE': ['Kvinnor', 'Unisex – barn', 'Män', 'pojkar', 'flickor', 'Unisex – vuxen'],
-                        'PL': ['Kobiety', 'Unisex — dla dorosłych', 'Dla meżczyzn', 'dla chłopców', 'dziewczyny', 'Unisex — dla dzieci'],
-                        'TR': [],
-                        'JP': ['女性用', '男女子両用', '男性用', '男子用', '女子用', '男女両用'],
-                        'AU': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
-                        'SG': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
-                        'AE': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult'],
-                        'SA': ['Women', 'Unisex Children', 'Men', 'Boys', 'Girls', 'Unisex Adult']
-                    },
-                    // Yes/No
-                    is_assembly_required: {
-                        'US': ['Yes', 'No'],
-                        'CA': ['Yes', 'No'],
-                        'MX': ['Sí', 'No'],
-                        'BR': [],
-                        'UK': ['Yes', 'No'],
-                        'FR': ['Oui', 'Non'],
-                        'DE': ['Ja', 'Nein'],
-                        'IT': ['Sì', 'No'],
-                        'ES': ['Sí', 'No'],
-                        'BE': ['Oui', 'Non'],
-                        'NL': ['Actief', 'Niet-actief'],
-                        'SE': ['Ja', 'Nej'],
-                        'PL': ['Tak', 'Nie'],
-                        'TR': [],
-                        'JP': ['はい', 'いいえ'],
-                        'AU': ['Yes', 'No'],
-                        'SG': ['Yes', 'No'],
-                        'AE': ['Yes', 'No'],
-                        'SA': ['Yes', 'No']
-                    },
-                    includes_remote: {
-                        'US': ['Yes', 'No'],
-                        'CA': ['Yes', 'No'],
-                        'MX': ['Sí', 'No'],
-                        'BR': [],
-                        'UK': ['Yes', 'No'],
-                        'FR': ['Oui', 'Non'],
-                        'DE': ['Ja', 'Nein'],
-                        'IT': ['Sì', 'No'],
-                        'ES': ['Sí', 'No'],
-                        'BE': ['Oui', 'Non'],
-                        'NL': ['Actief', 'Niet-actief'],
-                        'SE': ['Ja', 'Nej'],
-                        'PL': ['Tak', 'Nie'],
-                        'TR': [],
-                        'JP': ['はい', 'いいえ'],
-                        'AU': ['Yes', 'No'],
-                        'SG': ['Yes', 'No'],
-                        'AE': ['Yes', 'No'],
-                        'SA': ['Yes', 'No']
-                    },
-                    // DEFAULT
-                    fulfillment_center_id: {
-                        'US': ['AMAZON_NA', 'DEFAULT'],
-                        'CA': ['AMAZON_NA', 'DEFAULT'],
-                        'MX': ['AMAZON_NA', 'DEFAULT'],
-                        'BR': [],
-                        'UK': ['AMAZON_EU', 'DEFAULT'],
-                        'FR': ['AMAZON_EU', 'DEFAULT'],
-                        'DE': ['AMAZON_EU', 'DEFAULT'],
-                        'IT': ['AMAZON_EU', 'DEFAULT'],
-                        'ES': ['AMAZON_EU', 'DEFAULT'],
-                        'BE': ['AMAZON_EU', 'DEFAULT'],
-                        'NL': ['AMAZON_EU', 'DEFAULT'],
-                        'SE': ['AMAZON_EU', 'default'],
-                        'PL': ['AMAZON_EU', 'DEFAULT'],
-                        'TR': [],
-                        'JP': ['AMAZON_JP', 'DEFAULT'],
-                        'AU': ['AMAZON_JP', 'DEFAULT'],
-                        'SG': ['AMAZON_JP', 'DEFAULT'],
-                        'AE': [],// 无此项
-                        'SA': []// 无此项
-                    },
-                    // IN
-                    item_length_unit_of_measure: {
-                        'US': ['IN'],
-                        'CA': ['IN'],
-                        'MX': ['IN'],
-                        'BR': [],
-                        'UK': ['IN', 'CM', 'MM'],
-                        'FR': ['IN', 'CM', 'MM'],
-                        'DE': ['IN', 'CM', 'MM'],
-                        'IT': ['IN', 'CM', 'MM'],
-                        'ES': ['IN', 'CM', 'MM'],
-                        'BE': ['inches', 'centimeters', 'millimeters'],
-                        'NL': ['inch', 'centimeter', 'millimeter'],
-                        'SE': ['Tum', 'centimeter', 'Millimeter'],
-                        'PL': ['cale', 'centymetry', 'Milimetry'],
-                        'TR': [],
-                        'JP': ['IN', 'CM', 'MM'],
-                        'AU': ['IN', 'CM', 'MM'],
-                        'SG': ['IN', 'CM', 'MM'],
-                        'AE': ['Inches', 'centimeters', 'Millimeters'],
-                        'SA': ['Inches', 'centimeters', 'Millimeters']
-                    },
-                    item_height_unit_of_measure: {
-                        'US': ['IN'],
-                        'CA': ['IN'],
-                        'MX': ['IN'],
-                        'BR': [],
-                        'UK': ['IN', 'CM', 'MM'],
-                        'FR': ['IN', 'CM', 'MM'],
-                        'DE': ['IN', 'CM', 'MM'],
-                        'IT': ['IN', 'CM', 'MM'],
-                        'ES': ['IN', 'CM', 'MM'],
-                        'BE': ['inches', 'centimeters', 'millimeters'],
-                        'NL': ['inch', 'centimeter', 'millimeter'],
-                        'SE': ['Tum', 'centimeter', 'Millimeter'],
-                        'PL': ['cale', 'centymetry', 'Milimetry'],
-                        'TR': [],
-                        'JP': ['IN', 'CM', 'MM'],
-                        'AU': ['IN', 'CM', 'MM'],
-                        'SG': ['IN', 'CM', 'MM'],
-                        'AE': ['Inches', 'centimeters', 'Millimeters'],
-                        'SA': ['Inches', 'centimeters', 'Millimeters']
-                    },
-                    item_width_unit_of_measure: {
-                        'US': ['IN'],
-                        'CA': ['IN'],
-                        'MX': ['IN'],
-                        'BR': [],
-                        'UK': ['IN', 'CM', 'MM'],
-                        'FR': ['IN', 'CM', 'MM'],
-                        'DE': ['IN', 'CM', 'MM'],
-                        'IT': ['IN', 'CM', 'MM'],
-                        'ES': ['IN', 'CM', 'MM'],
-                        'BE': ['inches', 'centimeters', 'millimeters'],
-                        'NL': ['inch', 'centimeter', 'millimeter'],
-                        'SE': ['Tum', 'centimeter', 'Millimeter'],
-                        'PL': ['cale', 'centymetry', 'Milimetry'],
-                        'TR': [],
-                        'JP': ['IN', 'CM', 'MM'],
-                        'AU': ['IN', 'CM', 'MM'],
-                        'SG': ['IN', 'CM', 'MM'],
-                        'AE': ['Inches', 'centimeters', 'Millimeters'],
-                        'SA': ['Inches', 'centimeters', 'Millimeters']
-                    },
-                    package_length_unit_of_measure: {
-                        'US': ['IN'],
-                        'CA': ['IN'],
-                        'MX': ['IN'],
-                        'BR': [],
-                        'UK': ['IN', 'CM', 'MM'],
-                        'FR': ['IN', 'CM', 'MM'],
-                        'DE': ['IN', 'CM', 'MM'],
-                        'IT': ['IN', 'CM', 'MM'],
-                        'ES': ['IN', 'CM', 'MM'],
-                        'BE': ['inches', 'centimeters', 'millimeters'],
-                        'NL': ['inch', 'centimeter', 'millimeter'],
-                        'SE': ['Tum', 'centimeter', 'Millimeter'],
-                        'PL': ['cale', 'centymetry', 'Milimetry'],
-                        'TR': [],
-                        'JP': ['IN', 'CM', 'MM'],
-                        'AU': ['IN', 'CM', 'MM'],
-                        'SG': ['IN', 'CM', 'MM'],
-                        'AE': ['Inches', 'centimeters', 'Millimeters'],
-                        'SA': ['Inches', 'centimeters', 'Millimeters']
-                    },
-                    package_height_unit_of_measure: {
-                        'US': ['IN'],
-                        'CA': ['IN'],
-                        'MX': ['IN'],
-                        'BR': [],
-                        'UK': ['IN', 'CM', 'MM'],
-                        'FR': ['IN', 'CM', 'MM'],
-                        'DE': ['IN', 'CM', 'MM'],
-                        'IT': ['IN', 'CM', 'MM'],
-                        'ES': ['IN', 'CM', 'MM'],
-                        'BE': ['inches', 'centimeters', 'millimeters'],
-                        'NL': ['inch', 'centimeter', 'millimeter'],
-                        'SE': ['Tum', 'centimeter', 'Millimeter'],
-                        'PL': ['cale', 'centymetry', 'Milimetry'],
-                        'TR': [],
-                        'JP': ['IN', 'CM', 'MM'],
-                        'AU': ['IN', 'CM', 'MM'],
-                        'SG': ['IN', 'CM', 'MM'],
-                        'AE': ['Inches', 'centimeters', 'Millimeters'],
-                        'SA': ['Inches', 'centimeters', 'Millimeters']
-                    },
-                    package_width_unit_of_measure: {
-                        'US': ['IN'],
-                        'CA': ['IN'],
-                        'MX': ['IN'],
-                        'BR': [],
-                        'UK': ['IN', 'CM', 'MM'],
-                        'FR': ['IN', 'CM', 'MM'],
-                        'DE': ['IN', 'CM', 'MM'],
-                        'IT': ['IN', 'CM', 'MM'],
-                        'ES': ['IN', 'CM', 'MM'],
-                        'BE': ['inches', 'centimeters', 'millimeters'],
-                        'NL': ['inch', 'centimeter', 'millimeter'],
-                        'SE': ['Tum', 'centimeter', 'Millimeter'],
-                        'PL': ['cale', 'centymetry', 'Milimetry'],
-                        'TR': [],
-                        'JP': ['IN', 'CM', 'MM'],
-                        'AU': ['IN', 'CM', 'MM'],
-                        'SG': ['IN', 'CM', 'MM'],
-                        'AE': ['Inches', 'centimeters', 'Millimeters'],
-                        'SA': ['Inches', 'centimeters', 'Millimeters']
-                    },
-                    // LB
-                    maximum_weight_recommendation_unit_of_measure: {
-                        'US': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'CA': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'MX': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Tons', 'OZ'],
-                        'BR': [],
-                        'UK': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'FR': ['LB', 'KG', 'GR', 'Centièmes de livre', 'MG', 'Tons', 'OZ'],
-                        'DE': ['LB', 'KG', 'GR', 'Hundertstel Pfund', 'MG', 'Tonnen', 'OZ'],
-                        'IT': ['LB', 'KG', 'GR', 'Centesimi libbre', 'MG', 'Tonnellate', 'OZ'],
-                        'ES': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Toneladas', 'OZ'],
-                        'BE': ['pounds', 'kilograms', 'grams', 'Centièmes de livre', 'Milligrammes', 'Tonnes', 'ounces'],
-                        'NL': ['pond', 'kilo', 'gram', 'Hundertstel Pfund', 'Milligram', 'Tonnen', 'ounces'],
-                        'SE': ['Pound', 'Kilogram', 'Gram', 'Hundredths Pounds', 'Milligram', 'Ton', 'Uns'],
-                        'PL': ['Funty', 'Kilogramy', 'Gramy', 'Setne funtów', 'Miligramy', 'Tony', 'Uncje'],
-                        'TR': [],
-                        'JP': ['LB', 'KG', 'GR', '100分の1ポンド', 'MG', 'トン', 'OZ'],
-                        'AU': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'Milligrams', 'Tons', 'OZ'],
-                        'SG': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'AE': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces'],
-                        'SA': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces']
-                    },
-                    package_weight_unit_of_measure: {
-                        'US': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'CA': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'MX': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Tons', 'OZ'],
-                        'BR': [],
-                        'UK': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'FR': ['LB', 'KG', 'GR', 'Centièmes de livre', 'MG', 'Tons', 'OZ'],
-                        'DE': ['LB', 'KG', 'GR', 'Hundertstel Pfund', 'MG', 'Tonnen', 'OZ'],
-                        'IT': ['LB', 'KG', 'GR', 'Centesimi libbre', 'MG', 'Tonnellate', 'OZ'],
-                        'ES': ['LB', 'KG', 'GR', 'Centésimas de libra', 'MG', 'Toneladas', 'OZ'],
-                        'BE': ['pounds', 'kilograms', 'grams', 'Centièmes de livre', 'Milligrammes', 'Tonnes', 'ounces'],
-                        'NL': ['pond', 'kilo', 'gram', 'Hundertstel Pfund', 'Milligram', 'Tonnen', 'ounces'],
-                        'SE': ['Pound', 'Kilogram', 'Gram', 'Hundredths Pounds', 'Milligram', 'Ton', 'Uns'],
-                        'PL': ['Funty', 'Kilogramy', 'Gramy', 'Setne funtów', 'Miligramy', 'Tony', 'Uncje'],
-                        'TR': [],
-                        'JP': ['LB', 'KG', 'GR', '100分の1ポンド', 'MG', 'トン', 'OZ'],
-                        'AU': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'Milligrams', 'Tons', 'OZ'],
-                        'SG': ['LB', 'KG', 'GR', 'Hundredths Pounds', 'MG', 'Tons', 'OZ'],
-                        'AE': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces'],
-                        'SA': ['Pounds', 'Kilograms', 'Grams', 'Hundredths Pounds', 'Milligrams', 'Tons', 'Ounces']
-                    },
-                    // 强制性警示声明
-                    // cpsia_cautionary_statement: {},
-                    // China
-                    country_of_origin: {
-                        'US': ['China'],
-                        'CA': ['China'],
-                        'MX': ['China'],
-                        'BR': [],
-                        'UK': ['China'],
-                        'FR': ['Chine'],
-                        'DE': ['China'],
-                        'IT': ['Cina'],
-                        'ES': ['China'],
-                        'BE': ['CN'],
-                        'NL': ['China'],
-                        'SE': ['Kina'],
-                        'PL': ['Chiny'],
-                        'TR': [],
-                        'JP': ['中国'],
-                        'AU': ['China'],
-                        'SG': ['China'],
-                        'AE': ['China'],
-                        'SA': ['China']
-                    },
-                    // New
-                    condition_type: {
-                        'US': ['New'],
-                        'CA': ['New'],
-                        'MX': ['Nuevo'],
-                        'BR': [],
-                        'UK': ['New'],
-                        'FR': ['Neuf'],
-                        'DE': ['Neu'],
-                        'IT': ['Nuovo'],
-                        'ES': ['Nuevo'],
-                        'BE': ['new, new'],
-                        'NL': ['Nieuw'],
-                        'SE': ['Ny'],
-                        'PL': ['Nowe'],
-                        'TR': [],
-                        'JP': ['新品'],
-                        'AU': ['New'],
-                        'SG': ['New'],
-                        'AE': ['new, new'],
-                        'SA': ['new, new']
-                    }
-                }
-            }
+(function () {
+  function showBootError(text) {
+    var html = '<div style="max-width:760px;margin:48px auto;padding:22px;border:1px solid #fecdca;border-radius:16px;background:#fff6f5;color:#b42318;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Microsoft YaHei,Arial,sans-serif;line-height:1.7;">' +
+      '<h2 style="margin:0 0 10px;font-size:20px;">工具加载失败</h2>' +
+      '<div>' + text + '</div>' +
+      '<div style="margin-top:10px;color:#667085;font-size:14px;">离线使用时，请把 <b>vue.min.2.6.14.js</b> 和 <b>xlsx.full.min.js</b> 放在本 HTML 同目录；联网使用时请确认浏览器可以访问 CDN。</div>' +
+      '</div>';
+    document.body.innerHTML = html;
+  }
+
+  if (!window.Vue || !/^2\./.test(String(window.Vue.version || ''))) {
+    showBootError('Vue 2.6.14 没有加载成功，所以页面无法渲染。');
+    return;
+  }
+  if (!window.XLSX) {
+    showBootError('Excel 解析库 SheetJS 没有加载成功，所以无法读取或导出 Excel。');
+    return;
+  }
+
+  function createEmptyBook() {
+    return { file: null, workbook: null, sheetNames: [], selectedSheet: '' };
+  }
+
+  new Vue({
+    el: '#app',
+    data: function () {
+      return {
+        source: createEmptyBook(),
+        target: createEmptyBook(),
+        showHelp: false,
+        showAdvanced: false,
+        sourceMarkers: '原,旧,source,old',
+        targetMarkers: '目标,新,target,new',
+        friendlyHeaderRow: 4,
+        headerRow: 5,
+        dataStartRow: 7,
+        readAsText: true,
+        ignoreCase: false,
+        skipBlankSourceRows: true,
+        includeReportSheet: true,
+        sourceDrag: false,
+        targetDrag: false,
+        pendingAssignment: {
+          visible: false,
+          files: [],
+          sourceIndex: 0,
+          targetIndex: 1
         },
-        mounted() {
-            const status = document.getElementById('statusLabel')
-            status.innerText = '加载完成'
-            setTimeout(function () {
-                status.innerText = ''
-            }, 3000)
-        },
-        methods: {
-            // 读取源Excel
-            sourceInputChangeHandler(e) {
-                document.getElementById('sourceSheetDiv').style.visibility = e.target.files.length === 0 ? 'hidden' : 'visible'
-                this.loadExcel('source', e.target.files)
-            },
-            // 读取新Excel
-            targetInputChangeHandler(e) {
-                this.targetWorkBookMap = {}
-                document.getElementById('targetDiv').innerText = null
-                if (e.target.files.length === 1) {
-                    const name = e.target.files[0].name
-                    // 选单文件时判断文件名开头不是站点缩写则不可使用sku开头自动替换功能
-                    if (!this.siteMap[this.getFileNameSite(e.target.files[0].name)]) {
-                        const checkboxSku = document.getElementById('checkboxSku')
-                        checkboxSku.checked = false
-                        checkboxSku.disabled = true
-                    } else {
-                        document.getElementById('checkboxSku').disabled = false
-                    }
-                } else {
-                    // 选多文件时，文件名开头不是站点缩写则停止读取
-                    for (const file of e.target.files) {
-                        if (!this.siteMap[this.getFileNameSite(file.name)]) {
-                            document.getElementById('targetDiv').innerHTML = `<label style="color: red">请重新选择以站点英文缩写开头或结尾命名的多个文件</label>`
-                            return
-                        }
-                    }
-                }
-                this.loadExcel('target', e.target.files)
-            },
-            // 读取priceExcel
-            priceExcelChangeHandler (e) {
-                // 展示站点表格的price+
-                if (e.target.files.length>0 && this.targetWorkBookMap) {
-                    const divs = document.getElementsByClassName('price+')
-                    console.log('divs.length')
-                    console.log(divs.length)
-                    for (const div of divs) {
-                        div.style.visibility = 'visible'
-                    }
-                }
-                this.loadExcel('priceExcel', e.target.files)
-            },
-            // 读取文案翻译Excel
-            textExcelFileChangeHandler(e) {
-                this.translateWorkBookMap = {}
-                document.getElementById('translateFileDiv').innerText = null
-                this.loadExcel('translate', e.target.files)
-            },
-            // 加载一个或多个Excel，匹配为不同文件
-            loadExcel(name, files) {
-                const self = this
-                for (let file of files) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const data = new Uint8Array(e.target.result);
-                        const workBook = XLSX.read(data, {type: 'array'});
-                        switch (name) {
-                            case 'source':
-                                self.sourceWorkBook = workBook
-                                self.addOptions('sourceSheet', workBook.SheetNames, 6)
-                                break
-                            case 'target':
-                                // 验证文件站点重复
-                                const site = self.getFileNameSite(file.name)
-                                const selectId = site + 'Select'
-                                if (document.getElementById(selectId)) {
-                                    document.getElementById('targetDiv').innerHTML = `<label style="color: red">出现重复的站点缩写，请检查</label>`
-                                    break
-                                }
-                                self.targetWorkBookMap[site] = workBook
-                                // 显示文件名及页面下拉框
-                                const targetDiv = document.getElementById('targetDiv')
-                                // const html = `<div style="display: inline-block;width: 100px">` +
-                                //     `<label style="font-size: 12px">${self.shortenStr(file.name)}</label></div>`+
-                                //     `<label>Sheet:</label><select id="${site + 'self.ListPricePlus'}"></select>` +
-                                //     `<label>Price+</label>` +
-                                //     `<input id="${site + 'self.ListPricePlus'}" type="number" value="${self.listPricePlus[site]}" style="width: 40px;">` +
-                                //     `<br/>`
-                                // targetDiv.innerHTML = html
-
-                                // 文件名
-                                const div1 = document.createElement('div');
-                                let style = div1.style
-                                style.display = 'inline-block'
-                                style.width = '140px'
-                                div1.innerHTML = `<label style="font-size: 12px">${self.shortenStr(file.name)}</label>`
-                                // 页下拉框
-                                const div2 = document.createElement('div');
-                                style = div2.style
-                                style.display = 'inline-block'
-                                style.width = '200px'
-                                let label = document.createElement('label');
-                                label.innerText = 'Sheet: '
-                                label.style.fontSize = '12px'
-                                const select = document.createElement('select');
-                                select.id = selectId
-                                select.style.width = '120px'
-                                div2.appendChild(label)
-                                div2.appendChild(select)
-                                // price+
-                                const div3 = document.createElement('div');
-                                div3.className = 'price+'
-                                style = div3.style
-                                style.display = 'inline-block'
-                                style.width = '120px'
-                                // 当配置文件未选择时隐藏加价div
-                                if (!this.priceWorkBook) {
-                                    style.visibility = 'hidden'
-                                }
-                                label = document.createElement('label');
-                                label.innerText = 'Price+ '
-                                label.style.fontSize = '12px'
-                                const input = document.createElement('input');
-                                input.id = site + 'ListPricePlus'
-                                input.type = 'number'
-                                input.style.width = '40px'
-                                input.value = self.listPricePlus[site]
-                                div3.appendChild(label)
-                                div3.appendChild(input)
-                                targetDiv.appendChild(div1);
-                                targetDiv.appendChild(div2);
-                                targetDiv.appendChild(div3);
-                                targetDiv.appendChild(document.createElement('br'))
-                                self.addOptions(select.id, workBook.SheetNames, 6)
-                                break
-                            case 'priceExcel':
-                                // 验证表格是否正确
-                                if (!(workBook.SheetNames.includes('站点及语言') && workBook.SheetNames.includes('全站定价'))) {
-                                    self.$message.error('表格错误，请重新选择')
-                                    return
-                                }
-                                self.priceWorkBook = workBook
-                                break
-                            case 'translate':
-                                self.translateWorkBookMap[file.name] = workBook
-                                // 显示文件名
-                                const translateDiv = document.getElementById('translateFileDiv')
-                                // 文件名
-                                const div0 = document.createElement('div');
-                                let style0 = div0.style
-                                style0.display = 'inline-block'
-                                style0.width = '140px'
-                                div0.innerHTML = `<label style="font-size: 12px;">${self.shortenStr(file.name)}</label>`
-                                translateDiv.appendChild(div0)
-                                translateDiv.appendChild(document.createElement('br'))
-                                break
-                            default:
-                                this.$message.error('excel匹配错误')
-                        }
-                        console.log('Excel读取完成')
-                    }
-                    reader.readAsArrayBuffer(file)
-                }
-            },
-            // 获取文件名的开头或结尾站点字母
-            getFileNameSite(name) {
-                let site = ''
-                let pre, suffix
-                if (this.siteMap[pre = name.substring(0, 2).toUpperCase()]) {
-                    site = pre
-                } else if (this.siteMap[suffix = name.substring(0, name.length - 5).slice(-2).toUpperCase()]) {
-                    site = suffix
-                }
-                return site
-            },
-            loadInstructions(code) {
-                if (this.instructionState['code'] === code) {
-                    this.instructionState['show'] = !this.instructionState['show']
-                } else {
-                    this.instructionState['code'] = code
-                    this.instructionState['show'] = true
-                }
-                const div = document.getElementById('instructionsDiv')
-
-                if (this.instructionState['show']) {
-                    let html = ''
-                    switch (code) {
-                        case 1:{
-                            html = `<label>功能说明：</label><br/><br/>
-                                    <label>将源表格的列数据按新站点表格表头排序后导出</label><br/><br/>
-                                    <label>1. 解决不同表格列顺序不同，无法直接复制旧表格的已填数据填充新表的问题</label><br/><br/>
-                                    <label>2. 通过粘贴的值直观看出列的含义，不用盯着表头一格格去找要填的列，费神</label><br/><br/>
-                                    <label>3. 解决价格和文案仍需手动填写的问题,最大限度地减少上架表格填写工作量</label><br/><br/><br/>
-                                    <label>进阶功能：</label><br/><br/>
-                                    <label>1. 定价/文案表格:输入定价和各站点文案后，可替换到数据中，减少工作量，提升效率</label><br/><br/>
-                                    <label>2. Price+：以定价/文案表格中对应站点的定价加上Price+的值作为list_price的价格</label><br/><br/>
-                                    <label>3. SKU开头两位替换为对应站点缩写：勾选后，SKU开头两位会被替换为新表格文件的前两位</label><br/><br/>
-                                    <label>4. 文案提取合并：将文件名以语言命名，例如：英语、法语、日语，合并时会自动检测item_name超过200字符的行</label><br/><br/>
-
-                                    `
-                            break
-                        }
-                        case 2:{
-                            html = `<label>使用步骤：</label><br/><br/>
-                                    <label>1.选择源站点表格文件并选择template页</label><br/><br/>
-                                    <label>2.选择一个或多个目标站点表格文件并选择template页</label><br/><br/>
-                                    <label style="color:gray;">3.勾选SKU开头两位替换为对应站点缩写（可选操作）</label><br/><br/>
-                                    <label style="color:gray;">4.选择多站点文案表格（可选操作）</label><br/><br/>
-                                    <label style="color:gray;">5.选择带有各站点定价和文案翻译的表格文件（可选操作）</label><br/><br/>
-                                    <label>6.点击按钮，自动生成处理好数据列顺序的数据表格</label><br/><br/>
-                                    <label>7.复制生成的数据以仅粘贴值的方式粘贴到目标表格后，进行手动调整</label><br/><br/>
-                                    <label style="color:red;">注意：选择多个目标站点表格时，文件名前两位或末尾两位必须是站点英文缩写</label><br/>`
-                            break
-                        }
-                        case 3:{
-                            html = `<label>更新日志：</label><br/><br/>
-                                    <label>2024.12.17 更新：</label><br/><br/>
-                                    <label>&nbsp;&nbsp;1. 添加多表格文案提取功能</label><br/>
-                                    <label>&nbsp;&nbsp;2. 添加文案提取到配置表格功能</label><br/>
-                                    <label>&nbsp;&nbsp;3. 增加item_name长度检测提示功能</label><br/><br/>
-                                    <label>2024.12.14 更新：</label><br/><br/>
-                                    <label>&nbsp;&nbsp;1. 固定选项的属性自动转换为对应站点，如：Yes/No、Months/Years等</label><br/>
-                                    <label>&nbsp;&nbsp;2. 添加提取源站点表格文案功能</label><br/><br/>
-                                    <label>2024.07.19 更新：</label><br/><br/>
-                                    <label>&nbsp;&nbsp;1. 补充操作逻辑验证及文件校验</label><br/>
-                                    <label>&nbsp;&nbsp;2. 界面优化调整</label><br/>
-                                    <label>&nbsp;&nbsp;3. 添加窗体拖动</label><br/><br/>
-                                    <label>至此功能基本完成，此工具命名为：Amazon多站点上架辅助工具，当前版本为v1.6</label><br/><br/>
-                                    <label>2024.07.18 更新：</label><br/><br/>
-                                    <label>&nbsp;&nbsp;1. 界面优化调整</label><br/>
-                                    <label>&nbsp;&nbsp;2. SKU开头替换功能调整</label><br/>
-                                    <label>&nbsp;&nbsp;3. 选择目标站点表格更新为可选择多个站点文件</label><br/>
-                                    <label>&nbsp;&nbsp;4. 重新调整定价文案表格</label><br/><br/>
-                                    <label>2024.07.17 更新：</label><br/><br/>
-                                    <label>&nbsp;&nbsp;1. 新增定价及翻译自动替换功能，可指定站点</label><br/>
-                                    <label>&nbsp;&nbsp;2. 新增定价文案模板下载</label><br/>
-                                    <label>&nbsp;&nbsp;3. 界面优化调整</label><br/><br/>
-                                    <label>2024.07.13 更新：</label><br/><br/>
-                                    <label>&nbsp;&nbsp;添加SKU开头替换功能</label><br/><br/>
-                                    <label>2024.07.04 更新:</label><br/><br/>
-                                    <label>&nbsp;&nbsp;初步实现选择两个Excel，根据表头调整数据的功能</label><br/><br/>
-                                    <label>2024.07.03 更新:</label><br/><br/>
-                                    <label>表格上架很繁琐，有没有能够把产品快速上架全站点的方法或工具？</label><br/>
-                                    <label style="font-size: 12px">以下是找到的能把一个站点的Listing上架到其他站点的方法：</label><br/>
-                                    <label style="font-size: 12px">1. 亚马逊卖家后台-模板表格批量上架功能，挨个下载不同站点的上架表格，挨个填写数据后上传，表格填写工作量大，但上传稳定</label><br/>
-                                    <label style="font-size: 12px">2. 亚马逊卖家后台-全球销售功能，能够把一个站点的全部Listing同步到其他站点，缺点是容易出现某个站点或某个listing同步失败，需挨个站点检查。</label><br/>
-                                    <label style="font-size: 12px">3. 亚马逊卖家后台-单个商品编辑界面-开通多站点销售功能，能够把单产品同步到多个站点，缺点是需挨个设置，工作量大且会出现部分站点开启失败</label><br/>
-                                    <label style="font-size: 12px">4. 第三方ERP系统的商品信息采集功能，采集到商品信息后可上架到其他站点，单次只能上架单站点单个商品，效率极低，仅适合上新</label><br/><br/>
-                                    <label>很遗憾，上面找到的上架方法各有缺点，无法做到把产品快速准确地上架全站点，反而是表格上架更靠谱点</label><br/>
-                                    <label>因此我打算写一个工具来减少填写多站点上架表格时的重复性工作量</label><br/><br/>
-                                                                                                                 `
-                        }
-                    }
-                    div.style.height = '500px';
-                    div.style.padding = '20px';
-                    div.style.margin = '10px 0';
-                    div.innerHTML = html
-                } else {
-                    div.style.height = 0;
-                    div.style.padding = 0;
-                    div.style.margin = 0;
-                    div.innerHTML = ''
-                }
-            },
-            // 向指定select添加选项
-            addOptions(selectId, optionValues, defaultSelectOptionIndex = 0) {
-                const select = document.getElementById(selectId);
-                select.innerText = null
-                for (let i = 0; i < optionValues.length; i++) {
-                    const item = optionValues[i]
-                    const option = document.createElement('option');
-                    option.text = item;
-                    option.value = item;
-                    // 默认选中页
-                    if (i === defaultSelectOptionIndex) option.selected = true
-                    select.appendChild(option);
-                }
-            },
-            // 标题长度检测
-            validateLength(workbook) {
-                // 获取标题长度，如果长度过长，在最后进行弹窗提示
-                let msgMap = {}
-                const sheetNames = workbook.SheetNames
-
-                // 对每页进行循环
-                for (let sheetName of sheetNames) {
-                    const sheet = workbook.Sheets[sheetName]
-                    // 有效行列数
-                    let range = XLSX.utils.decode_range(sheet['!ref']);
-                    let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
-                    let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                    msgMap[sheetName] = []
-                    // 循环列，找到标题列
-                    for (let i = 1; i <= maxColCount; i++) {
-                        const colLetter = this.convertToLetter(i)
-                        const titleCell = sheet[colLetter+'1']
-                        if (titleCell && titleCell.v === 'item_name') {
-                            // 循环行，取单元格值，判断是否符合条件
-                            for (let j = 2; j < maxRowCount + 2; j++) {
-                                // 指定列的行
-                                let cell = sheet[colLetter + j]
-                                let value
-                                if (cell) {
-                                    value = cell.v
-                                    if (value && value.length > 200) {
-                                        msgMap[sheetName].push(colLetter + j)
-                                    }
-                                }
-                            }
-                            break
-                        }
-                    }
-                }
-                // 提示字符超长
-                const keys = Object.keys(msgMap)
-                let result = ''
-                for (const key of keys) {
-                    const arr = msgMap[key]
-                    if (arr && arr.length > 0) {
-                        let msg = '<br/>SheetName：' + key
-                        for (let value of arr) {
-                            msg += '<br/>' + value
-                        }
-                        result += msg
-                    }
-                }
-                if (result.length > 0) {
-                    const self = this
-                    setTimeout(function () {
-                        self.$alert('标题长度超过200字符的行：' + result, '提示', {
-                                showConfirmButton: false,
-                                dangerouslyUseHTMLString: true,
-                                type: 'warning',
-                                center: true
-                            })
-                    }, 500)
-                }
-            },
-            // 获取页数据
-            getSheetData(workBook, sheetName, headRowNumber = 1, startColNumber = 1) {
-                const sheet = workBook.Sheets[sheetName]
-                // 使用SheetJS的工具函数获取有值的最大列数
-                const range = XLSX.utils.decode_range(sheet['!ref']);
-                let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
-                let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                // 先取每列第三行值，再取每列值为value
-                const dataMap = {}
-                let cellKey
-                for (let colCount = startColNumber; colCount <= maxColCount; colCount++) {
-                    // 取列第三行值
-                    let cell = sheet[this.convertToLetter(colCount) + headRowNumber]
-                    if(!cell) continue
-                    cellKey = sheet[this.convertToLetter(colCount) + headRowNumber].v
-                    const arr = []
-                    for (let rowNum = headRowNumber + 1; rowNum <= maxRowCount; rowNum++) {
-                        cell = sheet[this.convertToLetter(colCount) + rowNum]
-                        arr.push(cell ? cell.v : '')
-                    }
-                    dataMap[cellKey] = arr
-                }
-                return dataMap
-            },
-            // 获取指定行的值
-            getRowContentByRowNumber(workBook, sheetName, rowNumber, startColNumber = 1) {
-                let sheet = workBook.Sheets[sheetName]
-                // 使用SheetJS的工具函数获取有值的行数和列数
-                let range = XLSX.utils.decode_range(sheet['!ref']);
-                let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
-                let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                // 获取指定行有值的所有单元格内容
-                const cellArray = []
-                for (let colNumber = 1; colNumber <= maxColCount; colNumber++) {// 最大列次数循环，获取每列指定行的值
-                    if (colNumber < startColNumber) continue
-                    // 取指定单元格的值
-                    cellArray.push(this.getCellValue(sheet, rowNumber, colNumber) || null)
-                }
-                return cellArray
-            },
-            // 获取指定列的值，从开始行开始，默认从第一行开始
-            getColContentByColNumber(workBook, sheetName, colNumber, startRowNumber = 1) {
-                let sheet = workBook.Sheets[sheetName]
-                // 使用SheetJS的工具函数获取有值的行数和列数
-                let range = XLSX.utils.decode_range(sheet['!ref']);
-                let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
-                let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                // 获取指定行有值的所有单元格内容
-                const cellArray = []
-                for (let rowNumber = 1; rowNumber <= maxRowCount; rowNumber++) {// 最大列次数循环，获取每行指定列的值
-                    if (rowNumber < startRowNumber) continue
-                    // 取指定单元格的值
-                    cellArray.push(this.getCellValue(sheet, rowNumber, colNumber) || null)
-                }
-                return cellArray
-            },
-            // 根据指定行单元格作为表头获取匹配列的值
-            getColContentByColHeader(workBook, sheetName, colHeaderStr, rowNumber = 1) {
-                const headerArr = this.getRowContentByRowNumber(workBook, sheetName, rowNumber)
-                console.log('headerArr' + headerArr)
-                // 获取是第几列匹配上
-                for (let i = 0; i < headerArr.length; i++) {
-                    if (colHeaderStr === headerArr[i]) {
-                        return this.getColContentByColNumber(workBook, sheetName, i + 1, rowNumber + 1)
-                    }
-                }
-                return []
-            },
-            // 获取表格页指定单元格的值
-            getCellValue(sheet, rowNumber, colNumber) {
-                if (sheet == null || rowNumber < 1 || colNumber < 1) return ''
-                const cell = sheet[this.convertToLetter(colNumber) + rowNumber]
-                return cell ? cell.v : ''
-            },
-            // 原始字符串、需要从字符串开头移除的字符串和需要从开头移除后添加的字符串。
-            removePrefixAndAddNew(originalStr, prefixToRemove, newPrefix) {
-                return originalStr.replace(new RegExp('^' + prefixToRemove), newPrefix);
-            },
-            // 列数转字母
-            convertToLetter(num) {
-                if (num <= 0) {
-                    return '';
-                }
-                let remainder = (num - 1) % 26;
-                return this.convertToLetter(Math.floor((num - 1) / 26)) + String.fromCharCode(65 + remainder); // 65对应ASCII码中的'A'
-            },
-            // 下载表格
-            data2WorkBook(dataArrMap) {
-                const workbook = XLSX.utils.book_new();
-                for (const key in dataArrMap) {
-                    const worksheet = XLSX.utils.aoa_to_sheet(dataArrMap[key]);
-                    // 将工作表添加到工作簿
-                    XLSX.utils.book_append_sheet(workbook, worksheet, key);
-                }
-                return workbook
-            },
-            exportExcel(workbook, fileName) {
-                // 下载文件
-                const wbout = XLSX.write(workbook, {bookType: 'xlsx', type: 'binary'});
-
-                function s2ab(s) {
-                    const buf = new ArrayBuffer(s.length);
-                    const view = new Uint8Array(buf);
-                    for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-                    return buf;
-                }
-
-                let name = (fileName ? fileName : this.getCurrentDateTime()) + '.xlsx'
-                saveAs(new Blob([s2ab(wbout)], {type: 'application/octet-stream'}), name);
-            },
-            // 获取当前时间字符串
-            getCurrentDateTime() {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = (now.getMonth() + 1).toString().padStart(2, '0');
-                const day = now.getDate().toString().padStart(2, '0');
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                const seconds = now.getSeconds().toString().padStart(2, '0');
-                return `${year}${month}${day}-${hours}${minutes}${seconds}`;
-            },
-            // 将字符串限制在前
-            shortenStr(str, prefixLen = 4, suffixLen = 9) {
-                // 如果长度无需调整则返回
-                if (str.length <= prefixLen + suffixLen) return str
-                const prefix = str.substring(0, prefixLen)
-                const suffix = str.substring(str.length - suffixLen)
-                return prefix + '...' + suffix
-            },
-            getSelectedValue(id) {
-                const selectEle = document.getElementById(id)
-                return selectEle ? selectEle.options[selectEle.selectedIndex].value : ''
-            },
-            // 从源站点表格中提取文案放到定价文案模板文件中
-            textExtraction() {
-                if (!this.sourceWorkBook) {
-                    console.log('请选择源站点表格文件')
-                    this.$message.error('请选择源站点表格文件')
-                    return
-                }
-                // 1.读取源excel数据
-                let selectEle = document.getElementById('sourceSheet')
-                const sourceSheetSelected = selectEle.options[selectEle.selectedIndex].value;
-                const sourceSheet = this.sourceWorkBook.Sheets[sourceSheetSelected]
-                // 读取源数据表的模板页所有列数据，按数据列
-                // 使用SheetJS的工具函数获取有值的行数和列数
-                let range = XLSX.utils.decode_range(sourceSheet['!ref']);
-                let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
-                let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                // 输出行数和列数
-                console.log(`源表格有值行数: ${maxRowCount}, 列数: ${maxColCount}`);
-                // 先取每列第三行值，再取每列值为value
-                const dataMap = {}
-                let cellKey
-                for (let colCount = 1; colCount <= maxColCount; colCount++) {
-                    // 取列第三行值
-                    let cell = sourceSheet[this.convertToLetter(colCount) + '3']
-                    if(!cell) continue
-                    cellKey = cell.v
-                    if (this.textKeyArr.includes(cellKey)) {
-                        const arr = []
-                        for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
-                            cell = sourceSheet[this.convertToLetter(colCount) + rowNum]
-                            arr.push(cell ? cell.v : null)
-                        }
-                        dataMap[cellKey] = arr
-                    }
-                }
-                console.log('dataMap')
-                console.log(dataMap)
-                // 2.将获取到的数据转为sheet支持的json格式，使用XLSX.utils.json_to_sheet转为sheet对象
-                const sheetDataArr = []
-                const keys = Object.keys(dataMap)
-                for (let i = 0; i < keys.length; i++) {
-                    // 遍历得到一列的所有数据
-                    const keyStr = keys[i]
-                    const colDataArr = dataMap[keyStr]
-                    for (let j = 0; j < colDataArr.length; j++) {
-                        // 将一列数据放入对象数组的对象属性中
-                        if (i === 0) {
-                            // 如果是第一列，创建元素对象
-                            sheetDataArr[j] = {}
-                        }
-                        sheetDataArr[j][keyStr] = colDataArr[j]
-                    }
-                }
-                console.log('sheetDataArr')
-                console.log(sheetDataArr)
-                const newWorkbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(newWorkbook, XLSX.utils.json_to_sheet(sheetDataArr), '文案');
-                // this.priceWorkBook.Sheets['英语'] = XLSX.utils.json_to_sheet(sheetDataArr)
-                // 导出
-                this.exportExcel(newWorkbook)
-                // // 将JSON转换回工作表
-                // const newSheet = XLSX.utils.json_to_sheet(sheetDataArr);
-                //
-                // // 创建新的工作簿
-                // const newWorkbook = XLSX.utils.book_new();
-                //
-                // // 添加新的sheet到工作簿
-                // XLSX.utils.book_append_sheet(newWorkbook, newSheet, 'NewSheet');
-                //
-                // // 写入文件
-                // XLSX.writeFile(newWorkbook, 'new_example.xlsx');
-            },
-            // excel合并
-            excelMergeAndDownload() {
-                if (!this.translateWorkBookMap) {
-                    this.$message.error('请选择文案表格文件')
-                    return
-                }
-                const sheets = this.getExcelSheets(this.translateWorkBookMap)
-                if (sheets.length === 0) {
-                    this.$message.error('未获取到页数据，请检查后重试')
-                    return
-                }
-                // 建WorkBook 加入页 导出
-                // 创建新的工作簿
-                const newWorkbook = XLSX.utils.book_new();
-
-                // 添加新的sheet到工作簿
-                const sheetKeys = Object.keys(sheets)
-                for (let key of sheetKeys) {
-                    XLSX.utils.book_append_sheet(newWorkbook, sheets[key], key)
-                }
-                // 写入文件
-                XLSX.writeFile(newWorkbook, '翻译文案合并'+new Date().getTime()+'.xlsx');
-                // 验证标题长度
-                this.validateLength(newWorkbook)
-            },
-            // 获取所有Excel文件的sheet，返回以Excel文件名为key，sheet对象为value的Object
-            // 入参为以Excel文件名为key，WorkBook对象为value的Object
-            getExcelSheets(workBookMap) {
-                if (!workBookMap) return {}
-                const keys = Object.keys(workBookMap)
-                const sheets = {}
-                for (let key of keys) {
-                    const workBook = workBookMap[key]
-                    const sheetNames = workBook.SheetNames
-                    if (sheetNames && sheetNames.length === 1) {
-                        const sheet = workBook.Sheets[sheetNames[0]]
-                        for (let i = 0; i < this.textKeyArr.length; i++) {
-                            let cell = sheet[this.convertToLetter(i+1) + '1']
-                            if(!cell) continue
-                            cell.v = this.textKeyArr[i]
-                        }
-                        sheets[key.replaceAll('.xlsx','')] = sheet
-                    }
-                }
-                return sheets
-            },
-            // 将文案整合到配置表格中
-            excelMerge2TemplateExcel() {
-                //
-                if (!this.priceWorkBook) {
-                    this.$message.error('请先选择配置表格')
-                    return
-                }
-                // 从文案文件处取页数据
-                const sheets = this.getExcelSheets(this.translateWorkBookMap)
-                if (sheets.length === 0) {
-                    this.$message.error('未获取到页数据，请检查后重试')
-                    return
-                }
-                // 在priceWorkBook中 加入页 导出
-                // 替换sheet到工作簿
-                const sheetKeys = Object.keys(sheets)
-                for (let key of sheetKeys) {
-                    const sheetNames = this.priceWorkBook.SheetNames
-                    if (sheetNames.includes(key)) {
-                        this.priceWorkBook.Sheets[key] = sheets[key]
-                    } else {
-                        XLSX.utils.book_append_sheet(this.priceWorkBook, sheets[key], key)
-                    }
-                }
-                // 写入文件
-                XLSX.writeFile(this.priceWorkBook, '配置表格含文案'+new Date().getTime()+'.xlsx');
-                // 标题长度检测
-                this.validateLength(this.priceWorkBook)
-            },
-            // 处理数据并下载
-            executeDataHandler() {
-                if (!this.sourceWorkBook || !this.targetWorkBookMap || this.targetWorkBookMap.length === 0) {
-                    this.$message.error('请选择源站点表格文件与新站点表格文件！');
-                    return
-                }
-                for (let site in this.targetWorkBookMap) {
-                    let input = document.getElementById(site + 'ListPricePlus')
-                    if (input) {
-                        this.listPricePlus[site] = Number(input.value)
-                        console.log('input.value:' + input.value)
-                    }
-                }
-                console.log('listPricePlus')
-                console.log(this.listPricePlus)
-                this.executeData2Excel();
-            },
-            executeData2Excel() {
-                // 1.读取源excel数据
-                let selectEle = document.getElementById('sourceSheet')
-                const sourceSheetSelected = selectEle.options[selectEle.selectedIndex].value;
-                const sourceSheet = this.sourceWorkBook.Sheets[sourceSheetSelected]
-                // 读取源数据表的模板页所有列数据，按数据列
-                // 使用SheetJS的工具函数获取有值的行数和列数
-                let range = XLSX.utils.decode_range(sourceSheet['!ref']);
-                let maxRowCount = range.e.r - range.s.r + 1; // 有值的行数
-                let maxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                // 输出行数和列数
-                console.log(`源表格有值行数: ${maxRowCount}, 列数: ${maxColCount}`);
-                // 先取每列第三行值，再取每列值为value
-                const dataMap = {}
-                let cellKey
-                for (let colCount = 1; colCount <= maxColCount; colCount++) {
-                    // 取列第三行值
-                    let cell = sourceSheet[this.convertToLetter(colCount) + '3']
-                    if(!cell) continue
-                    cellKey = cell.v
-                    const arr = []
-                    for (let rowNum = 4; rowNum <= maxRowCount; rowNum++) {
-                        cell = sourceSheet[this.convertToLetter(colCount) + rowNum]
-                        arr.push(cell ? cell.v : null)
-                    }
-                    dataMap[cellKey] = arr
-                }
-                console.log("dataMap")
-                console.log(dataMap)
-
-                const dataArrayMap = {}
-                for (let siteKey in this.targetWorkBookMap) {
-                    // 2. 获取目标表格的关键词数组
-                    selectEle = document.getElementById(siteKey + 'Select')
-                    const targetSheetSelected = selectEle.options[selectEle.selectedIndex].value;
-                    const targetSheet = this.targetWorkBookMap[siteKey].Sheets[targetSheetSelected]
-                    // 使用SheetJS的工具函数获取有值的最大列数
-                    range = XLSX.utils.decode_range(targetSheet['!ref']);
-                    const targetMaxColCount = range.e.c - range.s.c + 1; // 有值的列数
-                    // 输出列数
-                    console.log(`目标表格有值列数: ${targetMaxColCount}`);
-                    // 先取每列第三行值，再取每列值为value
-                    const targetKeyWordArr = []
-                    for (let colCount = 1; colCount <= targetMaxColCount; colCount++) {
-                        // 取列第三行值
-                        const cell = targetSheet[this.convertToLetter(colCount) + '3']
-                        if(!cell) continue
-                        cellKey = cell.v
-                        targetKeyWordArr.push(cellKey)
-                    }
-                    // 3. 获取目标表格指定列数据
-                    let priceArr
-                    let translateData
-                    if (this.priceWorkBook) {
-                        // 获取选择的站点
-                        // 加载select选项
-                        let siteName
-                        if(Object.keys(this.siteMap).includes(siteKey)) {
-                            siteName = this.siteMap[siteKey]
-                            console.log('siteName' + siteName)
-                        } else {
-                            this.$alert('请在新站点表格的文件开头或末尾增加站点缩写，如：US***.xslx', '提示', {
-                                showConfirmButton: false,
-                                closeOnClickModal: true,
-                                type: 'warning',
-                                center: true
-                            })
-                            return
-                        }
-                        // 获取全站定价页的指定站点定价
-                        priceArr = this.getColContentByColHeader(this.priceWorkBook, "全站定价", siteName)
-                        // priceArr = priceArr.map(Number)
-                        console.log('priceArr:' + priceArr)
-                        // 获取翻译页
-                        const siteArr = this.getColContentByColHeader(this.priceWorkBook, "站点及语言", "站点")
-                        const languageArr = this.getColContentByColHeader(this.priceWorkBook, "站点及语言", "语言")
-                        console.log('siteArr:' + siteArr)
-                        console.log('languageArr:' + languageArr)
-                        // 获取站点行对应的语言值
-                        let language = ''
-                        for (let i = 0; i < siteArr.length; i++) {
-                            if (siteName === siteArr[i]) {
-                                language = languageArr[i]
-                                break
-                            }
-                        }
-                        console.log('language:' + language)
-                        // 获取翻译页内容
-                        translateData = this.getSheetData(this.priceWorkBook, language)
-                        console.log('translateData')
-                        console.log(translateData)
-                    }
-                    // 4. 数据输出到excel
-                    const dataArr = []
-                    dataArr.push(targetKeyWordArr)
-                    // 外循环数据行数次，将每行的数据补上
-                    for (let i = 0; i < maxRowCount - 3; i++) {
-                        // 内循环将单元格数据补上，第一行已占据，从第二行开始
-                        let arr = dataArr[i + 1]
-                        if (!arr) {
-                            arr = dataArr[i + 1] = new Array(maxColCount);
-                        }
-                        for (let j = 0; j < targetKeyWordArr.length; j++) {
-                            const targetKeyWord = targetKeyWordArr[j]
-                            const dataArr = dataMap[targetKeyWord]
-                            // 获取单元格值
-                            let value = dataArr ? dataArr[i] : null
-                            // 在这里对特殊列的值进行处理
-                            // sku开头调整
-                            if (['item_sku', 'parent_sku'].includes(targetKeyWord) && value != null) {
-                                if (document.getElementById('checkboxSku').checked) {
-                                    value = siteKey + value.substring(2)
-                                }
-                            }
-
-                            // 各站点固定选项自动转换不同语言：Yes/No、Month/Year、Update/UpdateParts/Delete、LB/OZ、IN、China、New
-                            // 是有预设的部分直接，获取新值进行覆盖
-                            if (targetKeyWord in this.attrWords) {
-                                // 遍历获取匹配的选项，取索引
-                                let index = -1;
-                                const words = this.attrWords[targetKeyWord]
-                                for (let wordsKey in words) {
-                                    const wordArr = words[wordsKey]
-                                    if (wordArr) {
-                                        for (let k = 0; k < wordArr.length; k++) {
-                                            // 满足条件结束内层循环
-                                            if (wordArr[k] === value) {
-                                                index = k
-                                                break
-                                            }
-                                        }
-                                        // 满足条件结束外层循环
-                                        if (index !== -1) {
-                                            break
-                                        }
-                                    }
-                                }
-                                // 获取对应站点属性值
-                                const siteAttr = this.attrWords[targetKeyWord][siteKey]
-                                if(siteAttr && siteAttr[index]) {
-                                    value = siteAttr[index]
-                                }
-                            }
-                            // TODO 各站点部分不常填写内容自动补充
-
-                            // 若有加载价格表格则刷新
-                            if (this.priceWorkBook) {
-                                if (['standard_price', 'list_price', 'list_price_with_tax'].includes(targetKeyWord)) {
-                                    // 把价格放进去
-                                    if ('standard_price' === targetKeyWord) {
-                                        value = priceArr[i] || value
-                                    }
-                                    if (['list_price', 'list_price_with_tax'].includes(targetKeyWord)) {
-                                        value = priceArr[i] ? Number(priceArr[i]) + this.listPricePlus[siteKey] : value
-                                    }
-                                }
-                                if (this.textKeyArr.includes(targetKeyWord)) {
-                                    // 把翻译放进去
-                                    const colArr = translateData[targetKeyWord]
-                                    const val = colArr && colArr.length > 0 ? colArr[i] : ''
-                                    value = val || value
-                                }
-                            }
-                            arr[j] = value;
-                        }
-                    }
-                    dataArrayMap[siteKey] = dataArr
-                }
-                console.log("listPricePlus")
-                console.log(this.listPricePlus)
-                console.log('dataArrayMap:')
-                console.log(dataArrayMap)
-
-                // 数组转到表格
-                const workbook = this.data2WorkBook(dataArrayMap)
-                // 输出下载
-                this.exportExcel(workbook)
-                // 标题长度检测
-                this.validateLength(workbook)
-            }
+        message: { type: '', text: '' },
+        previewReady: false,
+        stats: { targetHeaders: 0, sourceHeaders: 0, matchedHeaders: 0, sourceRows: 0 },
+        unmatchedTargetHeaders: [],
+        sourceOnlyHeaders: [],
+        duplicateWarnings: [],
+        previewTopHeaders: [],
+        previewHeaders: [],
+        previewRows: []
+      };
+    },
+    computed: {
+      canGenerate: function () {
+        return !!(this.source.workbook && this.target.workbook && this.source.selectedSheet && this.target.selectedSheet);
+      }
+    },
+    watch: {
+      friendlyHeaderRow: function () { this.refreshPreview(); },
+      headerRow: function () { this.refreshPreview(); },
+      dataStartRow: function () { this.refreshPreview(); },
+      readAsText: function () { this.reparseLoadedBooks(); },
+      ignoreCase: function () { this.refreshPreview(); },
+      skipBlankSourceRows: function () { this.refreshPreview(); }
+    },
+    methods: {
+      emptyBook: function () {
+        return createEmptyBook();
+      },
+      setMessage: function (type, text) {
+        this.message = { type: type, text: text };
+      },
+      clearMessage: function () {
+        this.message = { type: '', text: '' };
+      },
+      removeFile: function (role) {
+        if (role === 'source') {
+          this.source = this.emptyBook();
+          this.setMessage('warning', '已删除原数据表格，请重新上传。');
+        } else {
+          this.target = this.emptyBook();
+          this.setMessage('warning', '已删除目标表格，请重新上传。');
         }
-    })
+        this.pendingAssignment.visible = false;
+        this.pendingAssignment.files = [];
+        this.refreshPreview();
+      },
+      cellText: function (value) {
+        if (value == null) return '';
+        if (value instanceof Date && !isNaN(value.getTime())) return value.toLocaleDateString();
+        return String(value);
+      },
+      formatSize: function (bytes) {
+        if (!bytes && bytes !== 0) return '';
+        var units = ['B', 'KB', 'MB', 'GB'];
+        var size = bytes;
+        var i = 0;
+        while (size >= 1024 && i < units.length - 1) { size /= 1024; i++; }
+        return size.toFixed(i === 0 ? 0 : 1) + ' ' + units[i];
+      },
+      markerList: function (text) {
+        return String(text || '')
+          .split(',')
+          .map(function (s) { return s.trim().toLowerCase(); })
+          .filter(Boolean);
+      },
+      detectFileRole: function (file) {
+        var name = String(file.name || '').toLowerCase();
+        var sourceHit = this.markerList(this.sourceMarkers).some(function (m) { return name.indexOf(m) >= 0; });
+        var targetHit = this.markerList(this.targetMarkers).some(function (m) { return name.indexOf(m) >= 0; });
+        if (sourceHit && !targetHit) return 'source';
+        if (targetHit && !sourceHit) return 'target';
+        return '';
+      },
+      handleFileSelect: async function (event, dropRole) {
+        var files = Array.from(event.target.files || []);
+        await this.routeFiles(files, dropRole);
+        event.target.value = '';
+      },
+      handleDrop: async function (event, dropRole) {
+        this.sourceDrag = false;
+        this.targetDrag = false;
+        var files = Array.from(event.dataTransfer.files || []);
+        await this.routeFiles(files, dropRole);
+      },
+      routeFiles: async function (files, dropRole) {
+        var excelFiles = files.filter(function (f) { return /\.(xlsx|xls|xlsm|xlsb|csv)$/i.test(f.name); });
+        if (!excelFiles.length) {
+          this.setMessage('error', '没有识别到 Excel/CSV 文件，请上传 .xlsx、.xls、.xlsm、.xlsb 或 .csv 文件。');
+          return;
+        }
+        if (excelFiles.length === 1) {
+          await this.loadFile(excelFiles[0], dropRole);
+          return;
+        }
+        await this.handleTwoFiles(excelFiles.slice(0, 2));
+        if (excelFiles.length > 2) {
+          this.setMessage('warning', '一次只会处理前两个 Excel/CSV 文件，其他文件已忽略。');
+        }
+      },
+      handleTwoFiles: async function (files) {
+        var roles = files.map((function (file) { return this.detectFileRole(file); }).bind(this));
+        var sourceIndex = roles.indexOf('source');
+        var targetIndex = roles.indexOf('target');
+        var sourceCount = roles.filter(function (r) { return r === 'source'; }).length;
+        var targetCount = roles.filter(function (r) { return r === 'target'; }).length;
 
-    /******拖动div******/
-    const draggable = document.getElementById('borderDiv');
-    let active = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-
-    function dragStart(e) {
-        if (e.type === "mousedown") {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-        } else if (e.type === "touchstart") {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
+        if (sourceCount === 1 && targetCount === 1 && sourceIndex !== targetIndex) {
+          await this.loadFile(files[sourceIndex], 'source', true);
+          await this.loadFile(files[targetIndex], 'target', true);
+          this.pendingAssignment.visible = false;
+          this.refreshPreview();
+          this.setMessage('success', '两个文件已根据文件名标记自动识别并读取。请确认商品数据页选择是否正确。');
+          return;
         }
 
-        if (e.target === draggable) {
-            active = true;
+        if (sourceCount === 1 && targetCount === 0) {
+          targetIndex = sourceIndex === 0 ? 1 : 0;
+          await this.loadFile(files[sourceIndex], 'source', true);
+          await this.loadFile(files[targetIndex], 'target', true);
+          this.pendingAssignment.visible = false;
+          this.refreshPreview();
+          this.setMessage('success', '已识别原数据表格，另一个文件自动作为目标表格读取。请确认商品数据页选择是否正确。');
+          return;
         }
-    }
 
-    function dragEnd(e) {
-        initialX = currentX;
-        initialY = currentY;
-        active = false;
-    }
-
-    function drag(e) {
-        if (active) {
-            e.preventDefault();
-
-            if (e.type === "mousemove") {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-            } else if (e.type === "touchmove") {
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-            }
-
-            xOffset = currentX;
-            yOffset = currentY;
-
-            setTranslate(currentX, currentY, draggable);
+        if (targetCount === 1 && sourceCount === 0) {
+          sourceIndex = targetIndex === 0 ? 1 : 0;
+          await this.loadFile(files[sourceIndex], 'source', true);
+          await this.loadFile(files[targetIndex], 'target', true);
+          this.pendingAssignment.visible = false;
+          this.refreshPreview();
+          this.setMessage('success', '已识别目标表格，另一个文件自动作为原数据表格读取。请确认商品数据页选择是否正确。');
+          return;
         }
+
+        this.pendingAssignment = {
+          visible: true,
+          files: files,
+          sourceIndex: 0,
+          targetIndex: files.length > 1 ? 1 : 0
+        };
+        this.setMessage('warning', '两个文件未能通过文件名标记明确识别，请手动指定原数据表格和目标表格。');
+      },
+      syncManualAssignment: function (changed) {
+        if (this.pendingAssignment.files.length !== 2) return;
+        if (changed === 'source') {
+          this.pendingAssignment.targetIndex = this.pendingAssignment.sourceIndex === 0 ? 1 : 0;
+        } else {
+          this.pendingAssignment.sourceIndex = this.pendingAssignment.targetIndex === 0 ? 1 : 0;
+        }
+      },
+      confirmManualAssignment: async function () {
+        if (!this.pendingAssignment.files.length) return;
+        if (this.pendingAssignment.sourceIndex === this.pendingAssignment.targetIndex) {
+          this.setMessage('error', '原数据表格和目标表格不能选择同一个文件。');
+          return;
+        }
+        var files = this.pendingAssignment.files;
+        await this.loadFile(files[this.pendingAssignment.sourceIndex], 'source', true);
+        await this.loadFile(files[this.pendingAssignment.targetIndex], 'target', true);
+        this.pendingAssignment.visible = false;
+        this.refreshPreview();
+        this.setMessage('success', '已按手动指定关系读取两个表格。请确认商品数据页选择是否正确。');
+      },
+      cancelManualAssignment: function () {
+        this.pendingAssignment.visible = false;
+        this.pendingAssignment.files = [];
+        this.setMessage('warning', '已取消手动分配，请重新拖入或选择文件。');
+      },
+      loadFile: async function (file, role, silent) {
+        silent = !!silent;
+        try {
+          var arrayBuffer = await file.arrayBuffer();
+          var workbook = XLSX.read(arrayBuffer, {
+            type: 'array',
+            cellDates: true
+          });
+          var targetObj = role === 'source' ? this.source : this.target;
+          targetObj.file = file;
+          targetObj.workbook = workbook;
+          targetObj.sheetNames = workbook.SheetNames || [];
+          targetObj.selectedSheet = targetObj.sheetNames[4] || targetObj.sheetNames[0] || '';
+          if (!silent) {
+            this.pendingAssignment.visible = false;
+            this.refreshPreview();
+            this.setMessage('success', (role === 'source' ? '原数据表格' : '目标表格') + '已读取：' + file.name);
+          }
+        } catch (err) {
+          console.error(err);
+          this.setMessage('error', '读取文件失败：' + file.name + '。请确认文件没有损坏，且格式为 Excel/CSV。');
+        }
+      },
+      reparseLoadedBooks: async function () {
+        var sourceFile = this.source.file;
+        var targetFile = this.target.file;
+        if (sourceFile) await this.loadFile(sourceFile, 'source', true);
+        if (targetFile) await this.loadFile(targetFile, 'target', true);
+        this.refreshPreview();
+      },
+      normalizeHeader: function (value) {
+        var text = String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
+        if (this.ignoreCase) text = text.toLowerCase();
+        return text;
+      },
+      displayHeader: function (value) {
+        return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
+      },
+      sheetToAoA: function (bookObj) {
+        if (!bookObj.workbook || !bookObj.selectedSheet) return [];
+        var ws = bookObj.workbook.Sheets[bookObj.selectedSheet];
+        if (!ws) return [];
+        return XLSX.utils.sheet_to_json(ws, {
+          header: 1,
+          defval: '',
+          blankrows: true,
+          raw: !this.readAsText
+        });
+      },
+      extendRow: function (row, length) {
+        var output = (row || []).slice(0, length);
+        while (output.length < length) output.push('');
+        return output;
+      },
+      parseSheetInfo: function (bookObj, role) {
+        var aoa = this.sheetToAoA(bookObj);
+        var headerIndex = Math.max(0, Number(this.headerRow || 1) - 1);
+        var dataIndex = Math.max(0, Number(this.dataStartRow || 1) - 1);
+        var headerRow = aoa[headerIndex] || [];
+        var headers = headerRow.map((function (h) { return this.displayHeader(h); }).bind(this));
+        var nonEmptyHeaders = headers.filter(function (h) { return h; });
+        var map = new Map();
+        var duplicates = [];
+        headers.forEach((function (header, index) {
+          if (!header) return;
+          var key = this.normalizeHeader(header);
+          if (!key) return;
+          if (map.has(key)) duplicates.push(role + '：' + header);
+          else map.set(key, { index: index, header: header });
+        }).bind(this));
+        var rows = aoa.slice(dataIndex);
+        if (role === '原数据表格' && this.skipBlankSourceRows) {
+          rows = rows.filter(function (row) {
+            return row && row.some(function (cell) { return String(cell == null ? '' : cell).trim() !== ''; });
+          });
+        }
+        return { aoa: aoa, headers: headers, nonEmptyHeaders: nonEmptyHeaders, map: map, duplicates: duplicates, rows: rows };
+      },
+      buildMappedData: function () {
+        if (!this.canGenerate) throw new Error('请先上传原数据表格和目标表格。');
+        if (Number(this.friendlyHeaderRow) < 1 || Number(this.headerRow) < 1 || Number(this.dataStartRow) < 1) throw new Error('行号必须大于等于 1。');
+
+        var sourceInfo = this.parseSheetInfo(this.source, '原数据表格');
+        var targetInfo = this.parseSheetInfo(this.target, '目标表格');
+        var friendlyHeaderIndex = Math.max(0, Number(this.friendlyHeaderRow || 1) - 1);
+        var rawFriendlyRow = (targetInfo.aoa[friendlyHeaderIndex] || []).map((function (h) { return this.displayHeader(h); }).bind(this));
+        var width = Math.max(targetInfo.headers.length, rawFriendlyRow.length);
+        var targetHeaders = this.extendRow(targetInfo.headers, width);
+        var targetFriendlyRow = this.extendRow(rawFriendlyRow, width);
+        var targetNonEmptyHeaders = targetHeaders.filter(function (h) { return h; });
+
+        if (!sourceInfo.nonEmptyHeaders.length) throw new Error('原数据表格在第 ' + this.headerRow + ' 行没有读取到属性名。');
+        if (!targetNonEmptyHeaders.length) throw new Error('目标表格在第 ' + this.headerRow + ' 行没有读取到属性名。');
+        if (!sourceInfo.rows.length) throw new Error('原数据表格从第 ' + this.dataStartRow + ' 行开始没有读取到商品数据。');
+
+        var unmatchedTarget = [];
+        var outputRows = sourceInfo.rows.map((function (row) {
+          return targetHeaders.map((function (header) {
+            if (!header) return '';
+            var key = this.normalizeHeader(header);
+            var sourceCol = sourceInfo.map.get(key);
+            if (!sourceCol) return '';
+            return row[sourceCol.index] == null ? '' : row[sourceCol.index];
+          }).bind(this));
+        }).bind(this));
+
+        targetHeaders.forEach((function (header) {
+          if (!header) return;
+          var key = this.normalizeHeader(header);
+          if (!sourceInfo.map.has(key)) unmatchedTarget.push(header);
+        }).bind(this));
+
+        var targetKeySet = new Set(targetHeaders.filter(Boolean).map((function (h) { return this.normalizeHeader(h); }).bind(this)));
+        var sourceOnly = sourceInfo.nonEmptyHeaders.filter((function (header) { return !targetKeySet.has(this.normalizeHeader(header)); }).bind(this));
+        var matchedCount = targetNonEmptyHeaders.length - unmatchedTarget.length;
+        var duplicateWarnings = sourceInfo.duplicates.concat(targetInfo.duplicates);
+
+        return {
+          targetFriendlyRow: targetFriendlyRow,
+          targetHeaders: targetHeaders,
+          outputRows: outputRows,
+          stats: {
+            targetHeaders: targetNonEmptyHeaders.length,
+            sourceHeaders: sourceInfo.nonEmptyHeaders.length,
+            matchedHeaders: matchedCount,
+            sourceRows: sourceInfo.rows.length
+          },
+          unmatchedTarget: unmatchedTarget,
+          sourceOnly: sourceOnly,
+          duplicateWarnings: duplicateWarnings
+        };
+      },
+      refreshPreview: function () {
+        if (!this.canGenerate) {
+          this.previewReady = false;
+          this.stats = { targetHeaders: 0, sourceHeaders: 0, matchedHeaders: 0, sourceRows: 0 };
+          this.unmatchedTargetHeaders = [];
+          this.sourceOnlyHeaders = [];
+          this.duplicateWarnings = [];
+          this.previewTopHeaders = [];
+          this.previewHeaders = [];
+          this.previewRows = [];
+          return;
+        }
+        try {
+          var result = this.buildMappedData();
+          this.previewReady = true;
+          this.stats = result.stats;
+          this.unmatchedTargetHeaders = result.unmatchedTarget;
+          this.sourceOnlyHeaders = result.sourceOnly;
+          this.duplicateWarnings = result.duplicateWarnings;
+          this.previewTopHeaders = result.targetFriendlyRow;
+          this.previewHeaders = result.targetHeaders.map(function (h, i) { return h || '(空列 ' + (i + 1) + ')'; });
+          this.previewRows = result.outputRows;
+        } catch (err) {
+          this.previewReady = false;
+          this.previewTopHeaders = [];
+          this.previewHeaders = [];
+          this.previewRows = [];
+        }
+      },
+      makeReportRows: function (result) {
+        var rows = [
+          ['项目', '数值'],
+          ['目标属性数', result.stats.targetHeaders],
+          ['原数据表格属性数', result.stats.sourceHeaders],
+          ['匹配属性数', result.stats.matchedHeaders],
+          ['原商品数据行数', result.stats.sourceRows],
+          [],
+          ['目标表有、原数据表格没有的属性', '导出时该列为空']
+        ];
+        result.unmatchedTarget.forEach(function (h) { rows.push([h, '未匹配']); });
+        rows.push([], ['原数据表格有、目标表没有的属性', '不会导出']);
+        result.sourceOnly.forEach(function (h) { rows.push([h, '未使用']); });
+        rows.push([], ['重复属性提醒', '工具默认使用第一次出现的属性列']);
+        result.duplicateWarnings.forEach(function (w) { rows.push([w, '重复']); });
+        return rows;
+      },
+      generateWorkbook: function () {
+        try {
+          var result = this.buildMappedData();
+          var aoa = [result.targetFriendlyRow, result.targetHeaders].concat(result.outputRows);
+          var wb = XLSX.utils.book_new();
+          var ws = XLSX.utils.aoa_to_sheet(aoa);
+          ws['!cols'] = result.targetHeaders.map((function (h, idx) {
+            var top = result.targetFriendlyRow[idx] || '';
+            var widthText = String(h || top || '');
+            return { wch: Math.min(Math.max(widthText.length + 2, 12), 32) };
+          }).bind(this));
+          XLSX.utils.book_append_sheet(wb, ws, 'matched_upload_data');
+
+          if (this.includeReportSheet) {
+            var report = XLSX.utils.aoa_to_sheet(this.makeReportRows(result));
+            report['!cols'] = [{ wch: 38 }, { wch: 24 }];
+            XLSX.utils.book_append_sheet(wb, report, 'mapping_report');
+          }
+
+          var base = this.target.file ? this.target.file.name.replace(/\.[^.]+$/, '') : 'target';
+          var now = new Date();
+          var stamp = '' + now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + '_' + String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0');
+          var filename = base + '_mapped_from_source_' + stamp + '.xlsx';
+          XLSX.writeFile(wb, filename, { bookType: 'xlsx' });
+          this.setMessage('success', '已生成并下载：' + filename + '。匹配 ' + result.stats.matchedHeaders + '/' + result.stats.targetHeaders + ' 个目标属性，共导出 ' + result.stats.sourceRows + ' 行商品数据。');
+          this.refreshPreview();
+        } catch (err) {
+          console.error(err);
+          this.setMessage('error', err.message || '生成失败，请检查表格和商品数据页选择。');
+        }
+      },
+      resetAll: function () {
+        this.source = this.emptyBook();
+        this.target = this.emptyBook();
+        this.pendingAssignment.visible = false;
+        this.pendingAssignment.files = [];
+        this.message = { type: '', text: '' };
+        this.previewReady = false;
+        this.stats = { targetHeaders: 0, sourceHeaders: 0, matchedHeaders: 0, sourceRows: 0 };
+        this.unmatchedTargetHeaders = [];
+        this.sourceOnlyHeaders = [];
+        this.duplicateWarnings = [];
+        this.previewTopHeaders = [];
+        this.previewHeaders = [];
+        this.previewRows = [];
+      }
     }
-
-    function setTranslate(xPos, yPos, el) {
-        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-    }
-
-    // Mouse events
-    draggable.addEventListener('mousedown', dragStart);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', dragEnd);
-
-    // Touch events
-    draggable.addEventListener('touchstart', dragStart, { passive: false });
-    draggable.addEventListener('touchmove', drag);
-    draggable.addEventListener('touchend', dragEnd);
-    /******拖动div******/
+  });
+})();
 </script>
 </body>
 </html>
