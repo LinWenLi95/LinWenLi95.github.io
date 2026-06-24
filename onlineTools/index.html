@@ -1,205 +1,564 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amazon工具导航页</title>
-    <!-- 添加favicon图标 -->
+    <title>Amazon 工具导航页</title>
     <link rel="icon" href="img/toolkit.svg" type="image/x-icon">
     <link rel="shortcut icon" href="img/toolkit.svg" type="image/x-icon">
     <link href="css/element-ui.css" rel="stylesheet">
     <style>
-        body, html {
+        :root {
+            --bg: #f6f8fb;
+            --panel: #ffffff;
+            --text: #172033;
+            --muted: #6b7280;
+            --line: #e6eaf0;
+            --line-strong: #d7dee8;
+            --primary: #2563eb;
+            --primary-light: #eef4ff;
+            --primary-hover: #1d4ed8;
+            --radius: 16px;
+            --shadow: 0 16px 36px rgba(17, 24, 39, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
             margin: 0;
-            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-width: 320px;
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            background: var(--bg);
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        #app {
+            min-height: 100vh;
+        }
+
+        .nav-page {
+            min-height: 100vh;
+            padding: 22px 18px 46px;
+        }
+
+        .nav-shell {
+            width: min(560px, 100%);
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+
+        .brand-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 auto;
+            border-radius: 11px;
+            color: var(--primary);
+            font-size: 18px;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .panel {
             overflow: hidden;
-            width: 100vw;
-            height: 100vh;
+            border: 1px solid var(--line);
+            border-radius: 24px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
         }
-        iframe {
-            border: none;
-            width: 100vw;  /* 视口宽度 */
-            height: 100vh; /* 视口高度 */
-            position: fixed;
-            top: 0;
-            left: 0;
+
+        .panel-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px;
+            border-bottom: 1px solid var(--line);
+            background: #fbfcfe;
         }
-        .centered {
-            position: fixed; /* 使div固定位置 */
-            top: 45%; /* 位于视口垂直中央 */
-            left: 50%; /* 位于视口水平中央 */
-            transform: translate(-50%, -50%); /* 使用transform进行微调，使div大小的一半向上和左方移动 */
-            /*width: 50%; !* 设置宽度 *!*/
-            padding: 20px; /* 内边距 */
-            box-sizing: border-box; /* 防止内边距影响宽度 */
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
         }
-        .backButton {
+
+        .search-wrap::before {
+            content: "🔎";
             position: absolute;
-            left: 10px;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            opacity: 0.55;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 40px;
+            padding: 0 12px 0 38px;
+            border: 1px solid var(--line);
+            outline: none;
+            border-radius: 12px;
+            color: var(--text);
+            background: #ffffff;
+            font-size: 14px;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .search-input:focus {
+            border-color: rgba(37, 99, 235, 0.42);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+        }
+
+        .count-text {
+            flex: 0 0 auto;
+            color: var(--muted);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .tool-list {
+            padding: 8px;
+        }
+
+        .tool-item {
+            width: 100%;
+            min-height: 58px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-radius: 15px;
+            color: inherit;
+            text-align: left;
+            background: transparent;
+            cursor: pointer;
+            transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+        }
+
+        .tool-item + .tool-item {
+            margin-top: 3px;
+        }
+
+        .tool-item:hover {
+            background: var(--primary-light);
+            border-color: rgba(37, 99, 235, 0.18);
+            transform: translateX(2px);
+        }
+
+        .tool-item:active {
+            transform: translateX(1px);
+        }
+
+        .tool-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            font-size: 18px;
+            background: #f1f5f9;
+        }
+
+        .tool-main {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .tool-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 15px;
+            line-height: 1.35;
+            font-weight: 700;
+        }
+
+        .tool-desc {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .tool-category {
+            flex: 0 0 auto;
+            padding: 4px 8px;
+            border-radius: 999px;
+            color: #475569;
+            font-size: 12px;
+            line-height: 1;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+        }
+
+        .open-arrow {
+            flex: 0 0 auto;
+            color: #94a3b8;
+            font-size: 18px;
+            transition: color 0.16s ease, transform 0.16s ease;
+        }
+
+        .tool-item:hover .open-arrow {
+            color: var(--primary);
+            transform: translateX(2px);
+        }
+
+        .empty-state {
+            padding: 34px 20px 38px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .iframe-page {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            background: #ffffff;
+        }
+
+        .back-float {
+            position: fixed;
             top: 10px;
-            z-index: 9;
-            opacity: 0.5;
+            left: 10px;
+            z-index: 30;
+            height: 34px;
+            padding: 0 13px;
+            border: 1px solid rgba(255, 255, 255, 0.58);
+            border-radius: 10px;
+            color: #0f172a;
+            background: rgba(255, 255, 255, 0.86);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .back-float:hover {
+            background: rgba(255, 255, 255, 0.96);
+            transform: translateX(1px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        @media (max-width: 640px) {
+            .nav-page {
+                padding: 26px 12px 34px;
+            }
+
+            .header {
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+
+            .brand-mark {
+                width: 36px;
+                height: 36px;
+                font-size: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .panel-top {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .count-text {
+                text-align: center;
+            }
+
+            .tool-item {
+                min-height: 62px;
+                padding: 10px;
+            }
+
+            .tool-desc {
+                display: none;
+            }
+
+            .tool-category {
+                display: none;
+            }
+
+            .back-float {
+                top: 10px;
+                left: 10px;
+                height: 36px;
+                padding: 0 12px;
+            }
         }
     </style>
 </head>
 <body>
 <div id="app">
-    <!--可选菜单居中-->
-    <div v-show="!iframe.show" class="centered">
-        <el-tooltip v-model="showTip.tip1" placement="top-start" effect="light">
-            <div slot="content">
-                <label>亚马逊常用尺寸/重量/汇率换算、美/加/澳/日FBA配送费计算、售价和毛利计算器、多站点产品定价等</label><br/>
-                <label>网址：https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('unitConvert')">单位换算📦毛利计算💰</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip2" placement="top-start" effect="light">
-            <div slot="content">
-                <label>亚马逊表格工具，将已填写数据的表格按目标表格的属性顺序重新排列新表格数据，减少重复性工作量</label><br/>
-                <label>网址：https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('copySiteExcel')">亚马逊表格工具</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip0" placement="top-start" effect="light">
-            <div slot="content">
-                <label>用于计划步骤或任务节点规划</label><br/>
-                <label>网址：https://linwenli95.github.io/onlineTools/tools/TimeLine/index.html</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('timeLine')">我的计划制定📝</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip11" placement="top-start" effect="light">
-            <div slot="content">
-                <label>生成亚马逊商品标签</label><br/>
-                <label>网址：https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/index.html</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('barcode_pdfs')">条形码生成器🖨️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip3" placement="top-start" effect="light">
-            <div slot="content">
-                <label>亚马逊站点信息，包含各站点所用的币种、汇率、语言、前后台网址、以图搜商品网址、邮编、是否支持FBA、是否支持FBM购买配送服务等信息</label><br/>
-                <label>网址：https://linwenli95.github.io/onlineTools/tools/Notes/index.html</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('siteInfo')">各站点城市邮编📋</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip4" placement="top-start" effect="light">
-            <div slot="content">
-                <label>好东西，亚马逊工具集、跨境资讯网站，有空可以逛逛</label><br/>
-                <label>网址：https://www.amz123.com</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('amazon123')">AMZ123跨境卖家导航🌎️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip5" placement="top-start" effect="light">
-            <div slot="content">
-                <label>海关编码查询,HSCode在填货代发票时使用</label><br/>
-                <label>网址：https://www.hsbianma.com</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('hsCode')">海关编码查询🔍️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip6" placement="top-start" effect="light">
-            <div slot="content">
-                <label>美国商标信息查询网站</label><br/>
-                <label>网址：https://tmsearch.uspto.gov</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('uspto')">美标信息查询🔍️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip7" placement="top-start" effect="light">
-            <div slot="content">
-                <label>英国商标信息查询网站</label><br/>
-                <label>网址：https://trademarks.ipo.gov.uk/ipo-tmtext</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleOpenUrl('ukipo')">英标信息查询🔍️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip8" placement="top-start" effect="light">
-            <div slot="content">
-                <label>外观专利查询网站</label><br/>
-                <label>网址：https://designdb.wipo.int/designdb/en/index.jsp</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleOpenUrl('patent')">外观专利查询🔍️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip9" placement="top-start" effect="light">
-            <div slot="content">
-                <label>快捷给标签添加Made In China文字</label>
-                <label>网址：http://amztool.moyuren.cn</label><br/>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('pdfEditor')">PDF添加Made In China⌨️</el-button>
-        </el-tooltip><br/><br/>
-        <el-tooltip v-model="showTip.tip10" placement="top-start" effect="light">
-            <div slot="content">
-                <label style="font-size: 14px;color: #5b5b5b">好看的烟花，效果逼真，可以点击屏幕放烟花，通过右上角设置调整烟花选项</label><br/>
-                <label style="font-size: 14px;color: #5b5b5b">网址：https://linwenli95.github.io/onlineTools/tools/Fireworks/</label>
-            </div>
-            <el-button type="primary" style="width: 200px" @click="handleTools('fireFlower')">一起看烟花吧🎇</el-button>
-        </el-tooltip>
-    </div>
-    <div v-if="iframe.show" >
-        <el-button type="primary" class="backButton" @click="handleBack">返回</el-button>
+    <section v-show="!iframe.show" class="nav-page">
+        <div class="nav-shell">
+            <header class="header">
+                <div class="brand-mark">🧰</div>
+                <h1>Amazon 工具导航</h1>
+            </header>
+
+            <main class="panel">
+                <div class="panel-top">
+                    <div class="search-wrap">
+                        <input v-model="query" class="search-input" type="text" placeholder="搜索：毛利、表格、商标、专利、条码...">
+                    </div>
+                    <div class="count-text">{{ filteredTools.length }} / {{ tools.length }}</div>
+                </div>
+
+                <div v-if="filteredTools.length" class="tool-list">
+                    <el-tooltip
+                            v-for="tool in filteredTools"
+                            :key="tool.key"
+                            placement="right-start"
+                            effect="light"
+                            :open-delay="220">
+                        <div slot="content">
+                            <strong>{{ tool.title }}</strong><br>
+                            <span>{{ tool.desc }}</span><br>
+                            <span>网址：{{ toolsSrc[tool.key] }}</span>
+                        </div>
+                        <button class="tool-item" @click="launchTool(tool)">
+                            <span class="tool-icon">{{ tool.icon }}</span>
+                            <span class="tool-main">
+                                <span class="tool-title-row">
+                                    <span class="tool-title">{{ tool.title }}</span>
+                                </span>
+                                <span class="tool-desc">{{ tool.desc }}</span>
+                            </span>
+                            <span class="tool-category">{{ tool.category }}</span>
+                            <span class="open-arrow">›</span>
+                        </button>
+                    </el-tooltip>
+                </div>
+
+                <div v-else class="empty-state">没有找到匹配的工具。</div>
+
+            </main>
+        </div>
+    </section>
+
+    <section v-if="iframe.show" class="iframe-page">
+        <button class="back-float" @click="handleBack">← 返回</button>
         <iframe :src="iframe.src">
-            <p>您的浏览器不支持iframe标签。</p>
+            <p>您的浏览器不支持 iframe 标签。</p>
         </iframe>
-    </div>
+    </section>
 </div>
-<!--<script color="0,0,0" opacity="0.8" count="200" src="https://cdn.bootcss.com/canvas-nest.js/1.0.1/canvas-nest.js" type="text/javascript" charset="utf-8"></script>-->
+
 <script src="js/vue.min.2.6.14.js"></script>
 <script src="js/element-ui.js"></script>
 
 <script>
-    // 创建一个Vue实例
     new Vue({
         el: '#app',
         data() {
             return {
-                showTip: {
-                    tip0: false,
-                    tip1: false,
-                    tip2: false,
-                    tip3: false,
-                    tip4: false,
-                    tip5: false,
-                    tip6: false,
-                    tip7: false,
-                    tip8: false,
-                    tip9: false,
-                    tip10: false,
-                    tip11: false
-                },
+                query: '',
                 iframe: {
                     show: false,
                     src: ''
                 },
                 toolsSrc: {
                     amazon123: 'https://www.amz123.com',
-                    hsCode: 'https://www.hsbianma.com',// 海关编码查询
-                    copySiteExcel: 'https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html',// 站点上架表格复制
-                    unitConvert: 'https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html',// 单位转换工具
-                    FBADeliveryFeeCalculation: 'https://linwenli95.github.io/onlineTools/tools/FBADeliveryFeeCalculation/index.html',// FBA配送费计算
-                    siteInfo: 'https://linwenli95.github.io/onlineTools/tools/Notes/index.html',// 各站点记录
+                    hsCode: 'https://www.hsbianma.com',
+                    copySiteExcel: 'https://linwenli95.github.io/onlineTools/tools/ExcelUtil/index.html',
+                    unitConvert: 'https://linwenli95.github.io/onlineTools/tools/UnitConvert/index.html',
+                    FBADeliveryFeeCalculation: 'https://linwenli95.github.io/onlineTools/tools/FBADeliveryFeeCalculation/index.html',
+                    siteInfo: 'https://linwenli95.github.io/onlineTools/tools/Notes/index.html',
                     fireFlower: 'https://linwenli95.github.io/onlineTools/tools/Fireworks/index.html',
                     timeLine: 'https://linwenli95.github.io/onlineTools/tools/TimeLine/index.html',
-                    pdfWeb: 'http://amztool.moyuren.cn/index',// pdf快捷添加Made in China
-                    pdfEditor: 'http://amztool.moyuren.cn',// pdf添加Made in China
-                    patent: 'https://designdb.wipo.int/designdb/en/index.jsp',// 外观专利查询
-                    uspto: 'https://tmsearch.uspto.gov',// 美标查询
-                    ukipo: 'https://trademarks.ipo.gov.uk/ipo-tmtext',// 英标查询
-                    imgWeightLoss: 'https://tinypng.com/',// 图片压缩
+                    pdfWeb: 'http://amztool.moyuren.cn/index',
+                    pdfEditor: 'http://amztool.moyuren.cn',
+                    patent: 'https://designdb.wipo.int/designdb/en/index.jsp',
+                    uspto: 'https://tmsearch.uspto.gov',
+                    ukipo: 'https://trademarks.ipo.gov.uk/ipo-tmtext',
+                    imgWeightLoss: 'https://tinypng.com/',
                     barcode_pdfs: 'https://linwenli95.github.io/onlineTools/tools/barcode_pdfs/index.html'
-                }
+                },
+                // 后续增加工具：复制任意一条对象，修改 key/title/desc/category/icon/mode/tags 即可。
+                tools: [
+                    {
+                        key: 'timeLine',
+                        title: '我的计划制定',
+                        desc: '用于任务节点、项目步骤和时间线规划。',
+                        category: '计划',
+                        icon: '📝',
+                        mode: 'embed',
+                        tags: ['计划', '时间线', '任务']
+                    }, {
+                        key: 'unitConvert',
+                        title: '单位换算 / 毛利计算',
+                        desc: '尺寸、重量、汇率、FBA 配送费、售价和毛利测算。',
+                        category: '计算',
+                        icon: '📦',
+                        mode: 'embed',
+                        tags: ['单位', '毛利', 'FBA', '售价', '汇率']
+                    }, {
+                        key: 'copySiteExcel',
+                        title: '亚马逊表格工具',
+                        desc: '按目标模板属性顺序重排表格数据，减少重复整理。',
+                        category: '表格',
+                        icon: '📊',
+                        mode: 'embed',
+                        tags: ['表格', '模板', '上架', 'Excel']
+                    }, {
+                        key: 'barcode_pdfs',
+                        title: '条形码生成器',
+                        desc: '生成亚马逊商品标签和条码 PDF。',
+                        category: '标签',
+                        icon: '🏷️',
+                        mode: 'embed',
+                        tags: ['条码', '标签', 'PDF', 'FNSKU']
+                    }, {
+                        key: 'siteInfo',
+                        title: '各站点城市邮编',
+                        desc: '站点币种、语言、网址、邮编、FBA/FBM 配送等信息。',
+                        category: '资料',
+                        icon: '📋',
+                        mode: 'embed',
+                        tags: ['站点', '邮编', '币种', 'FBA', 'FBM']
+                    }, {
+                        key: 'amazon123',
+                        title: 'AMZ123 跨境卖家导航',
+                        desc: '亚马逊工具集和跨境资讯导航。',
+                        category: '导航',
+                        icon: '🌎',
+                        mode: 'embed',
+                        tags: ['AMZ123', '跨境', '工具', '资讯']
+                    }, {
+                        key: 'hsCode',
+                        title: '海关编码查询',
+                        desc: '查询 HS Code，常用于货代发票和申报资料。',
+                        category: '查询',
+                        icon: '🔍',
+                        mode: 'embed',
+                        tags: ['海关编码', 'HSCode', '发票', '申报']
+                    }, {
+                        key: 'uspto',
+                        title: '美标信息查询',
+                        desc: '查询美国 USPTO 商标信息。',
+                        category: '合规',
+                        icon: '®️',
+                        mode: 'embed',
+                        tags: ['商标', '美国', 'USPTO', '品牌']
+                    }, {
+                        key: 'ukipo',
+                        title: '英标信息查询',
+                        desc: '查询英国 IPO 商标信息，外部页面打开。',
+                        category: '合规',
+                        icon: '🇬🇧',
+                        mode: 'external',
+                        tags: ['商标', '英国', 'UKIPO', '品牌']
+                    }, {
+                        key: 'patent',
+                        title: '外观专利查询',
+                        desc: '通过 WIPO DesignDB 查询外观设计专利信息。',
+                        category: '合规',
+                        icon: '💡',
+                        mode: 'external',
+                        tags: ['专利', '外观', 'WIPO', '侵权']
+                    }, {
+                        key: 'pdfEditor',
+                        title: 'PDF 添加 Made In China',
+                        desc: '快速给标签 PDF 添加 Made In China 文字。',
+                        category: '标签',
+                        icon: '⌨️',
+                        mode: 'embed',
+                        tags: ['PDF', 'Made in China', '标签']
+                    }, {
+                        key: 'fireFlower',
+                        title: '一起看烟花吧',
+                        desc: '打开可交互烟花页面，点击屏幕可放烟花。',
+                        category: '娱乐',
+                        icon: '🎇',
+                        mode: 'embed',
+                        tags: ['烟花', '放松', '娱乐']
+                    }
+                ]
             }
         },
-        mounted() {
-
+        computed: {
+            filteredTools() {
+                const keyword = this.query.trim().toLowerCase();
+                if (!keyword) return this.tools;
+                return this.tools.filter(tool => {
+                    const haystack = [
+                        tool.title,
+                        tool.desc,
+                        tool.category,
+                        ...(tool.tags || [])
+                    ].join(' ').toLowerCase();
+                    return haystack.includes(keyword);
+                });
+            }
         },
         methods: {
-            handleTools(value) {
-                this.iframe.show = !this.iframe.show
-                if (this.iframe.show) {
-                    this.iframe.src = this.toolsSrc[value]
+            launchTool(tool) {
+                const url = this.toolsSrc[tool.key];
+                if (!url) return;
+                if (tool.mode === 'external') {
+                    window.open(url, '_blank');
+                    return;
                 }
-            },
-            handleOpenUrl(keyStr) {
-                window.open(this.toolsSrc[keyStr]);
+                this.iframe.show = true;
+                this.iframe.src = url;
             },
             handleBack() {
-                this.iframe.show = !this.iframe.show
+                this.iframe.show = false;
+                this.iframe.src = '';
             }
         }
     })
